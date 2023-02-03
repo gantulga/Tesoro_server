@@ -1,0 +1,14 @@
+git init - git conf uusgeh
+git add -A - buh file iig projected hamaaruulah
+git rm -r folder-name
+git commit - local ruu commit hiih
+git commit -m - version bichih
+git checkout - local toi haritsuulah
+
+git push - localoos github ruu upload
+git pull - githubaas localruu download
+
+
+
+python manage.py migrate --fake authtoken zero
+python manage.py migrate

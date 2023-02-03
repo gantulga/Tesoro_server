@@ -1,0 +1,150 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% load static %}
+
+<div class="buttons">
+  {% for cli in all_clients %}
+    {% if cli.number > 310 %}
+      {% if cli.id == client %}
+        <a href="/transferProduct?client={{cli.id}}">
+          <button type="button" class="choosed">{{cli.description}}</button>
+        </a>
+      {% else %}
+        <a href="/transferProduct?client={{cli.id}}">
+          <button type="button">{{cli.description}}</button>
+        </a>
+      {% endif %}
+    {% endif %}
+  {% endfor %}
+</div>
+
+<div class="pageHeader">
+  БАРАА НЭМЭХ
+</div>
+{% if client %}
+<div class="pageBody">
+  <form class="transferProduct" method="POST">
+    {% csrf_token %}
+    <div class="oneRow head">
+      <!-- <div class="budget">Төсөв</div> -->
+      <!-- <div class="wallet">Данс</div> -->
+      <!-- <div class="division">Салбар</div> -->
+      <div class="client">Хаашаа</div>
+    </div>
+    <div class="oneRow info">
+      <!-- <div class="budget">
+        <select name="budget">
+          <option value="">Төсөв сонгоогүй</option>
+          {% for budget in all_budgets %}
+            <option value="{{budget.id}}">{{budget.name}} - {{budget.amount}}₮</option>
+          {% endfor %}
+        </select>
+      </div> -->
+      <!-- <div class="wallet">
+        <select name="fr_wallet" required>
+          <option value="">Данс сонгоогүй</option>
+          {% for wallet in all_wallets %}
+            <option value="{{wallet.id}}">{{wallet.description}} - {{wallet.account}}</option>
+          {% endfor %}
+        </select>
+      </div> -->
+      <!-- <div class="division">
+        <select name="division" required>
+          <option value="">Данс сонгоогүй</option>
+          {% for division in all_divisions %}
+            <option value="{{division.id}}">{{division.name}}</option>
+          {% endfor %}
+        </select>
+      </div> -->
+      <input type="hidden" name="fr_client" value="{{client}}" />
+      <div class="client">
+        <select name="client" required>
+          <option value="">Хаашаа гэдгээ сонгоогүй</option>
+          {% for client in all_clients %}
+            {% if client.number > 310 or 200 > client.number %}
+            <option value="{{client.id}}">{{client.description}}</option>
+            {% endif %}
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+    <div class="oneRow head">
+      <div class="index">№</div>
+      <div class="select">Бүтээгдэхүүн</div>
+      <div class="input">Х/Н</div>
+      <div class="input">Б/үлдэгдэл</div>
+      <div class="input">Тоо/Ширхэг</div>
+    </div>
+    {% for input in range %}
+      <div class="oneRow transfer">
+        <div class="index">{{ forloop.counter }}</div>
+        <div class="select">
+          <select name="product{{ forloop.counter }}" id="product{{ forloop.counter }}" onchange="checkBalance('{{ forloop.counter }}')"/>
+            <option value="">Бараа сонгоогүй</option>
+            {% for balance in all_balances %}
+              <option value="{{balance.product.id}}">{{balance.product.name}}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="input">
+          <input type="text" name="type{{ forloop.counter }}" value="" id="type{{ forloop.counter }}" disabled/>
+        </div>
+        <div class="input">
+          <input type="text" name="limit{{ forloop.counter }}" value="0" id="limit{{ forloop.counter }}" disabled/>
+        </div>
+        <div class="input">
+          <input type="text" name="quantity{{ forloop.counter }}" value="0" id="quantity{{ forloop.counter }}" onchange="changeValue('{{ forloop.counter }}')"/>
+        </div>
+      </div>
+    {% endfor %}
+    <div class="oneRow head">
+      <div class="index"></div>
+      <div class="select"></div>
+      <div class="input"></div>
+      <div class="input">НИЙТ ҮНЭ</div>
+      <div class="input"><input type="text" name="total" value="0" id="total" disabled/></div>
+    </div>
+    <button type="submit">Барааг оруулах</button>
+  </form>
+</div>
+
+<script>
+  function changeValue(number) {
+    var quantity = document.getElementById("quantity" + number).value;
+    var limit = document.getElementById("limit" + number).value;
+
+    console.log("limit" + limit)
+    console.log("quantity" + quantity)
+
+    if(parseInt(quantity) > parseInt(limit)){
+      alert("Барааны боломжит үлдэгдэл " + limit + " тул үүнээс их тоо хийх боломжгүй!");
+      document.getElementById("quantity" + number).value = limit;
+    }
+  }
+
+  async function checkBalance(number) {
+    var product = document.getElementById("product" + number).value
+    var info = null
+    var client = "{{client}}"
+    var url = '/api/productBalance/' + client + "/" + product
+    await fetch(url).then(data => {
+      return data.json()
+    }).then(data => {
+      info = data
+    });
+    console.log(info)
+    if(info){
+      var size_type = null
+      if(info['size_type'] == "quantity"){
+        size_type = "ш"
+      }else{
+        size_type = "гр"
+      }
+      document.getElementById("type" + number).value = size_type;
+      document.getElementById("limit" + number).value = info['size'];
+    }
+  }
+</script>
+{% endif %}
+{% endblock %}

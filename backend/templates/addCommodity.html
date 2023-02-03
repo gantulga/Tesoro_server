@@ -1,0 +1,137 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% load static %}
+<div class="pageHeader">
+  МАТЕРИАЛ НЭМЭХ
+</div>
+<div class="pageBody">
+  <form class="addCommodity" method="POST">
+    {% csrf_token %}
+    <div class="oneRow head">
+      <div class="budget">Төсөв</div>
+      <!-- <div class="wallet">Данс</div> -->
+      <!-- <div class="division">Салбар</div> -->
+      <div class="client">Хаашаа</div>
+    </div>
+    <div class="oneRow info">
+      <div class="budget">
+        <select name="budget">
+          <option value="">Төсөв сонгоогүй</option>
+          {% for budget in all_budgets %}
+            <option value="{{budget.id}}">{{budget.name}} - {{budget.amount}}₮</option>
+          {% endfor %}
+        </select>
+      </div>
+      <!-- <div class="wallet">
+        <select name="fr_wallet" required>
+          <option value="">Данс сонгоогүй</option>
+          {% for wallet in all_wallets %}
+            <option value="{{wallet.id}}">{{wallet.description}} - {{wallet.account}}</option>
+          {% endfor %}
+        </select>
+      </div> -->
+      <!-- <div class="division">
+        <select name="division" required>
+          <option value="">Данс сонгоогүй</option>
+          {% for division in all_divisions %}
+            <option value="{{division.id}}">{{division.name}}</option>
+          {% endfor %}
+        </select>
+      </div> -->
+      <div class="client">
+        <select name="client" required>
+          <option value="">Хаашаа гэдгээ сонгоогүй</option>
+          {% for client in all_clients %}
+            {% if client.number > 310 or 200 > client.number %}
+            <option value="{{client.id}}">{{client.description}}</option>
+            {% endif %}
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+    <div class="oneRow head">
+      <div class="index">№</div>
+      <div class="select">Материал</div>
+      <div class="input">Нэгж хэмжээ</div>
+      <div class="size_type">Х.Н</div>
+      <div class="input">гр/ш</div>
+      <div class="input">Нэгж үнэ</div>
+      <div class="input">Нийт үнэ</div>
+    </div>
+    {% for input in range %}
+      <div class="oneRow">
+        <div class="index">{{ forloop.counter }}</div>
+        <div class="select">
+          <select name="commodity{{ forloop.counter }}" id="commodity{{ forloop.counter }}" onchange="changeCommodity('{{ forloop.counter }}')">
+            <option value="">Бараа сонгоогүй</option>
+            {% for commodity in all_commodities %}
+              <option value="{{commodity.id}}">{{commodity.name}}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="input grey">
+          <input type="text" name="unit_size{{ forloop.counter }}" value="0" id="unit_size{{ forloop.counter }}" readonly/>
+        </div>
+        <div class="size_type grey">
+          <select name="size_type{{ forloop.counter }}" id="size_type{{ forloop.counter }}" readonly>
+              <option value="size">гр</option>
+              <option value="quantity">ш</option>
+          </select>
+        </div>
+        <div class="input">
+          <input type="text" name="quantity{{ forloop.counter }}" value="0" id="quantity{{ forloop.counter }}" onchange="changeValue('{{ forloop.counter }}')"/>
+        </div>
+        <div class="input">
+          <input type="text" name="price{{ forloop.counter }}" value="0" id="price{{ forloop.counter }}" onchange="changeValue('{{ forloop.counter }}')"/>
+        </div>
+        <div class="input grey">
+          <input type="text" name="total{{ forloop.counter }}" value="0" id="total{{ forloop.counter }}" readonly/>
+        </div>
+      </div>
+    {% endfor %}
+    <div class="oneRow head">
+      <div class="index"></div>
+      <div class="select"></div>
+      <div class="size_type"></div>
+      <div class="input"></div>
+      <div class="input">НИЙТ ҮНЭ</div>
+      <div class="input"><input type="text" name="total" value="0" id="total" disabled/></div>
+    </div>
+    <button type="submit">Барааг оруулах</button>
+  </form>
+</div>
+
+<script>
+  function changeValue(number) {
+    console.log(number)
+    var unit_size = document.getElementById("unit_size" + number).value;
+    var quantity = document.getElementById("quantity" + number).value;
+    var price = document.getElementById("price" + number).value;
+    document.getElementById("total" + number).value = quantity / unit_size * price;
+
+    var total = 0
+    for (let i = 1; i < 31; i++) {
+      total = total + parseInt(document.getElementById("total" + i).value);
+    }
+
+    document.getElementById("total").value = total;
+  }
+
+  async function changeCommodity(number) {
+    var commodity = document.getElementById("commodity" + number).value
+    var info = null
+    var url = '/api/commodityInfo/' + commodity
+    await fetch(url).then(data => {
+      return data.json()
+    }).then(data => {
+      info = data
+    });
+
+    if(info){
+      document.getElementById("size_type" + number).value = info['size_type'];
+      document.getElementById("unit_size" + number).value = info['unit_size'];
+    }
+  }
+</script>
+{% endblock %}

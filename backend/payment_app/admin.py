@@ -1,0 +1,32 @@
+from django.contrib import admin
+from .models import *
+
+admin.site.site_header = 'Tesoro Center - Хэрэглэгчийн програм'
+
+class OrderAdmin(admin.ModelAdmin):
+	#list_display = ('name', 'division')
+	exclude = ['created_by', 'updated_by']
+	list_display = ('id', 'client', 'discount', 'discounted_amount', 'amount', 'status')
+	def save_model(self, request, obj, form, change):
+		if not change:
+			obj.created_by = request.user
+		elif change:
+			obj.updated_by = request.user
+		obj.save()
+
+class OrderDetialAdmin(admin.ModelAdmin):
+	#list_display = ('name', 'division')
+	exclude = ['created_by', 'updated_by']
+	list_display = ('order', 'client', 'product', 'quantity', 'subtotal', 'discount')
+	def save_model(self, request, obj, form, change):
+		if not change:
+			obj.created_by = request.user
+		elif change:
+			obj.updated_by = request.user
+		obj.save()
+
+# Register your models here.
+admin.site.register(Order, OrderAdmin)
+admin.site.register(Order_detial, OrderDetialAdmin)
+admin.site.register(Bill)
+admin.site.register(Payment)

@@ -1,0 +1,757 @@
+body {
+    background: #edf5f8;
+    min-height: 100vh;
+}
+
+.loginPage {
+    background: #ff5f15;
+    width: 100%;
+    min-height: 100vh;
+}
+
+.loginPage .loginBox{
+    background: #fff;
+    padding: 30px;
+    border-radius: 15px;
+}
+
+.loginPage .loginBox h2{
+    color: #444444;
+}
+
+.loginPage .loginBox form p label{
+    width: 100px;
+    font-weight: 600;
+    color: #444444;
+}
+
+.loginPage .loginBox form p input{
+    width: calc(100% - 110px);
+    border: none;
+    outline: none;
+    border-radius: 10px;
+    background: #e8f0fe;
+}
+
+.loginPage .loginBox button{
+    float: right;
+    border: none;
+    outline: none;
+    padding: 10px 20px;
+    background: #ff5f15;
+    border-radius: 15px;
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.loginPage .loginBox button:hover{
+    background: #ff8851;
+}
+
+.header {
+    display: block;
+    position: relative;
+    height: 50px;
+    width: 100%;
+    background-color: #06163a;
+}
+
+.header .brand{
+display: inline-block;
+width: 300px;
+height: 50px;
+vertical-align: top;
+padding: 10px;
+}
+
+.header .brand img{
+height: 100%;
+}
+
+
+.header .menu {
+display: inline-block;
+float: right;
+width: 50px;
+height: 50px;
+vertical-align: top;
+}
+
+.dropbtn {
+background-color: #04AA6D;
+color: white;
+padding: 16px;
+font-size: 16px;
+border: none;
+}
+
+.dropdown {
+position: relative;
+display: inline-block;
+}
+
+.dropdown-content {
+display: none;
+position: absolute;
+right: 0;
+background-color: #fff;
+min-width: 300px;
+box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+z-index: 1;
+}
+
+.dropdown-content a{
+text-decoration: none;
+}
+
+.dropdown-content .link {
+width: 100%;
+color: black;
+padding: 12px 16px;
+text-decoration: none;
+display: block;
+border: none;
+outline: none;
+text-align: left;
+font-size: 14px;
+text-transform: uppercase;
+background: transparent;
+}
+
+.dropdown-content .link i{
+padding-right: 10px;
+width: 30px;
+overflow: hidden;
+text-align: center;
+}
+
+.dropdown-content .link:hover {background-color: #edf5f8;}
+
+.dropdown:hover .dropdown-content {display: block;}
+
+.dropdown:hover .dropbtn {background-color: #259c40;}
+
+.header .logout {
+display: inline-block;
+float: right;
+width: 50px;
+height: 50px;
+vertical-align: top;
+}
+
+.header .logout .button,
+.header .menu .button {
+border: none;
+outline: none;
+background: #ff5f15;
+height: 50px;
+width: 50px;
+color: #fff;
+font-size: 24px;
+padding: 5px 0 0 0;
+text-align: center;
+}
+
+.header .menu .button:hover {
+background: #213971;
+}
+
+.header .logout .button:hover {
+background: #ff9869;
+}
+
+.header .menu .dropbtn {
+background: transparent;
+}
+
+.main {
+    background: #fff;
+    padding: 20px;
+}
+
+.pageHeader {
+    font-weight: 600;
+    font-size: 20px;
+    padding-bottom: 20px;
+}
+
+.pageBody {
+    width: 100%;
+    overflow: hidden;
+}
+
+.pageBody .oneRow{
+    width: 100%;
+    position: relative;
+}
+
+.pageBody .oneRow .index{
+    width: 30px;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.pageBody .oneRow .name{
+    width: calc(100% - 350px);
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.pageBody .oneRow .size{
+    width: 100px;
+    display: inline-block;
+    text-align: right;
+    padding-right: 10px;
+    vertical-align: middle;
+}
+
+.pageBody .oneRow .division{
+    width: 100px;
+    display: inline-block;
+    text-align: right;
+    padding-right: 10px;
+    vertical-align: middle;
+}
+
+.pageBody .oneRow .client{
+    width: 100px;
+    white-space: nowrap;
+    overflow: hidden;
+    display: inline-block;
+    text-align: right;
+    vertical-align: middle;
+}
+
+.buttons {
+    width: 100%;
+    white-space: nowrap;
+    overflow-x: scroll;
+    padding: 10px 0;
+    margin-bottom: 15px;
+}
+
+.buttons a{
+    text-decoration: none;
+}
+
+.buttons button{
+    border: none;
+    outline: none;
+    background: #ff8851;
+    color: #000;
+    font-weight: 600;
+    margin-left: 10px;
+    padding: 10px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.buttons button:hover{
+    background: #ffb492;
+}
+
+.buttons button.choosed{
+    border: none;
+    outline: none;
+    background: #259c40;
+    color: #fff;
+    font-weight: 600;
+    margin-left: 10px;
+    padding: 10px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.buttons button.choosed:hover{
+    background: #36a851;
+}
+
+.addProduct {
+    width: 100%;
+}
+
+.addProduct .oneRow.head {
+    font-weight: 600;
+    text-align: center;
+    vertical-align: top;
+}
+
+
+.addProduct .oneRow {
+    width: 100%;
+    background: #e8f0fe;
+    padding: 5px 10px;
+    border-radius: 10px;
+    margin-top: 5px;
+}
+
+.addProduct .oneRow .index{
+    width: 30px;
+    display: inline-block;
+    text-align: center;
+    vertical-align: top;
+}
+
+.addProduct .oneRow .select{
+    width: calc(100% - 350px);
+    display: inline-block;
+}
+
+.addProduct .oneRow .input{
+    width: 100px;
+    display: inline-block;
+}
+
+.addProduct .oneRow .select select,
+.addProduct .oneRow .input input{
+    width: 100%;
+    padding: 5px 10px;
+    border: none;
+    outline: none;
+    border-radius: 10px;
+}
+
+.addProduct .oneRow .input input{
+    text-align: right;
+}
+
+.addProduct .oneRow.info {
+    margin-bottom: 20px;
+}
+
+.addProduct .oneRow .budget,
+.addProduct .oneRow .wallet,
+.addProduct .oneRow .division,
+.addProduct .oneRow .client {
+    width: calc((100% - 20px)/2);
+    display: inline-block;
+    text-align: center;
+    vertical-align: top;
+}
+
+.addProduct .oneRow .budget select,
+.addProduct .oneRow .wallet select,
+.addProduct .oneRow .division select,
+.addProduct .oneRow .client select {
+    width: 100%;
+    padding: 5px 10px;
+    border: none;
+    outline: none;
+    border-radius: 10px;
+    vertical-align: top;
+}
+
+.addProduct button{
+    border: none;
+    outline: none;
+    background: #ff5f15;
+    padding: 10px 20px;
+    border-radius: 15px;
+    color: #fff;
+    margin-top: 30px;
+    float: right;
+    font-weight: 600;
+}
+
+.addCommodity {
+    width: 100%;
+}
+
+.addCommodity .oneRow.head {
+    font-weight: 600;
+    text-align: center;
+    vertical-align: top;
+}
+
+
+.addCommodity .oneRow {
+    width: 100%;
+    background: #e8f0fe;
+    padding: 5px 10px;
+    border-radius: 10px;
+    margin-top: 5px;
+}
+
+.addCommodity .oneRow .index{
+    width: 30px;
+    display: inline-block;
+    text-align: center;
+    vertical-align: top;
+}
+
+.addCommodity .oneRow .select{
+    width: calc(100% - 530px);
+    display: inline-block;
+}
+
+.addCommodity .oneRow .input{
+    width: 100px;
+    display: inline-block;
+}
+
+.addCommodity .oneRow .size_type{
+    width: 70px;
+    display: inline-block;
+}
+
+.addCommodity .oneRow .size_type select, 
+.addCommodity .oneRow .select select,
+.addCommodity .oneRow .input input{
+    width: 100%;
+    padding: 5px 10px;
+    border: none;
+    outline: none;
+    border-radius: 10px;
+}
+
+.addCommodity .oneRow .input input{
+    text-align: right;
+}
+
+.addCommodity .oneRow.info {
+    margin-bottom: 20px;
+}
+
+.addCommodity .oneRow .budget,
+.addCommodity .oneRow .wallet,
+.addCommodity .oneRow .division,
+.addCommodity .oneRow .client {
+    width: calc((100% - 20px)/2);
+    display: inline-block;
+    text-align: center;
+    vertical-align: top;
+}
+
+.addCommodity .oneRow .budget select,
+.addCommodity .oneRow .wallet select,
+.addCommodity .oneRow .division select,
+.addCommodity .oneRow .client select {
+    width: 100%;
+    padding: 5px 10px;
+    border: none;
+    outline: none;
+    border-radius: 10px;
+    vertical-align: top;
+}
+
+.addCommodity button{
+    border: none;
+    outline: none;
+    background: #ff5f15;
+    padding: 10px 20px;
+    border-radius: 15px;
+    color: #fff;
+    margin-top: 30px;
+    float: right;
+    font-weight: 600;
+}
+
+.addCommodity .oneRow .grey input,
+.addCommodity .oneRow .grey select{
+    background: #afafaf;
+}
+
+.kitchen {
+    width: 100%;
+    background: #edf5f8;
+}
+
+.kitchen .tolgoi{
+    width: 100%;
+    font-size: 30px;
+    font-weight: 600;
+    background: #06163a;
+    color: #fff;
+    padding: 0 20px 10px 20px;
+}
+
+.kitchen .biye{
+    padding: 20px;
+    width: 100%;
+}
+
+.kitchen .biye .oneRow{
+    width: 100%;
+    font-size: 30px;
+    font-weight: 600;
+    background: #e6e6e6;
+    color: #333;
+    padding: 0 20px 10px 20px;
+    margin-bottom: 10px;
+    border-radius: 20px;
+}
+
+.kitchen .biye .oneRow.head{
+    font-size: 20px;
+    font-weight: 600;
+    background: #afafaf;
+    padding: 10px;
+    border-radius: 20px;
+}
+
+.kitchen .biye .oneRow.red{
+    background: rgb(241, 106, 106);
+    border-radius: 20px;
+}
+
+.kitchen .biye .oneRow.head .name{
+    text-align: center;
+}
+
+.kitchen .biye .oneRow .name{
+    width: calc(100% - 380px);
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.kitchen .biye .oneRow .size{
+    width: 50px;
+    display: inline-block;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.kitchen .biye .oneRow .client{
+    width: 150px;
+    display: inline-block;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.kitchen .biye .oneRow .time{
+    width: 100px;
+    display: inline-block;
+    text-align: center;
+    vertical-align: middle;
+}
+.kitchen .biye .oneRow .button{
+    width: 50px;
+    display: inline-block;
+    text-align: center;
+    vertical-align: middle;
+    float: right;
+}
+
+.kitchen .biye .oneRow .button button{
+    width: 100%;
+    border: none;
+    outline: none;
+    background: #259c40;
+    color: #fff;
+    cursor: pointer;
+}
+
+
+
+.transferProduct {
+    width: 100%;
+}
+
+.transferProduct .oneRow.head {
+    font-weight: 600;
+    text-align: center;
+    vertical-align: top;
+}
+
+
+.transferProduct .oneRow {
+    width: 100%;
+    background: #e8f0fe;
+    padding: 5px 10px;
+    border-radius: 10px;
+    margin-top: 5px;
+}
+
+.transferProduct .oneRow .index{
+    width: 30px;
+    display: inline-block;
+    text-align: center;
+    vertical-align: top;
+}
+
+.transferProduct .oneRow .select{
+    width: calc(100% - 350px);
+    display: inline-block;
+}
+
+.transferProduct .oneRow .input{
+    width: 100px;
+    display: inline-block;
+}
+
+.transferProduct .oneRow .select select,
+.transferProduct .oneRow .input input{
+    width: 100%;
+    padding: 5px 10px;
+    border: none;
+    outline: none;
+    border-radius: 10px;
+}
+
+.transferProduct .oneRow .input input{
+    text-align: right;
+}
+
+.transferProduct .oneRow.info {
+    margin-bottom: 20px;
+}
+
+.transferProduct .oneRow .budget,
+.transferProduct .oneRow .wallet,
+.transferProduct .oneRow .division,
+.transferProduct .oneRow .client {
+    width: 100%;
+    display: inline-block;
+    text-align: center;
+    vertical-align: top;
+}
+
+.transferProduct .oneRow .budget select,
+.transferProduct .oneRow .wallet select,
+.transferProduct .oneRow .division select,
+.transferProduct .oneRow .client select {
+    width: 100%;
+    padding: 5px 10px;
+    border: none;
+    outline: none;
+    border-radius: 10px;
+    vertical-align: top;
+}
+
+.transferProduct button{
+    border: none;
+    outline: none;
+    background: #ff5f15;
+    padding: 10px 20px;
+    border-radius: 15px;
+    color: #fff;
+    margin-top: 30px;
+    float: right;
+    font-weight: 600;
+}
+
+.pageBody .walletInfo {
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.pageBody .info-header {
+    font-size: 18px;
+    font-weight: 600;
+    padding-bottom: 5px;
+}
+
+.pageBody .wallet {
+    width: 100%;
+    background: #f0f0f0;
+    border: 1px solid #fff;
+    border-radius: 10px;
+    padding: 0 15px;
+}
+
+.pageBody .wallet.head {
+    font-weight: 600;
+}
+
+.pageBody .wallet.red {
+    background: rgb(255, 191, 191);
+}
+
+.pageBody .wallet.green {
+    background: rgb(191, 255, 191);
+}
+
+
+.pageBody .wallet .index{
+    display: inline-block;
+    width: 30px;
+}
+
+.pageBody .wallet .name{
+    display: inline-block;
+    padding-left: 20px;
+}
+
+.pageBody .wallet .balance{
+    float: right;
+    display: inline-block;
+    width: 100px;
+    text-align: right;
+}
+
+.pageBody .wallet .amount{
+    float: right;
+    display: inline-block;
+    width: 100px;
+    text-align: right;
+}
+
+.pageBody .wallet .amount.paid{
+    color: #007c1d;
+}
+
+.pageBody .wallet .amount.under{
+    color: #7c0000;
+}
+
+.pageBody .total{
+    font-size: 18px;
+    font-weight: 600;
+    width: 100%;
+    text-align: right;
+    background: #f0f0f0;
+    border: 1px solid #fff;
+    border-radius: 10px;
+    padding: 0 15px;
+    margin-bottom: 10px;
+}
+
+.pageBody .total .percent{
+    padding-right: 30px;
+}
+
+.pageBody .cat-name {
+    font-size: 18px;
+    font-weight: 600;
+    width: 100%;
+    text-align: left;
+    background: #dadada;
+    border: 1px solid #fff;
+    border-radius: 10px;
+    padding: 0 15px;
+}
+
+.pageBody .lounge-balance.head {
+    font-weight: 600;
+    background: #e6e6e6;
+    border-radius: 5px;
+}
+
+.pageBody .lounge-balance {
+    background: #e6e6e6;
+    border-radius: 5px;
+    margin-top: 1px;
+}
+
+.pageBody .lounge-balance .name{
+    width: calc(100% - 370px);
+}
+
+.pageBody .lounge-balance .prev{
+    display: inline-block;
+    width: 100px;
+    text-align: center;
+}
+
+.pageBody .lounge-balance .last{
+    display: inline-block;
+    width: 120px;
+    text-align: center;
+}
+
+.pageBody .lounge-balance .sold{
+    display: inline-block;
+    width: 100px;
+    text-align: center;
+}

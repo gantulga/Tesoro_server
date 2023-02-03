@@ -1,0 +1,147 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% load static %}
+<div class="buttons">
+  {% for shiftWork in shift_workers %}
+    <a href="/loungeItemBalances?shiftworker={{shiftWork.id}}">
+      <button type="button">{{shiftWork.id}}. {{shiftWork.created_at|date:"Y/m/d"}} - {{shiftWork.worker.first_name}}</button>
+    </a>
+  {% endfor %}
+</div>
+{% if prev_balances and balances %}
+  <h3>
+    {{shift_worker.created_at|date:"Y/m/d"}} - {{shift_worker.worker.first_name}}
+  </h3>
+{% endif %}
+<div class="pageHeader">
+  ЛОУНЖ БАРМЕН ХЭСГИЙН БАРААНЫ ҮЛДЭГДЭЛ
+</div>
+<div class="pageBody">
+  <div class="oneRow lounge-balance head">
+    <div class="index">
+      №
+    </div>
+    <div class="name">
+      Нэр
+    </div>
+    <div class="prev">
+      Эхлэл
+    </div>
+    <div class="last">
+      Одоо/Төгсгөл
+    </div>
+    <div class="sold">
+      Борлуулалт
+    </div>
+  </div>
+  {% for item in balances %}
+    {% if item.product %}
+    <div class="oneRow lounge-balance">
+      <div class="index">
+        {{ forloop.counter }}
+      </div>
+      <div class="name">
+        {{item.product.name}}
+      </div>
+      <div class="prev" id="pPrev{{ forloop.counter }}">
+        {% for prev in prev_balances %}
+          {% if item.product.id == prev.product.id %}
+            {% if prev.quantity != None and prev.size == None %}
+              {{prev.quantity}}
+            {% endif %}
+            {% if prev.quantity == None and prev.size != None %}
+              {{prev.size}}
+            {% endif %}
+          {% endif %}
+        {% endfor %}
+      </div>
+      <div class="last" id="pLast{{ forloop.counter }}">
+        {% if item.quantity != None and item.size == None %}
+          {{item.quantity}}
+        {% endif %}
+        {% if item.quantity == None and item.size != None %}
+          {{item.size}}
+        {% endif %}
+      </div>
+      <div class="sold" id="pSold{{ forloop.counter }}"></div>
+    </div>
+    {% endif %}
+  {% endfor %}
+</div>
+<div class="pageHeader pt-5">
+  ЛОУНЖ БАРМЕН ХЭСГИЙН МАТЕРИАЛЫН ҮЛДЭГДЭЛ
+</div>
+<div class="pageBody">
+  <div class="oneRow lounge-balance head">
+    <div class="index">
+      №
+    </div>
+    <div class="name">
+      Нэр
+    </div>
+    <div class="prev">
+      Эхлэл
+    </div>
+    <div class="last">
+      Одоо/Төгсгөл
+    </div>
+    <div class="sold">
+      Борлуулалт
+    </div>
+  </div>
+  {% for item in balances %}
+    {% if item.commodity %}
+    <div class="oneRow lounge-balance">
+      <div class="index">
+        {{ forloop.counter }}
+      </div>
+      <div class="name">
+        {{item.commodity.name}}
+      </div>
+      <div class="prev" id="mPrev{{ forloop.counter }}">
+        {% for prev in prev_balances %}
+          {% if item.commodity.id == prev.commodity.id %}
+            {% if prev.quantity != None and prev.size == None %}
+              {{prev.quantity}}
+            {% endif %}
+            {% if prev.quantity == None and prev.size != None %}
+              {{prev.size}}
+            {% endif %}
+          {% endif %}
+        {% endfor %}
+      </div>
+      <div class="last" id="mLast{{ forloop.counter }}">
+        {% if item.quantity != None and item.size == None %}
+          {{item.quantity}}
+        {% endif %}
+        {% if item.quantity == None and item.size != None %}
+          {{item.size}}
+        {% endif %}
+      </div>
+      <div class="sold" id="mSold{{ forloop.counter }}"></div>
+    </div>
+    {% endif %}
+  {% endfor %}
+</div>
+<script>
+  var length = 200
+  for (let i = 1; i < length; i++) {
+    var mPrev_div = document.getElementById("mPrev" + i)
+    var mLast_div = document.getElementById("mLast" + i)
+    if(mPrev_div && mLast_div){
+      if(parseInt(mLast_div.innerText) - parseInt(mPrev_div.innerText) != 0){
+        document.getElementById("mSold" + i).innerHTML = parseInt(mLast_div.innerText) - parseInt(mPrev_div.innerText);
+      }
+    }
+
+    var pPrev_div = document.getElementById("pPrev" + i)
+    var pLast_div = document.getElementById("pLast" + i)
+    if(pPrev_div && pLast_div){
+      if(parseInt(pLast_div.innerText) - parseInt(pPrev_div.innerText) != 0){
+        document.getElementById("pSold" + i).innerHTML = parseInt(pLast_div.innerText) - parseInt(pPrev_div.innerText);
+      }
+    }
+  }
+</script>
+{% endblock %}

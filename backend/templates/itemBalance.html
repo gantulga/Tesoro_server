@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% load static %}
+<div class="buttons">
+  {% if shift_worker %}
+  <a href="/itembalances">
+    <button type="button" style="background: green; color: #fff">Одоо байгаа үлдэгдэл</button>
+  </a>
+  {% endif %}
+  {% for shiftWork in shift_workers %}
+    <a href="/itembalances/shiftworker/{{shiftWork.id}}">
+      <button type="button">{{shiftWork.created_at|date:"Y/m/d"}} - {{shiftWork.division.name}} - {{shiftWork.worker.first_name}}</button>
+    </a>
+  {% endfor %}
+</div>
+{% if clients %}
+<div class="buttons">
+  <a href="/itembalances">
+    <button type="button" style="background: green; color: #fff">БҮГД</button>
+  </a>
+  {% for client in clients %}
+    {% if client.number > 310 %}
+    <a href="/itembalances?client={{client.id}}">
+      <button type="button">{{client.description}}</button>
+    </a>
+    {% endif %}
+  {% endfor %}
+</div>
+{% endif %}
+{% if shift_worker %}
+  <h3>
+    {{shift_worker.created_at|date:"Y/m/d"}} - {{shift_worker.division.name}} - {{shift_worker.worker.first_name}}
+  </h3>
+  {% endif %}
+<div class="pageHeader">
+  БАРААНЫ ҮЛДЭГДЭЛ
+</div>
+<div class="pageBody">
+  {% for item in all_items %}
+    {% if item.product %}
+    <div class="oneRow">
+      <div class="index">
+        {{ forloop.counter }}
+      </div>
+      <div class="name">
+        {{item.product.name}}
+      </div>
+      <div class="size">
+        {% if item.quantity != None %}
+          {{item.quantity}} ш
+        {% elif item.size != None %}
+          {{item.size}} гр
+        {% else %}
+        {% endif %}
+      </div>
+      <div class="division">
+        {{item.division.name}}
+      </div>
+      <div class="client">
+        {{item.client.description}}
+      </div>
+    </div>
+    {% endif %}
+  {% endfor %}
+</div>
+<div class="pageHeader pt-5">
+  МАТЕРИАЛЫН ҮЛДЭГДЭЛ
+</div>
+<div class="pageBody">
+  {% for item in all_items %}
+    {% if item.commodity %}
+    <div class="oneRow">
+      <div class="index">
+        {{ forloop.counter }}
+      </div>
+      <div class="name">
+        {{item.commodity.name}}
+      </div>
+      <div class="size">
+        {% if item.quantity != None %}
+          {{item.quantity}} ш
+        {% elif item.size != None %}
+          {{item.size}} гр
+        {% else %}
+        {% endif %}
+      </div>
+      <div class="division">
+        {{item.division.name}}
+      </div>
+      <div class="client">
+        {{item.client.description}}
+      </div>
+    </div>
+    {% endif %}
+  {% endfor %}
+</div>
+{% endblock %}

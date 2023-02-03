@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% load static %}
+
+<div class="buttons">
+  {% for worker in all_shift_workers %}
+    <a href="/dailyReport?shiftWorker={{worker.id}}">
+      <button type="button">{{worker.worker.first_name}} - {{worker.created_at}}</button>
+    </a>
+  {% endfor %}
+</div>
+
+{% if shift_work %}
+<div class="pageHeader">
+  Ээлжийн тайлан
+</div>
+<div class="pageBody">
+  <div class="walletInfo">
+    <div class="info-header">1. Орлогын мэдээлэл</div>
+    <div class="wallet">
+      <div class="index">1</div>
+      <div class="name">Нийт орлого</div>
+      <div class="amount">{{total_order_amount}} ₮</div>
+    </div>
+    <div class="wallet">
+      <div class="index">2</div>
+      <div class="name">Хөнгөлөлт үзүүлсэн</div>
+      <div class="amount">{{total_discount}} ₮</div>
+    </div>
+    <div class="wallet red">
+      <div class="index">3</div>
+      <div class="name">Төлөгдөөгүй /Үйлчилүүлэгчидээс/</div>
+      <div class="amount">{{total_under_amount_guest}} ₮</div>
+    </div>
+    <div class="wallet red">
+      <div class="index">4</div>
+      <div class="name">Төлөгдөөгүй /Ажилчидаас/</div>
+      <div class="amount">{{total_under_amount_worker}} ₮</div>
+    </div>
+    <div class="wallet green">
+      <div class="index">5</div>
+      <div class="name">Төлөгдсөн</div>
+      <div class="amount">{{total_payment_balanace}} ₮</div>
+    </div>
+  </div>
+
+  <div class="walletInfo">
+    <div class="info-header">2. Дансны орлогын мэдээлэл</div>
+    {% for temp in wallet_balances %}
+      {% if temp.balance > 0 %}
+        <div class="wallet">
+          <div class="index">{{ forloop.counter }}</div>
+          <div class="name">{{temp.wallet.name}} / {{temp.wallet.bank}} / {{temp.wallet.account}}</div>
+          <div class="balance">{{temp.balance}} ₮</div>
+        </div>
+      {% endif %}
+    {% endfor %}
+    <div class="total">Нийт: {{total_payment_balanace}} ₮</div>
+  </div>
+
+  <div class="walletInfo">
+    <div class="info-header">3. Борлуулсан бүтээгдэхүүний тоо, дүн</div>
+    {% for cat in all_parent_cats %}
+      {% if cat.id > 4 %}
+        <div class="cat-name">{{cat.name}}</div>
+        {% for temp in sold_items %}
+          {% if cat.id == temp.category.id %}
+            <div class="wallet">
+              <div class="index">{{ forloop.counter }}</div>
+              <div class="name">{{temp.product}}</div>
+              <div class="amount"><span id="item{{cat.id}}">{{temp.amount}}</span> ₮</div>
+              <div class="balance" >{{temp.quantity}}</div>
+            </div>
+          {% endif %}
+        {% endfor %}
+        <div class="total"><span class="percent">Хувь: <span id="percent{{cat.id}}"></span></span> Нийт: <span id="total{{cat.id}}"></span> ₮</div>
+      {% endif %}
+    {% endfor %}
+  </div>
+  <div class="walletInfo">
+    <div class="info-header">4. Ажилчдын төлбөрийн мэдээлэл</div>
+    <div class="wallet head">
+      <div class="index">№</div>
+      <div class="name">Ажилчин</div>
+      <div class="amount under">Дутуу ₮</div>
+      <div class="amount paid">Төлсөн ₮</div>
+      <div class="amount">Хөнгөлөлт ₮</div>
+      <div class="amount">Нийт ₮</div>
+    </div>
+    {% for worker in worker_under %}
+      <div class="wallet">
+        <div class="index">{{ forloop.counter }}</div>
+        <div class="name">{{worker.worker}}</div>
+        <div class="amount under">{{worker.under_amount}} ₮</div>
+        <div class="amount paid">{{worker.paid}} ₮</div>
+        <div class="amount">{{worker.discount}} ₮</div>
+        <div class="amount">{{worker.total_amount}} ₮</div>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+<script>
+  var length = 50
+  var total_amount = "{{total_order_amount}}"
+  for (let i = 1; i < length; i++) {
+    var idx = "#item" + i
+    var amount_array = document.querySelectorAll(idx)
+    if(amount_array.length > 0){
+      var total = 0
+      amount_array.forEach(e => {
+        total = total + parseInt(e.innerHTML)
+      })
+      document.getElementById("total" + i).innerHTML = total;
+      document.getElementById("percent" + i).innerHTML = (total / total_amount * 100).toFixed(2) + "%";
+    }
+  }
+</script>
+{% endblock %}
