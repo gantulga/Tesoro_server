@@ -161,7 +161,12 @@ export default class index extends Component {
                       <td>{order.client.number}</td>
                       <td>{order.status}</td>
                       <td>
-                        {order.customer.firstname} {order.customer.register}
+                        {order.customer != null ? 
+                        <>
+                          {order.customer.firstname ? order.customer.firstname : null}
+                          {order.customer.register ? order.customer.register : null}
+                        </>
+                          : null}
                       </td>
                       <td>
                         <Moment format="YYYY/MM/DD HH:mm">
