@@ -24,9 +24,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '^$ja78mdk!!43dl)7x1g5=@2wnmu018h1n#_(fr6qc&_*+s74h'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['192.168.1.*']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -91,9 +91,10 @@ TEMPLATES = [
     },
 ]
 
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "static"),
-]
+# STATICFILES_DIRS = [
+#     os.path.join(BASE_DIR, "static"),
+# ]
+
 mimetypes.add_type("text/css", ".css", True)
 WSGI_APPLICATION = 'tesoro_project.wsgi.application'
 
@@ -146,12 +147,17 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 STATIC_URL = '/static/'
+# STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static'),]
+# STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 MEDIA_URL = '/media/'
-MEDIA_ROOT = 'media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+if DEBUG:
+    STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static'),]
+else:
+    STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 MESSAGE_TAGS = {
     messages.DEBUG: 'alert-info',
@@ -177,7 +183,9 @@ REST_FRAMWORK = {
 #     'http://localhost:8000',
 #     'http://127.0.0.1:8000'
 # ]
+
 CORS_ORIGIN_ALLOW_ALL = True
+
 # CORS_ALLOW_CREDENTIALS = True
 # CORS_ALLOW_HEADERS = (
 #     'accept',
@@ -190,6 +198,7 @@ CORS_ORIGIN_ALLOW_ALL = True
 #     'x-csrftoken',
 #     'x-requested-with',
 # )
+
 CORS_ALLOW_METHODS = [
     'DELETE',
     'GET',
@@ -198,6 +207,7 @@ CORS_ALLOW_METHODS = [
     'POST',
     'PUT',
 ]
+
 CSRF_TRUSTED_ORIGINS = [
     'http://localhost:3000',
     'http://127.0.0.1:3000',
@@ -205,11 +215,7 @@ CSRF_TRUSTED_ORIGINS = [
     'http://127.0.0.1:8000'
     'http://localhost:5000',
     'http://127.0.0.1:5000'
-    'http://192.168.1.8:3000',
-    'http://192.168.1.8:8000',
-    'http://192.168.1.8:5000',
 ]
-ALLOWED_HOSTS = ['192.168.1.8', 'localhost', '127.0.0.1']
 
 DEFAULT_AUTO_FIELD='django.db.models.AutoField'
 

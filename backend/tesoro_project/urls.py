@@ -14,24 +14,22 @@ from financial_app.api import FinanceWalletsViewSet, BudgetsViewSet
 from rest_framework.authtoken import views as auth_views
 from structure_app.views import index as structure_app_index
 from django.views.generic.base import TemplateView # new
+from payment_app.views import putTest as PaymentViewsPutTest
 
 router = routers.DefaultRouter()
-# router.register('hotel/clientlogs', HotelClientLogsViewSet, 'clientlogs')
-# router.register('hotel/rooms', HotelRoomsViewSet, 'rooms')
+router.register('hotel/clientlogs', HotelClientLogsViewSet, 'clientlogs') #hotel app
+router.register('hotel/rooms', HotelRoomsViewSet, 'rooms') #hotel app
 # router.register('hotel/orders', HotelOrdersViewSet, 'hotelOrders')
 # router.register('hotel/newRoomOrder',
 #                 HotelOrdersNewHotelViewSet, 'newRoomOrder')
 # router.register('hotel/underpayments',
 #                 UnderpaymentsViewSet, 'hotelUnderpayments')
-# router.register('hotel/beforereceivables',
-#                 BeforeReceivablesViewSet, 'beforereceivables')
-# router.register('hotel/workshiftorders',
-#                 ShiftOrdersViewSet, 'workshiftorders')
-# router.register('hotel/workshiftpayments',
-#                 ShiftPaymentsViewSet, 'workshiftpayments')
+router.register('hotel/beforereceivables', BeforeReceivablesViewSet, 'beforereceivables')  #hotel app
+router.register('hotel/workshiftorders', ShiftOrdersViewSet, 'workshiftorders')  #hotel app
+router.register('hotel/workshiftpayments', ShiftPaymentsViewSet, 'workshiftpayments')  #hotel app
+
 # router.register('hotel/orders2', HotelOrdersViewSet4, 'hotelOrders2')
-# router.register('hotel/ordersForPayments',
-#                 HotelOrdersViewSet2, 'ordersForPayments')
+router.register('hotel/ordersForPayments', HotelOrdersViewSet2, 'ordersForPayments')
 # router.register('hotel/ordersDetials',
 #                 HotelOrderDetialsViewSet, 'hotelOrdersDetials')
 # router.register('hotel/ordersDetials2',
@@ -63,11 +61,11 @@ router.register('lounge/loungeMoneyTransferTypes', LoungeMoneyTransferTypesViewS
 router.register('lounge/BarmenProductBalances', BarmenProductBalancesViewSet, 'BarmenProductBalances')
 
 
-# router.register('settings', SettingsViewSet, 'settings')
+router.register('settings', SettingsViewSet, 'settings') #hotel app
 router.register('finance/wallets', FinanceWalletsViewSet, 'wallets')
 # router.register('finance/budgets', BudgetsViewSet, 'budgets')
 router.register('finance/postMoneyTransfer', LoungeMoneyTransferPostViewSet, 'postMoneyTransfer')
-# router.register('customers', CustomersViewSet, 'customers')
+router.register('customers', CustomersViewSet, 'customers')
 router.register('users', UsersViewSet, 'users')
 # router.register('divisions', DivisionsViewSet, 'divisions')
 # router.register('clients', ClientsViewSet, 'clients')
@@ -88,8 +86,7 @@ urlpatterns = [
     # path('hotel/', include('hotel.urls')),
     path('api/', include(router.urls)),
     path('generate_token/', auth_views.obtain_auth_token, name='generate_token'),
-    # url('^api/hotel/ordersForClients/(?P<client>.+)/$',
-    #     HotelOrdersViewSet3.as_view()),
+    url('^api/hotel/ordersForClients/(?P<client>.+)/$', HotelOrdersViewSet3.as_view()),
 
     # url('^api/client/(?P<client>.+)/products/$',
     #     ClientProductsViewSet.as_view()),
@@ -101,13 +98,11 @@ urlpatterns = [
     # url('^api/user/(?P<user>.+)/commodities/$',
     #     UserCommoditiesViewSet.as_view()),
 
-    # url('^api/division=(?P<division>.+)/clients/$',
-    #     DivisionClientsViewSet.as_view()),
+    url('^api/division=(?P<division>.+)/clients/$', DivisionClientsViewSet.as_view()), #hotel app
+    url('^api/division=(?P<division>.+)/item/balances/$', DivisionItemBalancesViewSet.as_view()), #hotel app
+    url('^api/hotel/shiftWorks/last$', LastShiftWorkViewSet.as_view()), #hotel app
 
-    # url('^api/division=(?P<division>.+)/item/balances/$',
-    #     DivisionItemBalancesViewSet.as_view()),
 
-    # url('^api/hotel/shiftWorks/last$', LastShiftWorkViewSet.as_view()),
 
     url('^api/lounge/products/$', LoungeProductsViewSet.as_view()),
     url('^api/lounge/clients/$', LoungeClientsViewSet.as_view()),
@@ -136,6 +131,12 @@ urlpatterns = [
     path('api/productBalance/<int:client_id>/<int:product_id>', views.productBalance),
     path('api/commodityBalance/<int:client_id>/<int:commodity_id>', views.commodityBalance),
     path('kitchen', views.kitchenFoods, name='kitchenFoods'),
+
+
+    url('^api/bill/putTest', PaymentViewsPutTest),
+
 ]
-urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
