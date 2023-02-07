@@ -302,7 +302,7 @@ export default class Calculations extends Component {
 
   async getOrderPaymentsData() {
     if (this.state.order_id) {
-      fetch(
+      await fetch(
         "http://" +
           this.props.ip_address +
           "/api/lounge/orderPayments/?orders=" +

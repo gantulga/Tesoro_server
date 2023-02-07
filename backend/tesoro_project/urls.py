@@ -1,7 +1,8 @@
 from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
-from django.conf.urls import url
+# from django.conf.urls import url
+from django.urls import include, re_path
 from django.conf.urls.static import static
 from . import views
 from product_app.views import balanceChecker
@@ -86,35 +87,35 @@ urlpatterns = [
     # path('hotel/', include('hotel.urls')),
     path('api/', include(router.urls)),
     path('generate_token/', auth_views.obtain_auth_token, name='generate_token'),
-    url('^api/hotel/ordersForClients/(?P<client>.+)/$', HotelOrdersViewSet3.as_view()),
+    re_path('^api/hotel/ordersForClients/(?P<client>.+)/$', HotelOrdersViewSet3.as_view()),
 
-    # url('^api/client/(?P<client>.+)/products/$',
+    # re_path('^api/client/(?P<client>.+)/products/$',
     #     ClientProductsViewSet.as_view()),
-    # url('^api/client/(?P<client>.+)/commodities/$',
+    # re_path('^api/client/(?P<client>.+)/commodities/$',
     #     ClientCommoditiesViewSet.as_view()),
 
-    # url('^api/user/(?P<user>.+)/products/$',
+    # re_path('^api/user/(?P<user>.+)/products/$',
     #     UserProductsViewSet.as_view()),
-    # url('^api/user/(?P<user>.+)/commodities/$',
+    # re_path('^api/user/(?P<user>.+)/commodities/$',
     #     UserCommoditiesViewSet.as_view()),
 
-    url('^api/division=(?P<division>.+)/clients/$', DivisionClientsViewSet.as_view()), #hotel app
-    url('^api/division=(?P<division>.+)/item/balances/$', DivisionItemBalancesViewSet.as_view()), #hotel app
-    url('^api/hotel/shiftWorks/last$', LastShiftWorkViewSet.as_view()), #hotel app
+    re_path('^api/division=(?P<division>.+)/clients/$', DivisionClientsViewSet.as_view()), #hotel app
+    re_path('^api/division=(?P<division>.+)/item/balances/$', DivisionItemBalancesViewSet.as_view()), #hotel app
+    re_path('^api/hotel/shiftWorks/last$', LastShiftWorkViewSet.as_view()), #hotel app
 
 
 
-    url('^api/lounge/products/$', LoungeProductsViewSet.as_view()),
-    url('^api/lounge/clients/$', LoungeClientsViewSet.as_view()),
-    url('^api/lounge/orders/$', LoungeOrdersViewSet.as_view()),
-    url('^api/lounge/unpaidOrders/$', LoungeUnpaidOrdersViewSet.as_view()),
-    url('^api/lounge/orderDetials/$', LoungeOrderDetialsViewSet.as_view()),
-    url('^api/lounge/orderPayments/$', LoungeOrderPaymentsViewSet.as_view()),
-    url('^api/lounge/balanceLogs/$', LoungeProductBalanceLogsViewSet.as_view()),
-    url('^printer/$', views.printer),
+    re_path('^api/lounge/products/$', LoungeProductsViewSet.as_view()),
+    re_path('^api/lounge/clients/$', LoungeClientsViewSet.as_view()),
+    re_path('^api/lounge/orders/$', LoungeOrdersViewSet.as_view()),
+    re_path('^api/lounge/unpaidOrders/$', LoungeUnpaidOrdersViewSet.as_view()),
+    re_path('^api/lounge/orderDetials/$', LoungeOrderDetialsViewSet.as_view()),
+    re_path('^api/lounge/orderPayments/$', LoungeOrderPaymentsViewSet.as_view()),
+    re_path('^api/lounge/balanceLogs/$', LoungeProductBalanceLogsViewSet.as_view()),
+    re_path('^printer/$', views.printer),
     path('api/balanceChecker/<int:client_id>/<int:product_id>', balanceChecker),
 
-    # url('^api/lounge/division/$', LoungeDivisionsViewSet.as_view()),
+    # re_path('^api/lounge/division/$', LoungeDivisionsViewSet.as_view()),
     # path('product/', include('product_app.urls')),
     # path('basic_asset/', views.Basic_asset_function, name='Basic_asset'),
     path('', views.home, name='home'),
@@ -133,7 +134,7 @@ urlpatterns = [
     path('kitchen', views.kitchenFoods, name='kitchenFoods'),
 
 
-    url('^api/bill/putTest', PaymentViewsPutTest),
+    re_path('^api/bill/putTest', PaymentViewsPutTest),
 
 ]
 

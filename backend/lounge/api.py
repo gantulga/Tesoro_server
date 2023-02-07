@@ -75,14 +75,14 @@ class LoungeUnpaidOrdersViewSet(generics.ListAPIView):
 
 class LoungeOrderDetialsViewSet(generics.ListAPIView):
     lounge_division = Division.objects.get(pk=5)
-    last_shift_work = Shift_work.objects.filter(
-        division=lounge_division.id).order_by('-id')[0]
+    last_shift_work = Shift_work.objects.filter(division=lounge_division.id).order_by('-id')[0]
     # queryset = Order_detial.objects.filter(shift_work=last_shift_work.id)
     queryset = Order_detial.objects.all()
-    # permission_classes = [permissions.AllowAny]
+
+    permission_classes = [permissions.AllowAny]
     serializer_class = LoungeOrderDetialsSerializer
     authentication_classes = (TokenAuthentication,)
-    permission_classes = (IsAuthenticated,)
+    # permission_classes = (IsAuthenticated,)
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['order']
 
@@ -173,7 +173,7 @@ class unSafe_WorkersViewSet(viewsets.ModelViewSet):
 class LoungeUnderPaymentsViewSet(viewsets.ModelViewSet):
     lounge_division = Division.objects.get(pk=5)
     last_shift_work = Shift_work.objects.filter(
-        division=lounge_division.id).order_by('-id')[0]
+    division=lounge_division.id).order_by('-id')[0]
     queryset = Order.objects.filter(shift_work=last_shift_work.id, status__in=["Төлбөр төлөгдөөгүй.", "Төлбөр дутуу төлсөн."], worker__isnull=True)
     permission_classes = [permissions.AllowAny]
     serializer_class = unSafe_loungaUnderPaymentsSerializer
@@ -219,8 +219,7 @@ class LoungeProductBalanceLogsViewSet(generics.ListAPIView):
 
 class BarmenProductBalancesViewSet(viewsets.ModelViewSet):
     lounge_take = Client.objects.get(pk=19)
-    queryset = Item_balance.objects.filter(
-        client=lounge_take)
+    queryset = Item_balance.objects.filter(client=lounge_take)
     permission_classes = [permissions.AllowAny]
     serializer_class = ItemBalancesSerializer
     authentication_classes = (TokenAuthentication,)

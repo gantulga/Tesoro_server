@@ -6,7 +6,7 @@
     "@testing-library/jest-dom": "^5.1.1",
     "@testing-library/react": "^10.0.1",
     "@testing-library/user-event": "^10.0.0",
-    "axios": "^0.19.2",
+    "axios": "^1.3.2",
     "bootstrap": "^4.4.1",
     "moment": "^2.26.0",
     "react": "^16.13.1",
@@ -16,12 +16,12 @@
     "react-idle-timer": "^4.3.6",
     "react-lock-screen": "^0.1.1",
     "react-moment": "^0.9.7",
-    "react-moment-input": "^0.2.30",
+    "react-moment-input": "^0.2.21",
     "react-notifications-component": "^2.4.0",
     "react-number-format": "^4.6.3",
     "react-paginating": "^1.4.0",
     "react-router-dom": "^5.1.2",
-    "react-scripts": "3.4.1",
+    "react-scripts": "^5.0.1",
     "react-select": "^3.1.0"
   },
   "scripts": {

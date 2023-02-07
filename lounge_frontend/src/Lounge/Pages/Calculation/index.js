@@ -240,8 +240,10 @@ export default class Calculations extends Component {
   }
 
   async getOrderDetialsData() {
+    console.log(this.state.order_id)
     if (this.state.order_id) {
-      fetch(
+      console.log("dasd")
+      await fetch(
         "http://" +
           this.props.ip_address +
           "/api/lounge/orderDetials/?order=" +
@@ -256,9 +258,10 @@ export default class Calculations extends Component {
       )
         .then(async (response) => {
           const data = await response.json();
-          this.setState({
+          await this.setState({
             order_detials: data,
           });
+          console.log(this.state.order_detials)
         })
         .catch((error) => {
           store.addNotification({
@@ -278,6 +281,7 @@ export default class Calculations extends Component {
           });
         });
     } else {
+      console.log("iishee")
       fetch("http://" + this.props.ip_address + "/api/lounge/orderDetials/", {
         method: "GET",
         headers: {
