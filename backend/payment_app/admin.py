@@ -25,8 +25,19 @@ class OrderDetialAdmin(admin.ModelAdmin):
 			obj.updated_by = request.user
 		obj.save()
 
+class BillAdmin(admin.ModelAdmin):
+	#list_display = ('name', 'division')
+	exclude = ['created_by', 'updated_by']
+	list_display = ('order', 'date', 'amount', 'lottery')
+	def save_model(self, request, obj, form, change):
+		if not change:
+			obj.created_by = request.user
+		elif change:
+			obj.updated_by = request.user
+		obj.save()
+
 # Register your models here.
 admin.site.register(Order, OrderAdmin)
 admin.site.register(Order_detial, OrderDetialAdmin)
-admin.site.register(Bill)
+admin.site.register(Bill, BillAdmin)
 admin.site.register(Payment)

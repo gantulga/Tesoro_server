@@ -152,10 +152,12 @@ class Configuration_value(models.Model):
     program_description = models.TextField(null=True, max_length=255)
     program_favicon_url = models.CharField(null=True, max_length=255)
     program_logo_url = models.CharField(null=True, max_length=255)
-    noat_tax = models.IntegerField(default=0, validators=[MinValueValidator(
-        0), MaxValueValidator(100)], blank=True, null=True)
-    capital_city_tax = models.IntegerField(default=0, validators=[
-                                           MinValueValidator(0), MaxValueValidator(100)], blank=True, null=True)
+
+    noat_tax = models.IntegerField(default=0, validators=[MinValueValidator(0), MaxValueValidator(100)], blank=True, null=True)
+    capital_city_tax = models.IntegerField(default=0, validators=[MinValueValidator(0), MaxValueValidator(100)], blank=True, null=True)
+    district_code = models.IntegerField(default=20, validators=[MinValueValidator(1), MaxValueValidator(35)], blank=True, null=True)
+    bill_id_suffix = models.BigIntegerField(default=100000, validators=[MinValueValidator(100000), MaxValueValidator(999999)], blank=True, null=True)
+
     hotel_deadline_time_of_dayService = models.CharField(
         null=True, max_length=2)
     hotel_start_time_of_timeService = models.CharField(

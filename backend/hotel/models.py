@@ -36,15 +36,12 @@ ROW_TYPE_CHOICES = (
 
 
 class Hotel_client_log(models.Model):
-    client = models.ForeignKey('structure_app.Client', null=True,
-                               blank=True, on_delete=models.DO_NOTHING, related_name='logs')
+    client = models.ForeignKey('structure_app.Client', null=True, blank=True, on_delete=models.DO_NOTHING, related_name='logs')
 
-    choices_type = models.CharField(
-        max_length=3, choices=ROW_TYPE_CHOICES, null=False)
+    choices_type = models.CharField(max_length=3, choices=ROW_TYPE_CHOICES, null=False)
     value = models.CharField(max_length=3, null=False)
     number = models.IntegerField(null=True)
-    created_at = models.DateTimeField(
-        auto_now_add=True, null=False, blank=False)
+    created_at = models.DateTimeField(auto_now_add=True, null=False, blank=False)
 
     def __str__(self):
         return str(self.choices_type)

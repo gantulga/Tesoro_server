@@ -65,6 +65,7 @@ class Order_detial(Modifiedinfo):
     to_date = models.DateTimeField(null=True, blank=True)
     discount_rate = models.IntegerField(default=0, validators=[MinValueValidator(0), MaxValueValidator(100)])
     subtotal = models.DecimalField(max_digits=14, decimal_places=2, null=False, blank=False)
+
     is_deleted = models.BooleanField(default=0)
     why_deleted = models.TextField(null=True, blank=True)
     deleted_date = models.DateTimeField(null=True, blank=True)
@@ -135,27 +136,38 @@ class Order_payments(Modifiedinfo):
 
 # Захиалгын төлбөр
 
-
 class Bill(Modifiedinfo):
-    client = models.ForeignKey('structure_app.Client', null=False, blank=False,
-                               on_delete=models.DO_NOTHING, related_name="client_bills")
-    total_amount = models.DecimalField(
-        max_digits=14, decimal_places=2, null=False, blank=False, default=0)
-    discount_rate = models.IntegerField(
-        default=0, validators=[MinValueValidator(0), MaxValueValidator(100)])
-    discounted_amount = models.DecimalField(
-        max_digits=14, decimal_places=2, null=False, blank=False, default=0)
-    amount = models.DecimalField(
-        max_digits=14, decimal_places=2, null=False, blank=False, default=0)
-    status = models.CharField(null=False, max_length=255)
-    got_ebarimt = models.BooleanField(default=0)
-    did_splited = models.BooleanField(default=0)
-    company_name = models.CharField(null=False, max_length=255)
-    company_register = models.CharField(null=False, max_length=255)
-    division = models.ForeignKey('structure_app.Division', null=False,
-                                 blank=False, on_delete=models.DO_NOTHING, related_name="division_bills")
-    customer = models.ForeignKey('structure_app.Customer', null=False,
-                                 blank=False, on_delete=models.DO_NOTHING, related_name="customer_bills")
+    amount = models.CharField(null=True, blank=True, max_length=255)
+    vat = models.CharField(null=True, blank=True, max_length=255)
+    cash_amount = models.CharField(null=True, blank=True, max_length=255)
+    non_cash_amount = models.CharField(null=True, blank=True, max_length=255)
+    city_tax = models.CharField(null=True, blank=True, max_length=255)
+
+    district_code = models.CharField(null=True, blank=True, max_length=255)
+    pos_no = models.CharField(null=True, blank=True, max_length=255)
+    customer_no = models.CharField(null=True, blank=True, max_length=255)
+    bill_type = models.CharField(null=True, blank=True, max_length=255)
+    bill_id_suffix = models.CharField(null=True, blank=True, max_length=255)
+    return_bill_id = models.CharField(null=True, blank=True, max_length=255)
+    tax_type = models.CharField(null=True, blank=True, max_length=255)
+
+    success = models.BooleanField(default=True)
+    register_no = models.CharField(null=True, blank=True, max_length=255)
+    bill_id = models.CharField(null=True, blank=True, max_length=255)
+    date = models.CharField(null=True, blank=True, max_length=255)
+    mac_address = models.CharField(null=True, blank=True, max_length=255)
+    internal_code = models.CharField(null=True, blank=True, max_length=255)
+    qr_data = models.CharField(null=True, blank=True, max_length=255)
+    lottery = models.CharField(null=True, blank=True, max_length=255)
+    lottery_warning_msg = models.CharField(null=True, blank=True, max_length=255)
+
+    error_code = models.CharField(null=True, blank=True, max_length=255)
+    message = models.CharField(null=True, blank=True, max_length=255)
+
+    order = models.ForeignKey('Order', null=False, blank=False, on_delete=models.DO_NOTHING, related_name="bills")
+    client = models.ForeignKey('structure_app.Client', null=False, blank=False, on_delete=models.DO_NOTHING, related_name="bills")
+    division = models.ForeignKey('structure_app.Division', null=False, blank=False, on_delete=models.DO_NOTHING, related_name="bills")
+    customer = models.ForeignKey('structure_app.Customer', null=True, blank=True, on_delete=models.DO_NOTHING, related_name="bills")
 
     def __str__(self):
         return str(self.id)
@@ -163,47 +175,27 @@ class Bill(Modifiedinfo):
 
 
 class Payment(Modifiedinfo):
-    confirmed_by = models.ForeignKey(
-        User, null=False, blank=False, on_delete=models.DO_NOTHING, related_name="payments")
-    amount = models.DecimalField(
-        max_digits=14, decimal_places=2, null=True, blank=True)
-    wallet = models.ForeignKey('financial_app.Wallet', null=False, blank=False,
-                               on_delete=models.DO_NOTHING, default=999, related_name="payments")
-    bills = models.ManyToManyField('Bill', through='Payment_bills')
-    shift_work = models.ForeignKey('structure_app.Shift_work', related_name='payments',
-                                   null=True, blank=True, on_delete=models.DO_NOTHING)
-    division = models.ForeignKey('structure_app.Division', null=True, blank=True,
-                                 on_delete=models.DO_NOTHING, related_name="payments")
+    confirmed_by = models.ForeignKey(User, null=False, blank=False, on_delete=models.DO_NOTHING, related_name="payments")
+    amount = models.DecimalField(max_digits=14, decimal_places=2, null=True, blank=True)
+    wallet = models.ForeignKey('financial_app.Wallet', null=False, blank=False,on_delete=models.DO_NOTHING, default=999, related_name="payments")
+    shift_work = models.ForeignKey('structure_app.Shift_work', related_name='payments', null=True, blank=True, on_delete=models.DO_NOTHING)
+    division = models.ForeignKey('structure_app.Division', null=True, blank=True, on_delete=models.DO_NOTHING, related_name="payments")
 
     def __str__(self):
         return str(self.id)
-# Тооцооны баримтууд
-
-
-class Payment_bills(Modifiedinfo):
-    bill = models.ForeignKey(
-        'Bill', on_delete=models.DO_NOTHING, related_name="bill_payments")
-    payment = models.ForeignKey(
-        'Payment', on_delete=models.DO_NOTHING, related_name="payment_bills")
         
 # POS машины нэгтгэл
 
 
 class Pos_account_consolidation(Modifiedinfo):
-    shift_work = models.ForeignKey('structure_app.Shift_work', related_name='pos_account_consolidation',
-                                   null=True, blank=True, on_delete=models.DO_NOTHING)
-    division = models.ForeignKey('structure_app.Division', null=False, blank=False,
-                                 on_delete=models.DO_NOTHING, related_name="Pos_account_consolidations")
+    shift_work = models.ForeignKey('structure_app.Shift_work', related_name='pos_account_consolidation', null=True, blank=True, on_delete=models.DO_NOTHING)
+    division = models.ForeignKey('structure_app.Division', null=False, blank=False, on_delete=models.DO_NOTHING, related_name="Pos_account_consolidations")
     fr_date = models.DateTimeField(null=False, blank=False)
     to_date = models.DateTimeField(null=False, blank=False)
-    account = models.ForeignKey('financial_app.Wallet', null=False, blank=False,
-                                on_delete=models.DO_NOTHING, related_name="Pos_account_consolidations")
-    amount = models.DecimalField(
-        max_digits=14, decimal_places=2, null=True, blank=True)
-    person_of_charge = models.ForeignKey(
-        User, null=False, blank=False, on_delete=models.DO_NOTHING, related_name="person_of_charge_pos")
-    confirmed_by = models.ForeignKey(
-        User, null=False, blank=False, on_delete=models.DO_NOTHING, related_name="confirmed_by_pos")
+    account = models.ForeignKey('financial_app.Wallet', null=False, blank=False, on_delete=models.DO_NOTHING, related_name="Pos_account_consolidations")
+    amount = models.DecimalField(max_digits=14, decimal_places=2, null=True, blank=True)
+    person_of_charge = models.ForeignKey(User, null=False, blank=False, on_delete=models.DO_NOTHING, related_name="person_of_charge_pos")
+    confirmed_by = models.ForeignKey(User, null=False, blank=False, on_delete=models.DO_NOTHING, related_name="confirmed_by_pos")
 
     def __str__(self):
         return str(self.id)

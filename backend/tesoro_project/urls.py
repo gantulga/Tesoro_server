@@ -15,7 +15,7 @@ from financial_app.api import FinanceWalletsViewSet, BudgetsViewSet
 from rest_framework.authtoken import views as auth_views
 from structure_app.views import index as structure_app_index
 from django.views.generic.base import TemplateView # new
-from payment_app.views import putTest as PaymentViewsPutTest
+from payment_app import views as payment_views
 
 router = routers.DefaultRouter()
 router.register('hotel/clientlogs', HotelClientLogsViewSet, 'clientlogs') #hotel app
@@ -133,8 +133,11 @@ urlpatterns = [
     path('api/commodityBalance/<int:client_id>/<int:commodity_id>', views.commodityBalance),
     path('kitchen', views.kitchenFoods, name='kitchenFoods'),
 
-
-    re_path('^api/bill/putTest', PaymentViewsPutTest),
+    path('api/bill/getInformation', payment_views.getInformation),
+    path('api/bill/checkApi', payment_views.checkApi),
+    path('api/bill/sendData', payment_views.sendData),
+    # path('api/bill/putData', payment_views.putData),
+    path('api/bill/createBill', payment_views.createBill),
 
 ]
 
