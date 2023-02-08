@@ -28,7 +28,7 @@ class OrderDetialAdmin(admin.ModelAdmin):
 class BillAdmin(admin.ModelAdmin):
 	#list_display = ('name', 'division')
 	exclude = ['created_by', 'updated_by']
-	list_display = ('order', 'date', 'amount', 'lottery')
+	list_display = ('order', 'date', 'amount', 'bill_type', 'lottery')
 	def save_model(self, request, obj, form, change):
 		if not change:
 			obj.created_by = request.user

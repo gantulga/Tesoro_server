@@ -34,10 +34,6 @@ def putData(order, register):
             if order.customer:
                 if order.customer.register:
                     register = order.customer.register
-                else:
-                    register = ""
-            else:
-                register = ""
 
         for detail in order.order_detials.all():
             json_order_lines.append({
@@ -87,7 +83,8 @@ def putData(order, register):
         # баримтанд НӨАТ тооцохгүй.
         # 2 НӨАТ-аас чөлөөлөгдөх бараа, ажил, үйлчилгээ борлуулсан баримт
         # 3 НӨАТ 0% тооцох бараа, ажил, үйлчилгээ борлуулсан баримт
-        print(type(register))
+        print(bill_type, register)
+        # register = "0000038"
         json_order = {
             "data": {
                 "amount": str(total_amount_no_tax + total_city_tax + total_vat),
@@ -97,7 +94,7 @@ def putData(order, register):
                 "cityTax": str(total_city_tax),
                 "districtCode": district_code,
                 "posNo": pos_number,
-                "customerNo": str(register),
+                "customerNo": register,
                 "billType": str(bill_type),
                 "billIdSuffix": str(conf_value.bill_id_suffix + 1),
                 "taxType": "1",
@@ -107,7 +104,7 @@ def putData(order, register):
         }
 
         r = None
-        print(json_order)
+        
         try:
             url = "http://103.50.205.35:8080/put"
             payload = json.dumps(json_order)
@@ -129,6 +126,11 @@ def putData(order, register):
                 lotteryWarningMsg = temp['lotteryWarningMsg']
             else:
                 lotteryWarningMsg = ""
+
+            if "internalCode" in temp:
+                internalCode = temp['internalCode']
+            else:
+                internalCode = ""
             
             if temp['success']:
                 bill = Bill.objects.create(
@@ -151,7 +153,7 @@ def putData(order, register):
                     bill_id = temp['billId'],
                     date = temp['date'],
                     mac_address = temp['macAddress'],
-                    internal_code = temp['internalCode'],
+                    internal_code = str(internalCode),
                     qr_data = temp['qrData'],
                     lottery = temp['lottery'],
                     lottery_warning_msg = lotteryWarningMsg,
@@ -162,7 +164,7 @@ def putData(order, register):
                     customer = order.customer
                 )
 
-                r = '{"billId":' + bill.id + ', "success":true}'
+                r = '{"billId":' + str(bill.id) + ', "success":true}'
                 r = json.dumps(r)
                 r = json.loads(r)
 

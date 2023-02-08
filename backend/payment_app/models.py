@@ -134,8 +134,14 @@ class Order_payments(Modifiedinfo):
     payment = models.ForeignKey(
         'Payment', on_delete=models.DO_NOTHING)
 
-# Захиалгын төлбөр
+BILL_TYPE_CHOICES = [
+    ('1', 'Хувь хүн'),
+    ('3', 'Байгууллага'),
+    ('5', 'Нэхэмжлэл'),
+]
 
+
+# Захиалгын төлбөр
 class Bill(Modifiedinfo):
     amount = models.CharField(null=True, blank=True, max_length=255)
     vat = models.CharField(null=True, blank=True, max_length=255)
@@ -146,7 +152,7 @@ class Bill(Modifiedinfo):
     district_code = models.CharField(null=True, blank=True, max_length=255)
     pos_no = models.CharField(null=True, blank=True, max_length=255)
     customer_no = models.CharField(null=True, blank=True, max_length=255)
-    bill_type = models.CharField(null=True, blank=True, max_length=255)
+    bill_type = models.CharField(null=True, blank=True, choices=BILL_TYPE_CHOICES, max_length=1)
     bill_id_suffix = models.CharField(null=True, blank=True, max_length=255)
     return_bill_id = models.CharField(null=True, blank=True, max_length=255)
     tax_type = models.CharField(null=True, blank=True, max_length=255)
