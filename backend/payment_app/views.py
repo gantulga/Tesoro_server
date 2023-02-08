@@ -16,7 +16,10 @@ def createBill(request):
         data = putData(order, register)
         return HttpResponse(data)
     else:
-        redirect('/')
+        r = '{"errorCode":"Please insert values!", "success":false}'
+        r = json.dumps(r)
+        r = json.loads(r)
+        return HttpResponse(r)
     
 
 def putData(order, register):
@@ -83,8 +86,7 @@ def putData(order, register):
         # баримтанд НӨАТ тооцохгүй.
         # 2 НӨАТ-аас чөлөөлөгдөх бараа, ажил, үйлчилгээ борлуулсан баримт
         # 3 НӨАТ 0% тооцох бараа, ажил, үйлчилгээ борлуулсан баримт
-        print(bill_type, register)
-        # register = "0000038"
+
         json_order = {
             "data": {
                 "amount": str(total_amount_no_tax + total_city_tax + total_vat),
@@ -102,6 +104,26 @@ def putData(order, register):
                 "stocks": json_order_lines
             }
         }
+
+        bill = Bill.objects.create(
+            amount = str(total_amount_no_tax + total_city_tax + total_vat),
+            vat = str(total_vat),
+            cash_amount = str(total_amount_no_tax + total_city_tax + total_vat),
+            non_cash_amount = "0.00",
+            city_tax = str(total_city_tax),
+
+            district_code = district_code,
+            pos_no = pos_number,
+            customer_no = register,
+            bill_type = str(bill_type),
+            bill_id_suffix = str(conf_value.bill_id_suffix + 1),
+            tax_type = "1",
+            status = "0",
+            order = order,
+            client = order.client,
+            division = order.division,
+            customer = order.customer
+        )
 
         r = None
         
@@ -133,42 +155,35 @@ def putData(order, register):
                 internalCode = ""
             
             if temp['success']:
-                bill = Bill.objects.create(
-                    amount = temp['amount'],
-                    vat = temp['vat'],
-                    cash_amount = temp['cashAmount'],
-                    non_cash_amount = temp['nonCashAmount'],
-                    city_tax = temp['cityTax'],
+                
+                # status
+                # ('0', 'Бэлтгэгдэж байгаа'),
+                # ('1', 'Амжилттай илгээгдсэн'),
+                # ('2', 'Алдаа гарсан'),
+                # ('3', 'Буцаахаар хүсэлт гаргасан'),
+                # ('4', 'Амжилттай буцаагдсан'),
+                # ('5', 'Дахин илгээгдсэн'),
+                # ('6', 'Татварлуу илгээгдсэн'),
 
-                    district_code = temp['districtCode'],
-                    pos_no = temp['posNo'],
-                    customer_no = temp['customerNo'],
-                    bill_type = temp['billType'],
-                    bill_id_suffix = temp['billIdSuffix'],
-                    return_bill_id = returnBillId,
-                    tax_type = temp['taxType'],
-
-                    success = temp['success'],
-                    register_no = temp['registerNo'],
-                    bill_id = temp['billId'],
-                    date = temp['date'],
-                    mac_address = temp['macAddress'],
-                    internal_code = str(internalCode),
-                    qr_data = temp['qrData'],
-                    lottery = temp['lottery'],
-                    lottery_warning_msg = lotteryWarningMsg,
-
-                    order = order,
-                    client = order.client,
-                    division = order.division,
-                    customer = order.customer
-                )
+                bill.status = "1"
+                bill.returnBillId = returnBillId
+                bill.lotteryWarningMsg = lotteryWarningMsg
+                bill.internalCode = internalCode
+                bill.save()
 
                 r = '{"billId":' + str(bill.id) + ', "success":true}'
                 r = json.dumps(r)
                 r = json.loads(r)
 
             else:
+                if "message" in temp:
+                    message = temp['message']
+                else:
+                    message = ""
+
+                bill.message = message
+                bill.error_code = temp['errorCode']
+
                 r = '{"errorCode":' + str(temp['errorCode']) + ', "success":false, "message":' + str(temp['message']) + '}'
                 r = json.dumps(r)
                 r = json.loads(r)
@@ -177,20 +192,27 @@ def putData(order, register):
 
         except requests.exceptions.HTTPError as errh:
             r = '{"errorCode":"HTTPError", "success":false}'
+            bill.error_code = "HTTPError"
             r = json.dumps(r)
             r = json.loads(r)
         except requests.exceptions.ConnectionError as errc:
             r = '{"errorCode":"ConnectionError", "success":false}'
+            bill.error_code = "ConnectionError"
             r = json.dumps(r)
             r = json.loads(r)
         except requests.exceptions.Timeout as errt:
             r = '{"errorCode":"Timeout", "success":false}'
+            bill.error_code = "Timeout"
             r = json.dumps(r)
             r = json.loads(r)
         except requests.exceptions.RequestException as err:
             r = '{"errorCode":"Error", "success":false}'
+            bill.error_code = "Error"
             r = json.dumps(r)
             r = json.loads(r)
+
+        bill.status = "2"
+        bill.save()
         return r
     else:
         r = '{"errorCode":"Bill is already created", "success":false}'

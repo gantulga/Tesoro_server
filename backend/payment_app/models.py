@@ -140,6 +140,16 @@ BILL_TYPE_CHOICES = [
     ('5', 'Нэхэмжлэл'),
 ]
 
+STATUS_CHOICES = [
+    ('0', 'Бэлтгэгдэж байгаа'),
+    ('1', 'Амжилттай илгээгдсэн'),
+    ('2', 'Алдаа гарсан'),
+    ('3', 'Буцаахаар хүсэлт гаргасан'),
+    ('4', 'Амжилттай буцаагдсан'),
+    ('5', 'Дахин илгээгдсэн'),
+    ('6', 'Татварлуу илгээгдсэн'),
+]
+
 
 # Захиалгын төлбөр
 class Bill(Modifiedinfo):
@@ -157,7 +167,6 @@ class Bill(Modifiedinfo):
     return_bill_id = models.CharField(null=True, blank=True, max_length=255)
     tax_type = models.CharField(null=True, blank=True, max_length=255)
 
-    success = models.BooleanField(default=True)
     register_no = models.CharField(null=True, blank=True, max_length=255)
     bill_id = models.CharField(null=True, blank=True, max_length=255)
     date = models.CharField(null=True, blank=True, max_length=255)
@@ -168,7 +177,8 @@ class Bill(Modifiedinfo):
     lottery_warning_msg = models.CharField(null=True, blank=True, max_length=255)
 
     error_code = models.CharField(null=True, blank=True, max_length=255)
-    message = models.CharField(null=True, blank=True, max_length=255)
+    message = models.CharField(null=True, blank=True, max_length=255) 
+    status = models.CharField(null=True, blank=True, choices=STATUS_CHOICES, max_length=1)
 
     order = models.ForeignKey('Order', null=False, blank=False, on_delete=models.DO_NOTHING, related_name="bills")
     client = models.ForeignKey('structure_app.Client', null=False, blank=False, on_delete=models.DO_NOTHING, related_name="bills")
