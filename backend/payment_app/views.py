@@ -11,18 +11,22 @@ from django.shortcuts import render, redirect, get_list_or_404, get_object_or_40
 def createBill(request):
     order = None
     register = request.GET.get('register')
+    printer_number = request.GET.get('printer_number')
     if request.GET.get('order') != None and request.GET.get('order') != "":
         order = get_object_or_404(Order, pk=request.GET.get('order'))
-        data = putData(order, register)
+        data = putData(order, register, printer_number)
         return HttpResponse(data)
     else:
         r = '{"errorCode":"Please insert values!", "success":false}'
         r = json.dumps(r)
         r = json.loads(r)
         return HttpResponse(r)
+
+def printBill(value, printer_number):
+    print(value, printer_number)
     
 
-def putData(order, register):
+def putData(order, register, printer_number):
     if order.bills.count() == 0:
         conf_value = Configuration_value.objects.first()
         total_vat = 0
@@ -193,7 +197,6 @@ def putData(order, register):
                 r = '{"errorCode":' + str(temp['errorCode']) + ', "success":false, "message":' + str(temp['message']) + '}'
                 r = json.dumps(r)
                 r = json.loads(r)
-            
             return r
 
         except requests.exceptions.HTTPError as errh:
@@ -219,11 +222,13 @@ def putData(order, register):
 
         bill.status = "2"
         bill.save()
+        printBill(r, printer_number)
         return r
     else:
         r = '{"errorCode":"Bill is already created", "success":false}'
         r = json.dumps(r)
         r = json.loads(r)
+        printBill(r, printer_number)
         return  r
 
 
