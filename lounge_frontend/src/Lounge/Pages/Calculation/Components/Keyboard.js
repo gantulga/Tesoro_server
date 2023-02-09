@@ -60,18 +60,19 @@ export default class Keyboard extends Component {
     });
   }
 
-  addNumber(number) {
-    if (this.props.mobile) {
-      this.props.passenger(number, "number");
-    } else {
-      this.setState((prevState) => ({
-        moneyValue: prevState.moneyValue + number.toString(),
-      }));
+  async addNumber(number) {
+    await this.setState((prevState) => ({
+      moneyValue: prevState.moneyValue + number.toString(),
+    }));
+    if(parseInt(this.state.moneyValue) > parseInt(this.props.max_amount)){
+      await this.setState({
+        moneyValue: this.props.max_amount.split(".")[0]
+      })
     }
   }
 
-  minusNumber() {
-    this.setState((prevState) => ({
+  async minusNumber() {
+    await this.setState((prevState) => ({
       moneyValue: prevState.moneyValue.slice(0, -1),
     }));
   }

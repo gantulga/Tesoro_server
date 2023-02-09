@@ -58,7 +58,9 @@ export default class Calculations extends Component {
       productBalances: [],
       prevProductBalances: [],
       selected_shiftWorker: null,
-      mTransfersData: []
+      mTransfersData: [],
+      company_register: null,
+      company_register_status: "0"
     };
     this.set_parent_cat = this.set_parent_cat.bind(this);
     this.set_cat = this.set_cat.bind(this);
@@ -68,6 +70,7 @@ export default class Calculations extends Component {
     this.toggle_keyboardBox = this.toggle_keyboardBox.bind(this);
     this.workerChanger = this.workerChanger.bind(this);
     this.customerChanger = this.customerChanger.bind(this);
+    this.registerChanger = this.registerChanger.bind(this);
     this.set_customer_order = this.set_customer_order.bind(this);
     this.set_worker_order = this.set_worker_order.bind(this);
 
@@ -87,6 +90,7 @@ export default class Calculations extends Component {
 
     this.checkBalance = this.checkBalance.bind(this)
     this.printer = this.printer.bind(this)
+    this.print_bill = this.print_bill.bind(this)
   }
 
   async getWorkersData() {
@@ -113,7 +117,7 @@ export default class Calculations extends Component {
           animationIn: ["animated", "fadeIn"],
           animationOut: ["animated", "fadeOut"],
           dismiss: {
-            duration: 5000,
+            duration: 2000,
             onScreen: true,
           },
         });
@@ -149,7 +153,7 @@ export default class Calculations extends Component {
           animationIn: ["animated", "fadeIn"],
           animationOut: ["animated", "fadeOut"],
           dismiss: {
-            duration: 5000,
+            duration: 2000,
             onScreen: true,
           },
         });
@@ -182,7 +186,7 @@ export default class Calculations extends Component {
           animationIn: ["animated", "fadeIn"],
           animationOut: ["animated", "fadeOut"],
           dismiss: {
-            duration: 5000,
+            duration: 2000,
             onScreen: true,
           },
         });
@@ -234,7 +238,7 @@ export default class Calculations extends Component {
           animationIn: ["animated", "fadeIn"],
           animationOut: ["animated", "fadeOut"],
           dismiss: {
-            duration: 5000,
+            duration: 2000,
             onScreen: true,
           },
         });
@@ -274,7 +278,7 @@ export default class Calculations extends Component {
             animationIn: ["animated", "fadeIn"],
             animationOut: ["animated", "fadeOut"],
             dismiss: {
-              duration: 5000,
+              duration: 2000,
               onScreen: true,
             },
           });
@@ -306,7 +310,7 @@ export default class Calculations extends Component {
             animationIn: ["animated", "fadeIn"],
             animationOut: ["animated", "fadeOut"],
             dismiss: {
-              duration: 5000,
+              duration: 2000,
               onScreen: true,
             },
           });
@@ -347,7 +351,7 @@ export default class Calculations extends Component {
             animationIn: ["animated", "fadeIn"],
             animationOut: ["animated", "fadeOut"],
             dismiss: {
-              duration: 5000,
+              duration: 2000,
               onScreen: true,
             },
           });
@@ -379,7 +383,7 @@ export default class Calculations extends Component {
     //         animationIn: ["animated", "fadeIn"],
     //         animationOut: ["animated", "fadeOut"],
     //         dismiss: {
-    //           duration: 5000,
+    //           duration: 2000,
     //           onScreen: true,
     //         },
     //       });
@@ -413,7 +417,7 @@ export default class Calculations extends Component {
           animationIn: ["animated", "fadeIn"],
           animationOut: ["animated", "fadeOut"],
           dismiss: {
-            duration: 5000,
+            duration: 2000,
             onScreen: true,
           },
         });
@@ -452,7 +456,7 @@ export default class Calculations extends Component {
           animationIn: ["animated", "fadeIn"],
           animationOut: ["animated", "fadeOut"],
           dismiss: {
-            duration: 5000,
+            duration: 2000,
             onScreen: true,
           },
         });
@@ -487,7 +491,7 @@ export default class Calculations extends Component {
             animationIn: ["animated", "fadeIn"],
             animationOut: ["animated", "fadeOut"],
             dismiss: {
-              duration: 5000,
+              duration: 2000,
               onScreen: true,
             },
           });
@@ -524,7 +528,7 @@ export default class Calculations extends Component {
               animationIn: ["animated", "fadeIn"],
               animationOut: ["animated", "fadeOut"],
               dismiss: {
-                duration: 5000,
+                duration: 2000,
                 onScreen: true,
               },
             });
@@ -561,7 +565,7 @@ export default class Calculations extends Component {
               animationIn: ["animated", "fadeIn"],
               animationOut: ["animated", "fadeOut"],
               dismiss: {
-                duration: 5000,
+                duration: 2000,
                 onScreen: true,
               },
             });
@@ -612,6 +616,9 @@ export default class Calculations extends Component {
       order_information: null,
       order_id: null,
       order_detials: [],
+      company_name: null,
+      company_register: null,
+      company_register_status: "0"
     });
     this.getOrdersData();
   }
@@ -628,6 +635,9 @@ export default class Calculations extends Component {
       keyboardBoxShow: false,
       productBoxShow: true,
       customer_mobile: null,
+      company_name: null,
+      company_register: null,
+      company_register_status: "0"
     });
   }
 
@@ -777,7 +787,7 @@ export default class Calculations extends Component {
           animationIn: ["animated", "fadeIn"],
           animationOut: ["animated", "fadeOut"],
           dismiss: {
-            duration: 5000,
+            duration: 2000,
             onScreen: true,
           },
         });
@@ -814,7 +824,7 @@ export default class Calculations extends Component {
           animationIn: ["animated", "fadeIn"],
           animationOut: ["animated", "fadeOut"],
           dismiss: {
-            duration: 5000,
+            duration: 2000,
             onScreen: true,
           },
         });
@@ -838,7 +848,7 @@ export default class Calculations extends Component {
           animationIn: ["animated", "fadeIn"],
           animationOut: ["animated", "fadeOut"],
           dismiss: {
-            duration: 5000,
+            duration: 2000,
             onScreen: true,
           },
         });
@@ -887,7 +897,7 @@ export default class Calculations extends Component {
           animationIn: ["animated", "fadeIn"],
           animationOut: ["animated", "fadeOut"],
           dismiss: {
-            duration: 5000,
+            duration: 2000,
             onScreen: true,
           },
         });
@@ -924,7 +934,7 @@ export default class Calculations extends Component {
           animationIn: ["animated", "fadeIn"],
           animationOut: ["animated", "fadeOut"],
           dismiss: {
-            duration: 5000,
+            duration: 2000,
             onScreen: true,
           },
         });
@@ -966,7 +976,7 @@ export default class Calculations extends Component {
           animationIn: ["animated", "fadeIn"],
           animationOut: ["animated", "fadeOut"],
           dismiss: {
-            duration: 5000,
+            duration: 2000,
             onScreen: true,
           },
         });
@@ -1145,7 +1155,7 @@ export default class Calculations extends Component {
               animationIn: ["animated", "fadeIn"],
               animationOut: ["animated", "fadeOut"],
               dismiss: {
-                duration: 5000,
+                duration: 2000,
                 onScreen: true,
               },
             });
@@ -1161,7 +1171,7 @@ export default class Calculations extends Component {
               animationIn: ["animated", "fadeIn"],
               animationOut: ["animated", "fadeOut"],
               dismiss: {
-                duration: 5000,
+                duration: 2000,
                 onScreen: true,
               },
             });
@@ -1177,7 +1187,7 @@ export default class Calculations extends Component {
           animationIn: ["animated", "fadeIn"],
           animationOut: ["animated", "fadeOut"],
           dismiss: {
-            duration: 5000,
+            duration: 2000,
             onScreen: true,
           },
         });
@@ -1203,7 +1213,7 @@ export default class Calculations extends Component {
           animationIn: ["animated", "fadeIn"],
           animationOut: ["animated", "fadeOut"],
           dismiss: {
-            duration: 5000,
+            duration: 2000,
             onScreen: true,
           },
         });
@@ -1217,7 +1227,7 @@ export default class Calculations extends Component {
           animationIn: ["animated", "fadeIn"],
           animationOut: ["animated", "fadeOut"],
           dismiss: {
-            duration: 5000,
+            duration: 2000,
             onScreen: true,
           },
         });
@@ -1232,7 +1242,7 @@ export default class Calculations extends Component {
           animationIn: ["animated", "fadeIn"],
           animationOut: ["animated", "fadeOut"],
           dismiss: {
-            duration: 5000,
+            duration: 2000,
             onScreen: true,
           },
         });
@@ -1279,7 +1289,7 @@ export default class Calculations extends Component {
             animationIn: ["animated", "fadeIn"],
             animationOut: ["animated", "fadeOut"],
             dismiss: {
-              duration: 5000,
+              duration: 2000,
               onScreen: true,
             },
           });
@@ -1370,7 +1380,7 @@ export default class Calculations extends Component {
                 animationIn: ["animated", "fadeIn"],
                 animationOut: ["animated", "fadeOut"],
                 dismiss: {
-                  duration: 5000,
+                  duration: 2000,
                   onScreen: true,
                 },
               });
@@ -1386,7 +1396,7 @@ export default class Calculations extends Component {
                 animationIn: ["animated", "fadeIn"],
                 animationOut: ["animated", "fadeOut"],
                 dismiss: {
-                  duration: 5000,
+                  duration: 2000,
                   onScreen: true,
                 },
               });
@@ -1409,7 +1419,7 @@ export default class Calculations extends Component {
             animationIn: ["animated", "fadeIn"],
             animationOut: ["animated", "fadeOut"],
             dismiss: {
-              duration: 5000,
+              duration: 2000,
               onScreen: true,
             },
           });
@@ -1431,7 +1441,7 @@ export default class Calculations extends Component {
           animationIn: ["animated", "fadeIn"],
           animationOut: ["animated", "fadeOut"],
           dismiss: {
-            duration: 5000,
+            duration: 2000,
             onScreen: true,
           },
         });
@@ -1446,7 +1456,7 @@ export default class Calculations extends Component {
           animationIn: ["animated", "fadeIn"],
           animationOut: ["animated", "fadeOut"],
           dismiss: {
-            duration: 5000,
+            duration: 2000,
             onScreen: true,
           },
         });
@@ -1498,6 +1508,87 @@ export default class Calculations extends Component {
     }
   }
 
+  async registerChecker(register){
+    var url = "http://" + this.props.ip_address + "/api/bill/registerChecker?register=" + register
+    var response = await fetch(url, {
+        method: "GET",
+      })
+      .then(response=>response.json())
+      .then(data=>{return data})
+    return response
+  }
+
+  async registerChanger(e) {
+    e.persist();
+    var status
+    var company = ""
+    if(e.target.value.length === 0){
+      status = "0"
+    }else if(e.target.value.length < 7){
+      status = "1"
+    }else if(e.target.value.length > 7){
+      status = "2"
+    }else{
+      var checking_value = await this.registerChecker(e.target.value)
+      if(checking_value['found']){
+        status = "4"
+        company = checking_value['name']
+      }else{
+        status = "3"
+      }
+    }
+
+    await this.setState({
+      company_register: e.target.value,
+      company_name: company,
+      company_register_status: status,
+    });
+  }
+
+  async print_bill() {
+    if(this.state.order_id){
+      var urla = "http://" + this.props.ip_address + "/api/bill/createBill?order=" + this.state.order_id + "&printer_number=1"
+      if(this.state.company_register){
+        urla = urla + "&register=" + this.state.company_register
+      }
+      await fetch(urla, {
+        method: "GET",
+      })
+      .then(response=>response.json())
+      .then(data=>{
+        if(data['success']){
+          store.addNotification({
+            message: "Баримт амжилттай хэвлэгдлээ.",
+            type: "success",
+            insert: "top",
+            container: "top-right",
+            animationIn: ["animated", "fadeIn"],
+            animationOut: ["animated", "fadeOut"],
+            dismiss: {
+              duration: 3000,
+              onScreen: true,
+            },
+          });
+          this.modalHide()
+
+        }else{
+          store.addNotification({
+            message: data['errorCode'],
+            type: "danger",
+            insert: "top",
+            container: "top-right",
+            animationIn: ["animated", "fadeIn"],
+            animationOut: ["animated", "fadeOut"],
+            dismiss: {
+              duration: 3000,
+              onScreen: true,
+            },
+          });
+        }
+      })
+    }
+  }
+
   set_customer_order() {
     if (
       this.state.order_id !== null &&
@@ -1543,7 +1634,7 @@ export default class Calculations extends Component {
           animationIn: ["animated", "fadeIn"],
           animationOut: ["animated", "fadeOut"],
           dismiss: {
-            duration: 5000,
+            duration: 2000,
             onScreen: true,
           },
         });
@@ -1558,7 +1649,7 @@ export default class Calculations extends Component {
           animationIn: ["animated", "fadeIn"],
           animationOut: ["animated", "fadeOut"],
           dismiss: {
-            duration: 5000,
+            duration: 2000,
             onScreen: true,
           },
         });
@@ -1595,7 +1686,7 @@ export default class Calculations extends Component {
           animationIn: ["animated", "fadeIn"],
           animationOut: ["animated", "fadeOut"],
           dismiss: {
-            duration: 5000,
+            duration: 2000,
             onScreen: true,
           },
         });
@@ -1632,7 +1723,7 @@ export default class Calculations extends Component {
           animationIn: ["animated", "fadeIn"],
           animationOut: ["animated", "fadeOut"],
           dismiss: {
-            duration: 5000,
+            duration: 2000,
             onScreen: true,
           },
         });
@@ -1685,7 +1776,7 @@ export default class Calculations extends Component {
           animationIn: ["animated", "fadeIn"],
           animationOut: ["animated", "fadeOut"],
           dismiss: {
-            duration: 5000,
+            duration: 2000,
             onScreen: true,
           },
         });
@@ -1700,7 +1791,7 @@ export default class Calculations extends Component {
           animationIn: ["animated", "fadeIn"],
           animationOut: ["animated", "fadeOut"],
           dismiss: {
-            duration: 5000,
+            duration: 2000,
             onScreen: true,
           },
         });
@@ -1773,7 +1864,7 @@ export default class Calculations extends Component {
           animationIn: ["animated", "fadeIn"],
           animationOut: ["animated", "fadeOut"],
           dismiss: {
-            duration: 5000,
+            duration: 2000,
             onScreen: true,
           },
         });
@@ -1788,7 +1879,7 @@ export default class Calculations extends Component {
           animationIn: ["animated", "fadeIn"],
           animationOut: ["animated", "fadeOut"],
           dismiss: {
-            duration: 5000,
+            duration: 2000,
             onScreen: true,
           },
         });
@@ -1829,7 +1920,7 @@ export default class Calculations extends Component {
             animationIn: ["animated", "fadeIn"],
             animationOut: ["animated", "fadeOut"],
             dismiss: {
-              duration: 5000,
+              duration: 2000,
               onScreen: true,
             },
           });
@@ -1843,7 +1934,7 @@ export default class Calculations extends Component {
             animationIn: ["animated", "fadeIn"],
             animationOut: ["animated", "fadeOut"],
             dismiss: {
-              duration: 5000,
+              duration: 2000,
               onScreen: true,
             },
           });
@@ -1861,7 +1952,7 @@ export default class Calculations extends Component {
         animationIn: ["animated", "fadeIn"],
         animationOut: ["animated", "fadeOut"],
         dismiss: {
-          duration: 5000,
+          duration: 2000,
           onScreen: true,
         },
       });
@@ -2055,7 +2146,7 @@ export default class Calculations extends Component {
               <i className="fa fa-home" />
           </button>
           <button className="d-inline-block per" onClick={() => this.show_orders()}>
-              <i className="fas fa-map-marker-alt" />
+              <i className="fas fa-bars" />
           </button>
           <button className="d-inline-block per" onClick={() => this.show_order()}>
               <i className="fas fa-plus"/>
@@ -2120,6 +2211,10 @@ export default class Calculations extends Component {
           show_modal={this.state.show_ebarimt}
           show_ebarimt={this.show_ebarimt}
           order_information={this.state.order_information}
+          registerChanger={this.registerChanger}
+          company_name={this.state.company_name}
+          company_register_status={this.state.company_register_status}
+          print_bill = {this.print_bill}
           {...this.props}
         />
       </div>

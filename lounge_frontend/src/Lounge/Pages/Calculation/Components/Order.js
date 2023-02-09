@@ -59,7 +59,7 @@ export default class componentName extends Component {
               </button>
             </div>
             <div className="button">
-              <button className="white" onClick={() => this.props.show_ebarimt(this.props.order_id)} disabled={this.props.order_id !== null ? false : true}>
+              <button className={this.props.order_id !== null && this.props.order_information && this.props.order_information.discounted_amount - paymentTotalAmount === 0 ? "white" : "white disabled"} onClick={() => this.props.show_ebarimt(this.props.order_id)} disabled={this.props.order_id !== null && this.props.order_information && this.props.order_information.discounted_amount - paymentTotalAmount === 0 ? false : true}>
               <i className="fa fa-print" aria-hidden="true"></i>Баримт
               </button>
             </div>
@@ -279,6 +279,7 @@ export default class componentName extends Component {
           <div className="left-side">
             <Keyboard
               {...this.props}
+              max_amount={this.props.order_information ? (this.props.order_information.discounted_amount - paymentTotalAmount).toString() : null}
             />
           </div>
           <div className="right-side">

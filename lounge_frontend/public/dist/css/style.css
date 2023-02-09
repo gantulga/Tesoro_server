@@ -1570,3 +1570,48 @@
   padding: 5px 10px;
   border-radius: 5px;
 }
+
+.ebarimt {
+
+}
+
+.ebarimt .title{
+  font-size: 16px;
+  font-weight: 600;
+  color: #1f1f1f;
+  width: 100%;
+}
+
+.ebarimt .desc{
+  font-size: 14px;
+  color: #616161;
+}
+
+.ebarimt input{
+  padding: 5px 10px;
+  border-radius: 5px;
+  border-color: #616161;
+  outline: none;
+  width: 100px;
+  margin-top: 15px;
+}
+
+.ebarimt.human{
+  margin-top: 50px;
+}
+
+.ebarimt .status{
+  width: calc(100% - 100px);
+  float: right;
+  font-size: 14px;
+  font-weight: 400;
+  padding: 23px 15px;
+}
+
+.ebarimt .status.red{
+  color: #860202;
+}
+
+.ebarimt .status.green{
+  color: #028602;
+}
