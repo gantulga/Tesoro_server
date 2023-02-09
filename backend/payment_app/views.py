@@ -24,8 +24,21 @@ def createBill(request):
 
 def printBill(value, printer_number):
     print(value, printer_number)
-    
 
+def registerChecker(request):
+    if request.GET.get('register') != None and request.GET.get('register') != "":
+        url = "http://info.ebarimt.mn/rest/merchant/info?regno=" + request.GET.get('register')
+        headers = {
+        'Content-Type': 'application/json'
+        }
+        response = requests.request("GET", url, headers=headers)
+        return HttpResponse(response)
+    else:
+        r = '{"found":false}'
+        r = json.dumps(r)
+        r = json.loads(r)
+        return HttpResponse(r)
+    
 def putData(order, register, printer_number):
     if order.bills.count() == 0:
         conf_value = Configuration_value.objects.first()
