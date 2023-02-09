@@ -31,7 +31,7 @@ export default class Orders extends Component {
               <div className="button">
                 {this.props.selected_client ? 
                   <button className={this.props.selected_division && this.props.selected_client ? "white active" : "white"} >
-                    {this.props.selected_client_number}
+                    № {this.props.selected_client_number}
                   </button>
                   :
                   <button className="white disabled" >

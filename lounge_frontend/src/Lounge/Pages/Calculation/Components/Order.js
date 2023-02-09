@@ -40,12 +40,12 @@ export default class componentName extends Component {
             </div>
             <div className="button">
               <button className={this.props.show_product ? "white active" : "white"} onClick={this.props.toggle_product}>
-                <i className="fa fa-plus" aria-hidden="true"></i>Бараа нэмэх
+                <i className="fa fa-plus" aria-hidden="true"></i>Бараа
               </button>
             </div>
             <div className="button">
               <button className={this.props.show_keyboard && !this.props.show_product ? "white active" : "white"} onClick={this.props.toggle_keyboard}>
-                <i className="fa fa-calculator" aria-hidden="true"></i>Тооцоо хийх
+                <i className="fa fa-calculator" aria-hidden="true"></i>Тооцоо
               </button>
             </div>
             <div className="button">
@@ -56,6 +56,11 @@ export default class componentName extends Component {
             <div className="button">
               <button className="white" onClick={() => this.props.show_detial(this.props.order_id)} disabled={this.props.order_id !== null ? false : true}>
               <i className="fa fa-percent" aria-hidden="true"></i>Хөнгөлөлт
+              </button>
+            </div>
+            <div className="button">
+              <button className="white" onClick={() => this.props.show_ebarimt(this.props.order_id)} disabled={this.props.order_id !== null ? false : true}>
+              <i className="fa fa-print" aria-hidden="true"></i>Баримт
               </button>
             </div>
           </div>
