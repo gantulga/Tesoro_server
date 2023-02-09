@@ -11,6 +11,7 @@ import Customer from "./Components/Modals/Customer";
 import Clients from "./Components/Clients";
 import Order from "./Components/Order";
 import Orders from "./Components/Orders";
+import Ebarimt from "./Components/Modals/Ebarimt";
 
 export default class Calculations extends Component {
   constructor(props) {
@@ -35,6 +36,7 @@ export default class Calculations extends Component {
       show_payment: false,
       show_detial: false,
       show_customer: false,
+      show_ebarimt: false,
       show_unpaidOrders: false,
       show_addProducts: false,
       table_id: null,
@@ -240,9 +242,7 @@ export default class Calculations extends Component {
   }
 
   async getOrderDetialsData() {
-    console.log(this.state.order_id)
     if (this.state.order_id) {
-      console.log("dasd")
       await fetch(
         "http://" +
           this.props.ip_address +
@@ -261,7 +261,6 @@ export default class Calculations extends Component {
           await this.setState({
             order_detials: data,
           });
-          console.log(this.state.order_detials)
         })
         .catch((error) => {
           store.addNotification({
@@ -595,6 +594,7 @@ export default class Calculations extends Component {
       show_detial: false,
       keyboardBoxShow: false,
       show_customer: false,
+      show_ebarimt: false,
       order_information: null,
     });
   }
@@ -608,6 +608,7 @@ export default class Calculations extends Component {
       show_detial: false,
       keyboardBoxShow: false,
       show_customer: false,
+      show_ebarimt: false,
       order_information: null,
       order_id: null,
       order_detials: [],
@@ -623,6 +624,7 @@ export default class Calculations extends Component {
       show_payment: false,
       show_detial: false,
       show_customer: false,
+      show_ebarimt: false,
       keyboardBoxShow: false,
       productBoxShow: true,
       customer_mobile: null,
@@ -648,6 +650,7 @@ export default class Calculations extends Component {
       show_payment: true,
       show_detial: false,
       show_customer: false,
+      show_ebarimt: false,
       order_information: null,
     });
   }
@@ -660,6 +663,7 @@ export default class Calculations extends Component {
       show_payment: false,
       show_detial: true,
       show_customer: false,
+      show_ebarimt: false,
     });
   }
 
@@ -981,6 +985,7 @@ export default class Calculations extends Component {
       show_product_balances_modal: false,
       show_detial: false,
       show_customer: false,
+      show_ebarimt: false,
       show_unpaidOrders: false,
     });
   }
@@ -1009,6 +1014,20 @@ export default class Calculations extends Component {
   async show_customer() {
     await this.setState({
       show_customer: true,
+      show_ebarimt: false,
+      show_orders: false,
+      show_tables: false,
+      show_order: true,
+      show_payment: false,
+      productBoxShow: false,
+      keyboardBoxShow: false,
+    });
+  }
+
+  async show_ebarimt() {
+    await this.setState({
+      show_customer: false,
+      show_ebarimt: true,
       show_orders: false,
       show_tables: false,
       show_order: true,
@@ -2011,6 +2030,7 @@ export default class Calculations extends Component {
             order_id={this.state.order_id}
             paymentInfoReceiver={this.paymentInfoReceiver.bind(this)}
             show_customer={this.show_customer.bind(this)}
+            show_ebarimt={this.show_ebarimt.bind(this)}
             passenger={this.customerChanger}
 
             categories={this.state.categories}
@@ -2091,6 +2111,14 @@ export default class Calculations extends Component {
           workerChanger={this.workerChanger}
           workersData={this.state.workersData}
           set_worker_order={this.set_worker_order}
+          order_information={this.state.order_information}
+          {...this.props}
+        />
+
+        <Ebarimt
+          modalHide={this.modalHide.bind(this)}
+          show_modal={this.state.show_ebarimt}
+          show_ebarimt={this.show_ebarimt}
           order_information={this.state.order_information}
           {...this.props}
         />

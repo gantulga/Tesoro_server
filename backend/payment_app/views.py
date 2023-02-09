@@ -169,6 +169,12 @@ def putData(order, register):
                 bill.returnBillId = returnBillId
                 bill.lotteryWarningMsg = lotteryWarningMsg
                 bill.internalCode = internalCode
+                bill.bill_id = temp['billId']
+                bill.date = temp['date']
+                bill.mac_address = temp['macAddress']
+                bill.qr_data = temp['qrData']
+                bill.lottery = temp['lottery']
+                bill.register_no = temp['registerNo']
                 bill.save()
 
                 r = '{"billId":' + str(bill.id) + ', "success":true}'
