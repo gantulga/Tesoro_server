@@ -14,9 +14,7 @@ User = get_user_model()
 
 class Createdinfo(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
-    created_by = models.ForeignKey(
-        User, related_name='%(class)s_createdby', null=True, blank=True, on_delete=models.DO_NOTHING)
-
+    created_by = models.ForeignKey(User, related_name='%(class)s_createdby', null=True, blank=True, on_delete=models.DO_NOTHING)
     class Meta:
         abstract = True
 
@@ -24,10 +22,8 @@ class Createdinfo(models.Model):
 class Modifiedinfo(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
-    created_by = models.ForeignKey(
-        User, related_name='%(class)s_createdby', null=True, blank=True, on_delete=models.DO_NOTHING)
-    updated_by = models.ForeignKey(
-        User, related_name='%(class)s_modifiedby', null=True, blank=True, on_delete=models.DO_NOTHING)
+    created_by = models.ForeignKey(User, related_name='%(class)s_createdby', null=True, blank=True, on_delete=models.DO_NOTHING)
+    updated_by = models.ForeignKey(User, related_name='%(class)s_modifiedby', null=True, blank=True, on_delete=models.DO_NOTHING)
 
     class Meta:
         abstract = True
@@ -38,8 +34,7 @@ class Modifiedinfo(models.Model):
 class Division(Createdinfo):
     name = models.CharField(null=False, max_length=255)
     description = models.TextField(null=False)
-    users = models.ManyToManyField(
-        User, db_table="auth_user_divisions", related_name='divisions')
+    users = models.ManyToManyField(User, db_table="auth_user_divisions", related_name='divisions')
     erembe = models.IntegerField(null=True, blank=True)
 
     def __str__(self):
@@ -49,8 +44,7 @@ class Division(Createdinfo):
 
 
 class Client(Createdinfo):
-    division = models.ForeignKey(
-        'Division', null=False, blank=False, on_delete=models.PROTECT, related_name="clients")
+    division = models.ForeignKey('Division', null=False, blank=False, on_delete=models.PROTECT, related_name="clients")
     number = models.IntegerField(null=False)
     description = models.TextField(null=False, max_length=255)
     free = models.BooleanField(default=1)
@@ -70,8 +64,7 @@ class Client(Createdinfo):
 
 # Бүртгэлтэй үйлчилүүлэгчийн мэдээлэл, байнга үйлчилүүлж манайд өөрөө бүртгүүлсэн хүмүүс
 class Customer(Createdinfo):
-    user = models.OneToOneField(
-        User, on_delete=models.CASCADE, null=True, blank=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)
     lastname = models.CharField(null=True, max_length=255)
     firstname = models.CharField(null=False, max_length=255)
     register = models.CharField(null=False, max_length=255, unique=True)
@@ -82,8 +75,7 @@ class Customer(Createdinfo):
     mobile = models.IntegerField(blank=True, null=True, default=0)
     phone = models.IntegerField(blank=True, null=True, default=0)
     email = models.EmailField(blank=True, null=True, default=0)
-    discount_rate = models.IntegerField(default=0, validators=[MinValueValidator(
-        0), MaxValueValidator(100)], blank=True, null=True)
+    discount_rate = models.IntegerField(default=0, validators=[MinValueValidator(0), MaxValueValidator(100)], blank=True, null=True)
     information = models.TextField(null=True, default='')
 
     # class Meta:

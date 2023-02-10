@@ -314,9 +314,10 @@ class LoungeOrderUpdateSerializer(serializers.ModelSerializer):
             order.save()
 
         if self.context['request'].data['customer_mobile'] != None and order.customer == None:
-            print("2")
-            customer = Customer.objects.filter(mobile=int(
-                self.context['request'].data['customer_mobile']))
+            mobile = self.context['request'].data['customer_mobile']
+            print("2", type(mobile))
+            customer = Customer.objects.filter(mobile=mobile)
+            print("customer: ", len(customer), customer)
             if len(customer) == 0:
                 newCustomer = Customer.objects.create(mobile=self.context['request'].data['customer_mobile'])
                 print("3")

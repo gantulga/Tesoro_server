@@ -83,7 +83,6 @@ class Commodity(Createdinfo):
 
 class Product(Createdinfo):
     name = models.CharField(null=False, blank=False, max_length=255)
-    print_name = models.CharField(null=True, blank=True, max_length=255)
     description = models.TextField(null=True, blank=True, max_length=255)
     cost = models.DecimalField(max_digits=14, decimal_places=2)
     categories = models.ManyToManyField('Product_category', db_table="product_app_product_categories", related_name="products")

@@ -25,7 +25,7 @@ class ProductCategoryAdmin(admin.ModelAdmin):
 
 
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ('name', 'print_name', 'cost')
+    list_display = ('name', 'cost')
     list_per_page = 500
     exclude = ['created_by']
 

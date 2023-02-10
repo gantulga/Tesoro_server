@@ -162,6 +162,7 @@ class Bill(Modifiedinfo):
     district_code = models.CharField(null=True, blank=True, max_length=255)
     pos_no = models.CharField(null=True, blank=True, max_length=255)
     customer_no = models.CharField(null=True, blank=True, max_length=255)
+    customer_name = models.CharField(null=True, blank=True, max_length=255)
     bill_type = models.CharField(null=True, blank=True, choices=BILL_TYPE_CHOICES, max_length=1)
     bill_id_suffix = models.CharField(null=True, blank=True, max_length=255)
     return_bill_id = models.CharField(null=True, blank=True, max_length=255)
@@ -179,6 +180,7 @@ class Bill(Modifiedinfo):
     error_code = models.CharField(null=True, blank=True, max_length=255)
     message = models.CharField(null=True, blank=True, max_length=255) 
     status = models.CharField(null=True, blank=True, choices=STATUS_CHOICES, max_length=1)
+    printer = models.CharField(null=True, blank=True, max_length=1)
 
     order = models.ForeignKey('Order', null=False, blank=False, on_delete=models.DO_NOTHING, related_name="bills")
     client = models.ForeignKey('structure_app.Client', null=False, blank=False, on_delete=models.DO_NOTHING, related_name="bills")

@@ -2,11 +2,15 @@ from django.shortcuts import render
 import json
 import requests
 from datetime import datetime
-import http.client
 from django.http import HttpResponse
 from .models import Order, Order_detial, Bill, Payment
 from structure_app.models import Configuration_value
 from django.shortcuts import render, redirect, get_list_or_404, get_object_or_404
+import socket
+from PIL import Image, ImageDraw, ImageFont, ImageOps
+import struct
+import qrcode
+import textwrap
 
 def createBill(request):
     order = None
@@ -22,8 +26,196 @@ def createBill(request):
         r = json.loads(r)
         return HttpResponse(r)
 
-def printBill(value, printer_number):
-    print(value, printer_number)
+def printBill(bill, printer_number):
+    bill = Bill.objects.get(pk=bill)
+    
+    mysocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    mysocket.connect(("192.168.1.9", 9100))
+
+    width = 600
+    if bill.bill_type == "1":
+        add_h = 750
+    elif bill.bill_type == "3":
+        add_h = 580
+
+    height = len(bill.order.order_detials.all()) * 70 + add_h
+    image = Image.new("RGB", (width, height), "white")
+    draw = ImageDraw.Draw(image)
+    # font = ImageFont.load_default()
+
+    
+    unicode_font_22 = ImageFont.truetype("media/roboto.ttf", 22)
+    unicode_font_26 = ImageFont.truetype("media/roboto.ttf", 26)
+    unicode_font_32 = ImageFont.truetype("media/roboto.ttf", 32)
+    unicode_font_36 = ImageFont.truetype("media/roboto.ttf", 36)
+    unicode_font_48 = ImageFont.truetype("media/roboto.ttf", 48)
+    y = 0
+
+    text = "Tesoro Center"
+    draw.text((160, y), text, fill="black", font=unicode_font_48)
+
+    y = y + 70
+    draw.text((30, y), "Огноо: " + bill.date, fill="black", font=unicode_font_22)
+    draw.text((400, y), "Принтер №: " + bill.printer, fill="black", font=unicode_font_22)
+
+    y = y + 40
+    draw.text((30, y), "ҮҮзүүлэгч: " + '"Гүн Арвижих Эрдэнэс" ХХК', fill="black", font=unicode_font_22)
+    y = y + 30
+    draw.text((30, y), "ҮҮзүүлэгч ТТД: " + "4388771", fill="black", font=unicode_font_22)
+
+    if bill.bill_type == "3":
+        y = y + 40
+        draw.text((30, y), "Үйлчлүүлэгч: " + bill.customer_name , fill="black", font=unicode_font_22)
+        y = y + 30
+        draw.text((30, y), "Үйлчлүүлэгчийн ТТД: " + bill.customer_no, fill="black", font=unicode_font_22)
+    
+    y = y + 40
+    draw.text((60, y), "Тоо", fill="black", font=unicode_font_22)
+
+    draw.text((200, y), "Үнэ", fill="black", font=unicode_font_22)
+
+    draw.text((400, y), "Дүн", fill="black", font=unicode_font_22)
+
+    y = y + 15
+    draw.text((30, y), "--------------------------------------------------------------------------------", fill="black", font=unicode_font_26)
+    
+    row_number = 1
+    y = y + 30
+    for detail in bill.order.order_detials.all():
+        det_text = str(row_number) + ". " + str(detail.product.name)
+        draw.text((30, y), det_text, fill="black", font=unicode_font_26)
+
+        quantity_text = str(detail.quantity)
+        draw.text((60, y + 30), quantity_text, fill="black", font=unicode_font_22)
+
+        price_text = str(detail.product.cost)
+        draw.text((170, y + 30), price_text, fill="black", font=unicode_font_22)
+
+        amount_text = str(detail.product.cost * detail.quantity)
+        w, h = draw.textsize(amount_text)
+        draw.text((width - w - 140, y + 30), amount_text, fill="black", font=unicode_font_22)
+
+        row_number = row_number + 1
+        y = y + 70
+
+    draw.text((30, y), "--------------------------------------------------------------------------------", fill="black", font=unicode_font_26)
+
+    niit_dun = "Нийт дүн: " + bill.amount
+    y = y + 30
+    draw.text((30, y), niit_dun, fill="black", font=unicode_font_26)
+
+    tuluh_dun = "Төлөх дүн: " + bill.amount
+    y = y + 30
+    draw.text((30, y), tuluh_dun, fill="black", font=unicode_font_36)
+
+    noat_dun = "НӨАТ: " + bill.vat
+    y = y + 44
+    draw.text((30, y), noat_dun, fill="black", font=unicode_font_26)
+
+    belen_dun = "Бэлэн: " + bill.cash_amount
+    y = y + 30
+    draw.text((30, y), belen_dun, fill="black", font=unicode_font_26)
+    
+    belen_bus_dun = "Бэлэн бус: " + bill.non_cash_amount
+    y = y + 30
+    draw.text((30, y), belen_bus_dun, fill="black", font=unicode_font_26)
+
+    y = y + 30
+    draw.text((30, y), "--------------------------------------------------------------------------------", fill="black", font=unicode_font_26)
+
+    ddd = "ДДТД: " + bill.bill_id
+    lines = textwrap.wrap(ddd, width=600)
+    y = y + 30
+    for line in lines:
+        draw.text((30, y), line, font=unicode_font_26, fill="black")
+        y += 30
+
+    if bill.bill_type == "1":
+        ebarimt = "Ebarimt "
+        y += 30
+        draw.text((270, y), ebarimt, fill="black", font=unicode_font_32)
+
+        ebarimt_dun = "Дүн: " + bill.amount.split(".")[0]
+        y += 36
+        draw.text((270, y), ebarimt_dun, fill="black", font=unicode_font_32)
+
+        ebarimt_code = "Код: " + bill.lottery
+        y += 36
+        draw.text((270, y), ebarimt_code, fill="black", font=unicode_font_32)
+
+    image.save("media/qrCodes/" + str(bill.id) + "-text.jpg")
+    im = Image.open("media/qrCodes/" + str(bill.id) + "-text.jpg")
+    # if image is not 1-bit, convert it
+    if im.mode != '1':
+        im = im.convert('1')
+    # if image width is not a multiple of 8 pixels, fix that
+    if im.size[0] % 8:
+        im2 = Image.new('1', (im.size[0] + 8 - im.size[0] % 8, im.size[1]), 'white')
+        im2.paste(im, (0, 0))
+        im = im2
+
+    # Invert image, via greyscale for compatibility
+    #  (no, I don't know why I need to do this)
+    im = ImageOps.invert(im.convert('L'))
+    # ... and now convert back to single bit
+    im = im.convert('1')
+    
+    # QR SIDE
+    data = (bill.qr_data)
+    qr = qrcode.QRCode(box_size=5)
+    qr.add_data(data)
+    qr_image = qr.make_image()
+    qr_image.save('media/qrCodes/' + str(bill.id) + ".jpg")
+    qr_im = Image.open("media/qrCodes/" + str(bill.id) + ".jpg")
+    # if image is not 1-bit, convert it
+    if qr_im.mode != '1':
+        qr_im = qr_im.convert('1')
+    # if image width is not a multiple of 8 pixels, fix that
+    if qr_im.size[0] % 8:
+        qr_im2 = Image.new('1', (qr_im.size[0] + 8 - qr_im.size[0] % 8, qr_im.size[1]), 'white')
+        qr_im2.paste(qr_im, (0, 0))
+        qr_im = qr_im2
+
+    # Invert image, via greyscale for compatibility
+    #  (no, I don't know why I need to do this)
+    qr_im = ImageOps.invert(qr_im.convert('L'))
+    # ... and now convert back to single bit
+    qr_im = qr_im.convert('1')
+
+    if bill.bill_type == "1":
+        im.paste(qr_im, (0, height - 270), mask = qr_im)
+
+    job = [(b''.join((bytearray(b'\x1d\x76\x30\x00'),
+                struct.pack('2B', int(im.size[0] / 8 % 256),
+                            int(im.size[0] / 8 / 256)),
+                struct.pack('2B', int(im.size[1] % 256),
+                            int(im.size[1] / 256)),
+                im.tobytes()))),
+            b'\x1b\r\n',
+            b'\x1b\r\n',
+            b'\x1b\r\n',
+            b'\x1b\r\n',
+            b'\x1b\x69'
+        ]
+
+    # b'\x1b\x69' тасдах
+
+    #(b''.join((bytearray(b'\x1d\x76\x30\x00'),
+    # struct.pack('2B', int(qr_im.size[0] / 8 % 256),
+    #             int(qr_im.size[0] / 8 / 256)),
+    # struct.pack('2B', int(qr_im.size[1] % 256),
+    #             int(qr_im.size[1] / 256)),
+    # qr_im.tobytes()))),
+
+    
+    for b in job:
+        mysocket.sendall(b)
+    mysocket.close()
+
+    
+    return HttpResponse("done")
+
+
 
 def registerChecker(request):
     if request.GET.get('register') != None and request.GET.get('register') != "":
@@ -38,17 +230,27 @@ def registerChecker(request):
         r = json.dumps(r)
         r = json.loads(r)
         return HttpResponse(r)
+
+def registerCheckerName(register):
+    url = "http://info.ebarimt.mn/rest/merchant/info?regno=" + str(register)
+    headers = {
+        'Content-Type': 'application/json'
+    }
+    response = requests.request("GET", url, headers=headers)
+    return json.loads(response.content)['name']
+    
     
 def putData(order, register, printer_number):
     if order.bills.count() == 0:
         conf_value = Configuration_value.objects.first()
         total_vat = 0
-        total_city_tax = 0
-        total_amount_no_tax = 0
+        total_amount = 0
         json_order_lines = []
+        customer_name = ""
 
         if register:
             bill_type = 3
+            customer_name = registerCheckerName(register)
         else:
             bill_type = 1
             if order.customer:
@@ -56,20 +258,22 @@ def putData(order, register, printer_number):
                     register = order.customer.register
 
         for detail in order.order_detials.all():
+            per_amount = detail.subtotal / detail.quantity
+            per_price = float(per_amount) / float((conf_value.noat_tax + 100) / 100)
+            vat = float(detail.subtotal) - float(per_price)
             json_order_lines.append({
                 "code": str(detail.product.id),
                 "name": detail.product.name,
                 "qty": str(detail.quantity) + ".00",
                 "measureUnit": "ш",
-                "unitPrice": str(detail.subtotal / detail.quantity + (detail.subtotal * conf_value.noat_tax / 100)  + (detail.subtotal * conf_value.capital_city_tax / 100)),
+                "unitPrice": str(detail.subtotal / detail.quantity),
                 "totalAmount": str(detail.subtotal),
-                "cityTax": str(detail.subtotal * conf_value.capital_city_tax / 100),
-                "vat": str(detail.subtotal * conf_value.noat_tax / 100),
+                "cityTax": "0.00",
+                "vat": "%.2f" % vat,
                 "barCode": ""
             })
-            total_vat = total_vat + (detail.subtotal * conf_value.noat_tax / 100)
-            total_city_tax = total_city_tax + (detail.subtotal * conf_value.capital_city_tax / 100)
-            total_amount_no_tax = total_amount_no_tax + (detail.subtotal)
+            total_vat = total_vat + vat
+            total_amount = total_amount + (detail.subtotal)
 
         if conf_value.district_code < 10:
             district_code = "0" + str(conf_value.district_code)
@@ -106,11 +310,11 @@ def putData(order, register, printer_number):
 
         json_order = {
             "data": {
-                "amount": str(total_amount_no_tax + total_city_tax + total_vat),
-                "vat": str(total_vat),
-                "cashAmount": str(total_amount_no_tax + total_city_tax + total_vat),
+                "amount": "%.2f" % total_amount,
+                "vat": "%.2f" % total_vat,
+                "cashAmount": "%.2f" % total_amount,
                 "nonCashAmount": "0.00",
-                "cityTax": str(total_city_tax),
+                "cityTax": "0.00",
                 "districtCode": district_code,
                 "posNo": pos_number,
                 "customerNo": register,
@@ -121,13 +325,13 @@ def putData(order, register, printer_number):
                 "stocks": json_order_lines
             }
         }
-
+        print(customer_name)
         bill = Bill.objects.create(
-            amount = str(total_amount_no_tax + total_city_tax + total_vat),
-            vat = str(total_vat),
-            cash_amount = str(total_amount_no_tax + total_city_tax + total_vat),
+            amount = "%.2f" % total_amount,
+            vat = "%.2f" % total_vat,
+            cash_amount = "%.2f" % total_amount,
             non_cash_amount = "0.00",
-            city_tax = str(total_city_tax),
+            city_tax = "0.00",
 
             district_code = district_code,
             pos_no = pos_number,
@@ -139,7 +343,9 @@ def putData(order, register, printer_number):
             order = order,
             client = order.client,
             division = order.division,
-            customer = order.customer
+            customer = order.customer,
+            printer = printer_number,
+            customer_name = customer_name
         )
 
         r = None
@@ -192,11 +398,13 @@ def putData(order, register, printer_number):
                 bill.qr_data = temp['qrData']
                 bill.lottery = temp['lottery']
                 bill.register_no = temp['registerNo']
+                customer_name = customer_name,
                 bill.save()
 
                 r = '{"billId":' + str(bill.id) + ', "success":true}'
                 r = json.dumps(r)
                 r = json.loads(r)
+                printBill(bill.id, printer_number)
 
             else:
                 if "message" in temp:
@@ -235,13 +443,11 @@ def putData(order, register, printer_number):
 
         bill.status = "2"
         bill.save()
-        printBill(r, printer_number)
         return r
     else:
         r = '{"errorCode":"Bill is already created", "success":false}'
         r = json.dumps(r)
         r = json.loads(r)
-        printBill(r, printer_number)
         return  r
 
 
