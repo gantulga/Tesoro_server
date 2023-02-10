@@ -168,12 +168,10 @@ class OrderDetailRecieverSerializer(serializers.ModelSerializer):
                             product=validated_data['product'], client=client).order_by('-id')[:1]
 
                         if fr_client_item_balance:
-                            print("quantity bga")
                             balance = Item_balance.objects.get(
                                 pk=fr_client_item_balance[0].id)
                             quantity = balance.quantity - \
                                 validated_data['quantity']
-                            print(quantity)
                             balance.updated_by = validated_data['created_by']
                             balance.quantity = quantity
                             balance.save()
@@ -303,7 +301,6 @@ class LoungeOrderUpdateSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def update(self, instance, validated_data):
-        print("1")
         order = Order.objects.get(
             pk=int(self.context['request'].data['order_id']))
 
@@ -315,23 +312,18 @@ class LoungeOrderUpdateSerializer(serializers.ModelSerializer):
 
         if self.context['request'].data['customer_mobile'] != None and order.customer == None:
             mobile = self.context['request'].data['customer_mobile']
-            print("2", type(mobile))
             customer = Customer.objects.filter(mobile=mobile)
-            print("customer: ", len(customer), customer)
             if len(customer) == 0:
                 newCustomer = Customer.objects.create(mobile=self.context['request'].data['customer_mobile'])
-                print("3")
                 if newCustomer:
                     order.customer = newCustomer
                     order.save()
-                    print("4")
                 else:
                     print("Customer uusgej chadsangui.")
 
             if len(customer) > 0:
                 order.customer = customer[0]
                 order.save()
-                print("5")
         return order
 
 

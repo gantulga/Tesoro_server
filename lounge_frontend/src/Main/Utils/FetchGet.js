@@ -22,7 +22,7 @@ export function fetchGet(url, token, hezee) {
             response.status,
           type: "danger",
           insert: "top",
-          container: "top-right",
+          container: "bottom-right",
           animationIn: ["animated", "fadeIn"],
           animationOut: ["animated", "fadeOut"],
           dismiss: {
@@ -42,7 +42,7 @@ export function fetchGet(url, token, hezee) {
           error,
         type: "danger",
         insert: "top",
-        container: "top-right",
+        container: "bottom-right",
         animationIn: ["animated", "fadeIn"],
         animationOut: ["animated", "fadeOut"],
         dismiss: {

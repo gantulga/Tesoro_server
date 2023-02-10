@@ -54,7 +54,7 @@ export default class MoneyTransfers extends Component {
             error,
           type: "danger",
           insert: "top",
-          container: "top-right",
+          container: "bottom-right",
           animationIn: ["animated", "fadeIn"],
           animationOut: ["animated", "fadeOut"],
           dismiss: {
@@ -87,7 +87,7 @@ export default class MoneyTransfers extends Component {
             error,
           type: "danger",
           insert: "top",
-          container: "top-right",
+          container: "bottom-right",
           animationIn: ["animated", "fadeIn"],
           animationOut: ["animated", "fadeOut"],
           dismiss: {
@@ -120,7 +120,7 @@ export default class MoneyTransfers extends Component {
             error,
           type: "danger",
           insert: "top",
-          container: "top-right",
+          container: "bottom-right",
           animationIn: ["animated", "fadeIn"],
           animationOut: ["animated", "fadeOut"],
           dismiss: {
@@ -184,7 +184,7 @@ export default class MoneyTransfers extends Component {
             message: "Зарлагын гүйлгээ амжилттай хадгалагдлаа!",
             type: "success",
             insert: "top",
-            container: "top-right",
+            container: "bottom-right",
             animationIn: ["animated", "fadeIn"],
             animationOut: ["animated", "fadeOut"],
             dismiss: {
@@ -204,7 +204,7 @@ export default class MoneyTransfers extends Component {
             error,
           type: "danger",
           insert: "top",
-          container: "top-right",
+          container: "bottom-right",
           animationIn: ["animated", "fadeIn"],
           animationOut: ["animated", "fadeOut"],
           dismiss: {

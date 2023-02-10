@@ -113,7 +113,7 @@ export default class Calculations extends Component {
             error,
           type: "danger",
           insert: "top",
-          container: "top-right",
+          container: "bottom-right",
           animationIn: ["animated", "fadeIn"],
           animationOut: ["animated", "fadeOut"],
           dismiss: {
@@ -149,7 +149,7 @@ export default class Calculations extends Component {
             error,
           type: "danger",
           insert: "top",
-          container: "top-right",
+          container: "bottom-right",
           animationIn: ["animated", "fadeIn"],
           animationOut: ["animated", "fadeOut"],
           dismiss: {
@@ -182,7 +182,7 @@ export default class Calculations extends Component {
             error,
           type: "danger",
           insert: "top",
-          container: "top-right",
+          container: "bottom-right",
           animationIn: ["animated", "fadeIn"],
           animationOut: ["animated", "fadeOut"],
           dismiss: {
@@ -234,7 +234,7 @@ export default class Calculations extends Component {
             error,
           type: "danger",
           insert: "top",
-          container: "top-right",
+          container: "bottom-right",
           animationIn: ["animated", "fadeIn"],
           animationOut: ["animated", "fadeOut"],
           dismiss: {
@@ -274,7 +274,7 @@ export default class Calculations extends Component {
               error,
             type: "danger",
             insert: "top",
-            container: "top-right",
+            container: "bottom-right",
             animationIn: ["animated", "fadeIn"],
             animationOut: ["animated", "fadeOut"],
             dismiss: {
@@ -306,7 +306,7 @@ export default class Calculations extends Component {
               error,
             type: "danger",
             insert: "top",
-            container: "top-right",
+            container: "bottom-right",
             animationIn: ["animated", "fadeIn"],
             animationOut: ["animated", "fadeOut"],
             dismiss: {
@@ -347,7 +347,7 @@ export default class Calculations extends Component {
               error,
             type: "danger",
             insert: "top",
-            container: "top-right",
+            container: "bottom-right",
             animationIn: ["animated", "fadeIn"],
             animationOut: ["animated", "fadeOut"],
             dismiss: {
@@ -379,7 +379,7 @@ export default class Calculations extends Component {
     //           error,
     //         type: "danger",
     //         insert: "top",
-    //         container: "top-right",
+    //         container: "bottom-right",
     //         animationIn: ["animated", "fadeIn"],
     //         animationOut: ["animated", "fadeOut"],
     //         dismiss: {
@@ -413,7 +413,7 @@ export default class Calculations extends Component {
             error,
           type: "danger",
           insert: "top",
-          container: "top-right",
+          container: "bottom-right",
           animationIn: ["animated", "fadeIn"],
           animationOut: ["animated", "fadeOut"],
           dismiss: {
@@ -452,7 +452,7 @@ export default class Calculations extends Component {
             error,
           type: "danger",
           insert: "top",
-          container: "top-right",
+          container: "bottom-right",
           animationIn: ["animated", "fadeIn"],
           animationOut: ["animated", "fadeOut"],
           dismiss: {
@@ -487,7 +487,7 @@ export default class Calculations extends Component {
               error,
             type: "danger",
             insert: "top",
-            container: "top-right",
+            container: "bottom-right",
             animationIn: ["animated", "fadeIn"],
             animationOut: ["animated", "fadeOut"],
             dismiss: {
@@ -524,7 +524,7 @@ export default class Calculations extends Component {
                 error,
               type: "danger",
               insert: "top",
-              container: "top-right",
+              container: "bottom-right",
               animationIn: ["animated", "fadeIn"],
               animationOut: ["animated", "fadeOut"],
               dismiss: {
@@ -561,7 +561,7 @@ export default class Calculations extends Component {
                 error,
               type: "danger",
               insert: "top",
-              container: "top-right",
+              container: "bottom-right",
               animationIn: ["animated", "fadeIn"],
               animationOut: ["animated", "fadeOut"],
               dismiss: {
@@ -783,7 +783,7 @@ export default class Calculations extends Component {
             "Алдаа гарлаа. Бүтээгдэхүүний орцийг шалгах явцад алдаа гарлаа.",
           type: "danger",
           insert: "top",
-          container: "top-right",
+          container: "bottom-right",
           animationIn: ["animated", "fadeIn"],
           animationOut: ["animated", "fadeOut"],
           dismiss: {
@@ -820,7 +820,7 @@ export default class Calculations extends Component {
           message: "Бараа гарах боломжгүй.",
           type: "danger",
           insert: "top",
-          container: "top-right",
+          container: "bottom-right",
           animationIn: ["animated", "fadeIn"],
           animationOut: ["animated", "fadeOut"],
           dismiss: {
@@ -844,7 +844,7 @@ export default class Calculations extends Component {
           message: "Бараа хамгийн ихдээ " + balance_obj['balance'] + " ширхэг гарна.",
           type: "warning",
           insert: "top",
-          container: "top-right",
+          container: "bottom-right",
           animationIn: ["animated", "fadeIn"],
           animationOut: ["animated", "fadeOut"],
           dismiss: {
@@ -893,7 +893,7 @@ export default class Calculations extends Component {
             error,
           type: "danger",
           insert: "top",
-          container: "top-right",
+          container: "bottom-right",
           animationIn: ["animated", "fadeIn"],
           animationOut: ["animated", "fadeOut"],
           dismiss: {
@@ -930,7 +930,7 @@ export default class Calculations extends Component {
             error,
           type: "danger",
           insert: "top",
-          container: "top-right",
+          container: "bottom-right",
           animationIn: ["animated", "fadeIn"],
           animationOut: ["animated", "fadeOut"],
           dismiss: {
@@ -972,7 +972,7 @@ export default class Calculations extends Component {
             error,
           type: "danger",
           insert: "top",
-          container: "top-right",
+          container: "bottom-right",
           animationIn: ["animated", "fadeIn"],
           animationOut: ["animated", "fadeOut"],
           dismiss: {
@@ -1151,7 +1151,7 @@ export default class Calculations extends Component {
               message: "Захиалгын detail амжилттай үүслээ.",
               type: "success",
               insert: "top",
-              container: "top-right",
+              container: "bottom-right",
               animationIn: ["animated", "fadeIn"],
               animationOut: ["animated", "fadeOut"],
               dismiss: {
@@ -1167,7 +1167,7 @@ export default class Calculations extends Component {
                 "Захиалгын detail үүссэнгүй. Системийн инженерт хандана уу.",
               type: "danger",
               insert: "top",
-              container: "top-right",
+              container: "bottom-right",
               animationIn: ["animated", "fadeIn"],
               animationOut: ["animated", "fadeOut"],
               dismiss: {
@@ -1183,7 +1183,7 @@ export default class Calculations extends Component {
           message: "Захиалга үүссэнгүй. Системийн инженерт хандана уу.",
           type: "danger",
           insert: "top",
-          container: "top-right",
+          container: "bottom-right",
           animationIn: ["animated", "fadeIn"],
           animationOut: ["animated", "fadeOut"],
           dismiss: {
@@ -1209,7 +1209,7 @@ export default class Calculations extends Component {
             "Client-ээ сонгоно уу! (ширээний дугаар, өрөөний дугаарыг сонгох шаардлагатай!))",
           type: "danger",
           insert: "top",
-          container: "top-right",
+          container: "bottom-right",
           animationIn: ["animated", "fadeIn"],
           animationOut: ["animated", "fadeOut"],
           dismiss: {
@@ -1223,7 +1223,7 @@ export default class Calculations extends Component {
           message: "Ээлж нээгээгүй байгаа тул захиалга авч болохгүй!",
           type: "danger",
           insert: "top",
-          container: "top-right",
+          container: "bottom-right",
           animationIn: ["animated", "fadeIn"],
           animationOut: ["animated", "fadeOut"],
           dismiss: {
@@ -1238,7 +1238,7 @@ export default class Calculations extends Component {
             "Захиалгын мэдээлэл илгээхэд алдаа гарлаа. Системийн инженерт хандана уу.",
           type: "danger",
           insert: "top",
-          container: "top-right",
+          container: "bottom-right",
           animationIn: ["animated", "fadeIn"],
           animationOut: ["animated", "fadeOut"],
           dismiss: {
@@ -1285,7 +1285,7 @@ export default class Calculations extends Component {
               error,
             type: "danger",
             insert: "top",
-            container: "top-right",
+            container: "bottom-right",
             animationIn: ["animated", "fadeIn"],
             animationOut: ["animated", "fadeOut"],
             dismiss: {
@@ -1376,7 +1376,7 @@ export default class Calculations extends Component {
                 message: "Захиалгын detail амжилттай үүслээ.",
                 type: "success",
                 insert: "top",
-                container: "top-right",
+                container: "bottom-right",
                 animationIn: ["animated", "fadeIn"],
                 animationOut: ["animated", "fadeOut"],
                 dismiss: {
@@ -1392,7 +1392,7 @@ export default class Calculations extends Component {
                   "Захиалгын detail үүссэнгүй. Системийн инженерт хандана уу.",
                 type: "danger",
                 insert: "top",
-                container: "top-right",
+                container: "bottom-right",
                 animationIn: ["animated", "fadeIn"],
                 animationOut: ["animated", "fadeOut"],
                 dismiss: {
@@ -1415,7 +1415,7 @@ export default class Calculations extends Component {
             message: "Захиалга үүссэнгүй. Системийн инженерт хандана уу.",
             type: "danger",
             insert: "top",
-            container: "top-right",
+            container: "bottom-right",
             animationIn: ["animated", "fadeIn"],
             animationOut: ["animated", "fadeOut"],
             dismiss: {
@@ -1437,7 +1437,7 @@ export default class Calculations extends Component {
           message: "Ээлж нээгээгүй байгаа тул захиалга авч болохгүй!",
           type: "danger",
           insert: "top",
-          container: "top-right",
+          container: "bottom-right",
           animationIn: ["animated", "fadeIn"],
           animationOut: ["animated", "fadeOut"],
           dismiss: {
@@ -1452,7 +1452,7 @@ export default class Calculations extends Component {
             "Захиалгын мэдээлэл шинэчлэхэд алдаа гарлаа. Системийн инженерт хандана уу.",
           type: "danger",
           insert: "top",
-          container: "top-right",
+          container: "bottom-right",
           animationIn: ["animated", "fadeIn"],
           animationOut: ["animated", "fadeOut"],
           dismiss: {
@@ -1561,7 +1561,7 @@ export default class Calculations extends Component {
             message: "Баримт амжилттай хэвлэгдлээ.",
             type: "success",
             insert: "top",
-            container: "top-right",
+            container: "bottom-right",
             animationIn: ["animated", "fadeIn"],
             animationOut: ["animated", "fadeOut"],
             dismiss: {
@@ -1576,7 +1576,7 @@ export default class Calculations extends Component {
             message: data['errorCode'],
             type: "danger",
             insert: "top",
-            container: "top-right",
+            container: "bottom-right",
             animationIn: ["animated", "fadeIn"],
             animationOut: ["animated", "fadeOut"],
             dismiss: {
@@ -1630,7 +1630,7 @@ export default class Calculations extends Component {
           message: "Захиалгаа (Order) сонгоно уу!.",
           type: "danger",
           insert: "top",
-          container: "top-right",
+          container: "bottom-right",
           animationIn: ["animated", "fadeIn"],
           animationOut: ["animated", "fadeOut"],
           dismiss: {
@@ -1645,7 +1645,7 @@ export default class Calculations extends Component {
           message: "Үйлчлүүлэгчийн утасны дугаарыг оруулаагүй байна!.",
           type: "danger",
           insert: "top",
-          container: "top-right",
+          container: "bottom-right",
           animationIn: ["animated", "fadeIn"],
           animationOut: ["animated", "fadeOut"],
           dismiss: {
@@ -1682,7 +1682,7 @@ export default class Calculations extends Component {
             error,
           type: "danger",
           insert: "top",
-          container: "top-right",
+          container: "bottom-right",
           animationIn: ["animated", "fadeIn"],
           animationOut: ["animated", "fadeOut"],
           dismiss: {
@@ -1719,7 +1719,7 @@ export default class Calculations extends Component {
             error,
           type: "danger",
           insert: "top",
-          container: "top-right",
+          container: "bottom-right",
           animationIn: ["animated", "fadeIn"],
           animationOut: ["animated", "fadeOut"],
           dismiss: {
@@ -1772,7 +1772,7 @@ export default class Calculations extends Component {
           message: "Захиалгаа (Order) сонгоно уу!.",
           type: "danger",
           insert: "top",
-          container: "top-right",
+          container: "bottom-right",
           animationIn: ["animated", "fadeIn"],
           animationOut: ["animated", "fadeOut"],
           dismiss: {
@@ -1787,7 +1787,7 @@ export default class Calculations extends Component {
           message: "Ажилчны нэрийг оруулаагүй байна!.",
           type: "danger",
           insert: "top",
-          container: "top-right",
+          container: "bottom-right",
           animationIn: ["animated", "fadeIn"],
           animationOut: ["animated", "fadeOut"],
           dismiss: {
@@ -1860,7 +1860,7 @@ export default class Calculations extends Component {
           message: "Ээлжийг амжилттай нээлээ.",
           type: "success",
           insert: "top",
-          container: "top-right",
+          container: "bottom-right",
           animationIn: ["animated", "fadeIn"],
           animationOut: ["animated", "fadeOut"],
           dismiss: {
@@ -1875,7 +1875,7 @@ export default class Calculations extends Component {
           message: "Ээлжийг нээж чадсангүй. Системийн инженерт хандана уу.",
           type: "danger",
           insert: "top",
-          container: "top-right",
+          container: "bottom-right",
           animationIn: ["animated", "fadeIn"],
           animationOut: ["animated", "fadeOut"],
           dismiss: {
@@ -1916,7 +1916,7 @@ export default class Calculations extends Component {
             message: "Ээлжийг амжилттай хаалаа.",
             type: "success",
             insert: "top",
-            container: "top-right",
+            container: "bottom-right",
             animationIn: ["animated", "fadeIn"],
             animationOut: ["animated", "fadeOut"],
             dismiss: {
@@ -1930,7 +1930,7 @@ export default class Calculations extends Component {
             message: "Ээлжийг хааж чадсангүй. Системийн инженерт хандана уу.",
             type: "danger",
             insert: "top",
-            container: "top-right",
+            container: "bottom-right",
             animationIn: ["animated", "fadeIn"],
             animationOut: ["animated", "fadeOut"],
             dismiss: {
@@ -1948,7 +1948,7 @@ export default class Calculations extends Component {
         message: "Ээлжийг нээсэн хүн зөвхөн ээлжийг хаах ёстой!",
         type: "warning",
         insert: "top",
-        container: "top-right",
+        container: "bottom-right",
         animationIn: ["animated", "fadeIn"],
         animationOut: ["animated", "fadeOut"],
         dismiss: {
