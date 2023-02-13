@@ -108,7 +108,7 @@ DATABASES = {
         # 'NAME': 'tesoro_mn',
         'NAME': 'tesoro',
         'USER': 'root',
-        'PASSWORD': '',
+        'PASSWORD': 'Fa90101830#',
         'HOST': 'localhost',
         'PORT': '3306',
     }
