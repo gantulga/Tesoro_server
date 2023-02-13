@@ -138,9 +138,7 @@ urlpatterns = [
     path('api/bill/sendData', payment_views.sendData),
     # path('api/bill/putData', payment_views.putData),
     path('api/bill/createBill', payment_views.createBill),
-    path('api/bill/registerChecker', payment_views.registerChecker),
-    path('api/bill/printBill', payment_views.printBill),
-
+    path('api/bill/registerChecker', payment_views.registerChecker)
 ]
 
 if settings.DEBUG:

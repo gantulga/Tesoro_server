@@ -39,7 +39,7 @@ export default class Keyboard extends Component {
             error,
           type: "danger",
           insert: "top",
-          container: "top-right",
+          container: "bottom-right",
           animationIn: ["animated", "fadeIn"],
           animationOut: ["animated", "fadeOut"],
           dismiss: {
@@ -115,7 +115,7 @@ export default class Keyboard extends Component {
             message: "Гүйлгээний мэдээллийг хадгалах явцад алдаа гарлаа.",
             type: "danger",
             insert: "top",
-            container: "top-right",
+            container: "bottom-right",
             animationIn: ["animated", "fadeIn"],
             animationOut: ["animated", "fadeOut"],
             dismiss: {
@@ -134,7 +134,7 @@ export default class Keyboard extends Component {
           message: "Гүйлгээний мэдээлэл амжилттай хадгалагдлаа!",
           type: "success",
           insert: "top",
-          container: "top-right",
+          container: "bottom-right",
           animationIn: ["animated", "fadeIn"],
           animationOut: ["animated", "fadeOut"],
           dismiss: {
@@ -150,7 +150,7 @@ export default class Keyboard extends Component {
           message: "Дансны мэдээллээ сонгоно уу!",
           type: "danger",
           insert: "top",
-          container: "top-right",
+          container: "bottom-right",
           animationIn: ["animated", "fadeIn"],
           animationOut: ["animated", "fadeOut"],
           dismiss: {
@@ -165,7 +165,7 @@ export default class Keyboard extends Component {
           message: "Гүйлгээний үнийн дүн 0-ээс дээш байх ёстой!",
           type: "danger",
           insert: "top",
-          container: "top-right",
+          container: "bottom-right",
           animationIn: ["animated", "fadeIn"],
           animationOut: ["animated", "fadeOut"],
           dismiss: {
@@ -180,7 +180,7 @@ export default class Keyboard extends Component {
           message: "Захиалгын дугаар сонгогдоогүй байна!",
           type: "danger",
           insert: "top",
-          container: "top-right",
+          container: "bottom-right",
           animationIn: ["animated", "fadeIn"],
           animationOut: ["animated", "fadeOut"],
           dismiss: {
@@ -195,7 +195,7 @@ export default class Keyboard extends Component {
           message: "Ээлжний ажилтан сонгогдоогүй байна!",
           type: "danger",
           insert: "top",
-          container: "top-right",
+          container: "bottom-right",
           animationIn: ["animated", "fadeIn"],
           animationOut: ["animated", "fadeOut"],
           dismiss: {
@@ -211,7 +211,7 @@ export default class Keyboard extends Component {
             "Ээлж нээгээгүй байгаа тул ямар нэгэн гүйлгээ хийх боломжгүй!",
           type: "danger",
           insert: "top",
-          container: "top-right",
+          container: "bottom-right",
           animationIn: ["animated", "fadeIn"],
           animationOut: ["animated", "fadeOut"],
           dismiss: {

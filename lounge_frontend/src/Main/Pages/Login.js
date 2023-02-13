@@ -40,7 +40,7 @@ export default class Login extends Component {
             message: "Нэвтрэх нэр аль эсвэл нууц үг буруу байна!",
             type: "danger",
             insert: "top",
-            container: "top-right",
+            container: "bottom-right",
             animationIn: ["animated", "fadeIn"],
             animationOut: ["animated", "fadeOut"],
             dismiss: {
@@ -54,7 +54,7 @@ export default class Login extends Component {
             message: username + " та амжилттай нэвтэрлээ.",
             type: "success",
             insert: "top",
-            container: "top-right",
+            container: "bottom-right",
             animationIn: ["animated", "fadeIn"],
             animationOut: ["animated", "fadeOut"],
             dismiss: {
@@ -79,7 +79,7 @@ export default class Login extends Component {
             error,
           type: "danger",
           insert: "top",
-          container: "top-right",
+          container: "bottom-right",
           animationIn: ["animated", "fadeIn"],
           animationOut: ["animated", "fadeOut"],
           dismiss: {
@@ -115,7 +115,7 @@ export default class Login extends Component {
           message: "Backend сервертэй холбогдож чадсангүй." + error,
           type: "danger",
           insert: "top",
-          container: "top-right",
+          container: "bottom-right",
           animationIn: ["animated", "fadeIn"],
           animationOut: ["animated", "fadeOut"],
           dismiss: {
@@ -143,7 +143,7 @@ export default class Login extends Component {
           message: "Backend сервертэй холбогдож чадсангүй." + error,
           type: "danger",
           insert: "top",
-          container: "top-right",
+          container: "bottom-right",
           animationIn: ["animated", "fadeIn"],
           animationOut: ["animated", "fadeOut"],
           dismiss: {

@@ -92,7 +92,7 @@ export default class DetialsInformation extends Component {
                   "Хөнгөлөлтийн мэдээлэл амжилттай хадгалагдлаа",
                 type: "success",
                 insert: "top",
-                container: "top-right",
+                container: "bottom-right",
                 animationIn: ["animated", "fadeIn"],
                 animationOut: ["animated", "fadeOut"],
                 dismiss: {
@@ -108,7 +108,7 @@ export default class DetialsInformation extends Component {
                   "Хадгалах явцад алдаа гарлаа системийн инженерт ханадана уу!",
                 type: "danger",
                 insert: "top",
-                container: "top-right",
+                container: "bottom-right",
                 animationIn: ["animated", "fadeIn"],
                 animationOut: ["animated", "fadeOut"],
                 dismiss: {
