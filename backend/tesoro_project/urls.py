@@ -124,6 +124,7 @@ urlpatterns = [
     path('itembalances/shiftworker/<int:shiftworker>', views.itemBalanceShiftWorker, name='itemBalanceShiftWorker'),
     path('addProduct', views.addProduct, name='addProduct'),
     path('addCommodity', views.addCommodity, name='addCommodity'),
+    path('changePriceProduct', views.changePriceProduct, name='changePriceProduct'),
     path('transferProduct', views.transferProduct, name='transferProduct'),
     path('transferCommodity', views.transferCommodity, name='transferCommodity'),
     path('posNegtgel', views.posNegtgel, name='posNegtgel'),

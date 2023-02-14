@@ -110,16 +110,6 @@ def addProduct(request):
 
 
 @never_cache
-def loungeLastShiftReport(request):
-    group = Group.objects.get(pk=2)
-    if group in request.user.groups.all():
-        shift_workers = Shift_work.objects.filter(division=3).order_by('-id')
-        return render(request, 'itemBalance.html', {'all_items':all_items, 'shift_workers':shift_workers, 'shift_worker':shift_worker})
-    else:
-        return redirect('/accounts/login/')
-
-
-@never_cache
 def loungeShiftReport(request, shiftworker):
     group = Group.objects.get(pk=2)
     if group in request.user.groups.all():
@@ -608,3 +598,21 @@ def printer(request):
         return JsonResponse("Done", status=200, safe=False)
     else:
         return JsonResponse("Done", status=404, safe=False)
+
+@never_cache
+def changePriceProduct(request):
+    group = Group.objects.get(pk=2)
+    if group in request.user.groups.all():
+        if request.method == 'POST':
+            for key in request.POST:
+                if key != 'csrfmiddlewaretoken':
+                    value = request.POST[key]
+                    product = Product.objects.get(pk=key)
+                    product.cost = value
+                    product.save()
+            return redirect('/changePriceProduct')
+        else:
+            all_products = Product.objects.all().order_by('id')
+            return render(request, 'changePriceProduct.html', {'all_products':all_products})
+    else:
+        return redirect('/accounts/login/')
