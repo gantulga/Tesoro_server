@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% load static %}
+<div class="pageHeader">
+  ИБАРИМТ ИЛГЭЭХ
+</div>
+<div class="pageBody">
+  <span>Илгээх товчийг дарсан бол буцаах, засах боломжгүйг санаарай!</span>
+  {% if response %}
+  <div style="margin-top: 30px;">{{response}}</div>
+  {% endif %}
+  {% if bills %}
+  <table style="margin-top: 30px;">
+    <tr>
+      <th style="padding: 0 10px;">№</th>
+      <th style="padding: 0 10px;">Огноо</th>
+      <th style="padding: 0 10px;">Дүн</th>
+      <th style="padding: 0 10px;">Төрөл</th>
+      <th style="padding: 0 10px;">Нэр</th>
+      <th style="padding: 0 10px;">Регистер</th>
+      <th style="padding: 0 10px;">Төлөв</th>
+    </tr>
+    {% for bill in bills%}
+    <tr>
+      <td style="padding: 0 10px;">{{forloop.counter}}</td>
+      <td style="padding: 0 10px;">{{bill.date}}</td>
+      <td style="padding: 0 10px; text-align: right;">{{bill.amount}}</td>
+      <td style="padding: 0 10px; text-align: right;">{% if bill.bill_type == '1' %}Хувь хүн{% elif bill.bill_type == '3' %}Байгууллага{% else %}Нэхэмжлэл{% endif %}</td>
+      <td style="padding: 0 10px; text-align: right;">{% if bill.customer_name %}{{bill.customer_name}}{% endif %}</td>
+      <td style="padding: 0 10px; text-align: right;">{% if bill.customer_name %}{{bill.customer_no}}{% endif %}</td>
+      <td style="padding: 0 10px; text-align: right;">
+        {% if bill.status == '0' %}
+          Бэлтгэгдэж байгаа
+        {% elif bill.status == '1' %}
+          Амжилттай илгээгдсэн
+        {% elif bill.status == '2' %}
+          Алдаа гарсан
+        {% elif bill.status == '3' %}
+          Буцаахаар хүсэлт гаргасан
+        {% elif bill.status == '4' %}
+          Амжилттай буцаагдсан
+        {% elif bill.status == '5' %}
+          Дахин илгээгдсэн
+        {% elif bill.status == '6' %}
+          Татварлуу илгээгдсэн
+        {% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+  </table>
+  <form method="POST">
+    {% csrf_token %}
+    <button type="submit" class="defaultBtn">Илгээх</button>
+  </form>
+  {% endif %}
+</div>
+{% endblock %}

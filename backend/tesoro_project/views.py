@@ -30,6 +30,7 @@ import json
 from rest_framework.decorators import api_view
 import socket
 from rest_framework.response import Response
+from payment_app.models import Bill
 
 def home(request):
     group = Group.objects.get(pk=2)
@@ -614,5 +615,24 @@ def changePriceProduct(request):
         else:
             all_products = Product.objects.all().order_by('id')
             return render(request, 'changePriceProduct.html', {'all_products':all_products})
+    else:
+        return redirect('/accounts/login/')
+    
+def sendBillToTatvar(request):
+    group = Group.objects.get(pk=2)
+    if group in request.user.groups.all():
+        if request.method == 'POST':
+            response = requests.get("http://192.168.1.8:8000/api/bill/sendData")
+            bills = Bill.objects.filter(status='1')
+            if response.ok and response.text == "success":
+                for bill in bills:
+                    bill.status = '6'
+                    bill.save()
+            bills = Bill.objects.filter(status='1')
+            
+            return render(request, 'sendBillToTatvar.html', {'bills':bills, 'response':response.text})
+        else:
+            bills = Bill.objects.filter(status='1').order_by('id')
+            return render(request, 'sendBillToTatvar.html', {'bills':bills})
     else:
         return redirect('/accounts/login/')
