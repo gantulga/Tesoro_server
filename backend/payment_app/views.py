@@ -143,8 +143,8 @@ def printBill(bill, printer_number):
         y += 36
         draw.text((270, y), ebarimt_code, fill="black", font=unicode_font_32)
 
-    image.save("media/qrCodes/" + str(bill.id) + "-text.jpg")
-    im = Image.open("media/qrCodes/" + str(bill.id) + "-text.jpg")
+    image.save("/home/tesoro/Tesoro_server/backend/media/qrCodes/" + str(bill.id) + "-text.jpg")
+    im = Image.open("/home/tesoro/Tesoro_server/backend/media/qrCodes/" + str(bill.id) + "-text.jpg")
     # if image is not 1-bit, convert it
     if im.mode != '1':
         im = im.convert('1')
@@ -166,7 +166,7 @@ def printBill(bill, printer_number):
     qr.add_data(data)
     qr_image = qr.make_image()
     qr_image.save('media/qrCodes/' + str(bill.id) + ".jpg")
-    qr_im = Image.open("media/qrCodes/" + str(bill.id) + ".jpg")
+    qr_im = Image.open("/home/tesoro/Tesoro_server/backend/media/qrCodes/" + str(bill.id) + ".jpg")
     # if image is not 1-bit, convert it
     if qr_im.mode != '1':
         qr_im = qr_im.convert('1')
