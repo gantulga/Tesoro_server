@@ -165,7 +165,7 @@ def printBill(bill, printer_number):
     qr = qrcode.QRCode(box_size=5)
     qr.add_data(data)
     qr_image = qr.make_image()
-    qr_image.save('media/qrCodes/' + str(bill.id) + ".jpg")
+    qr_image.save('/home/tesoro/Tesoro_server/backend/media/qrCodes/' + str(bill.id) + ".jpg")
     qr_im = Image.open("/home/tesoro/Tesoro_server/backend/media/qrCodes/" + str(bill.id) + ".jpg")
     # if image is not 1-bit, convert it
     if qr_im.mode != '1':
