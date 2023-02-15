@@ -103,22 +103,22 @@ WSGI_APPLICATION = 'tesoro_project.wsgi.application'
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'tesoro',
-        'USER': 'root',
-        'PASSWORD': 'Fa90101830#',
-        'HOST': 'localhost',
-        'PORT': '3306',
-    }
     # 'default': {
     #     'ENGINE': 'django.db.backends.mysql',
     #     'NAME': 'tesoro',
     #     'USER': 'root',
-    #     'PASSWORD': '',
+    #     'PASSWORD': 'Fa90101830#',
     #     'HOST': 'localhost',
     #     'PORT': '3306',
     # }
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'tesoro',
+        'USER': 'root',
+        'PASSWORD': '',
+        'HOST': 'localhost',
+        'PORT': '3306',
+    }
 }
 
 
@@ -184,12 +184,20 @@ REST_FRAMWORK = {
     'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend')
 }
 
-# CORS_ORIGIN_WHITELIST = [
-#     'http://localhost:3000',
-#     'http://127.0.0.1:3000',
-#     'http://localhost:8000',
-#     'http://127.0.0.1:8000'
-# ]
+CORS_ORIGIN_WHITELIST = [
+    'http://localhost:8000',
+    'http://127.0.0.1:8000',
+    'http://localhost:8001',
+    'http://127.0.0.1:8001',
+    'http://localhost:8002',
+    'http://127.0.0.1:8002',
+    'http://192.168.1.8:8000',
+    'http://192.168.1.8:8001',
+    'http://192.168.1.8:8002',
+    'http://112.72.8.158:8000',
+    'http://112.72.8.158:8001',
+    'http://112.72.8.158:8002'
+]
 
 CORS_ORIGIN_ALLOW_ALL = True
 
@@ -216,12 +224,18 @@ CORS_ALLOW_METHODS = [
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-    'http://localhost:3000',
-    'http://127.0.0.1:3000',
     'http://localhost:8000',
-    'http://127.0.0.1:8000'
-    'http://localhost:5000',
-    'http://127.0.0.1:5000'
+    'http://127.0.0.1:8000',
+    'http://localhost:8001',
+    'http://127.0.0.1:8001',
+    'http://localhost:8002',
+    'http://127.0.0.1:8002',
+    'http://192.168.1.8:8000',
+    'http://192.168.1.8:8001',
+    'http://192.168.1.8:8002',
+    'http://112.72.8.158:8000',
+    'http://112.72.8.158:8001',
+    'http://112.72.8.158:8002'
 ]
 
 DEFAULT_AUTO_FIELD='django.db.models.AutoField'
