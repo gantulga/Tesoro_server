@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% load static %}
+<div class="pageHeader">
+  БАРАА ҮНЭ СОЛИХ
+</div>
+<div class="pageBody">
+  <form method="POST">
+    {% csrf_token %}
+    <table>
+      <tr>
+        <th>№</th>
+        <th>Ангилал</div>
+        <th>Бүтээгдэхүүн</th>
+        <th>Нэгж үнэ</th>
+      </tr>
+    {% for product in all_products %}
+      <tr>
+        <td>{{ forloop.counter }}</td>
+        <td>{{ product.categories.all.0.name }}</td>
+        <td style="padding-left:15px">{{ product.name }}</td>
+        <td>
+          <input type="text" name="{{product.id}}" value="{{product.cost}}"/>
+        </td>
+      </tr>
+    {% endfor %}
+    <tr>
+      <th>№</th>
+      <th>Ангилал</div>
+      <th>Бүтээгдэхүүн</th>
+      <th>Нэгж үнэ</th>
+    </tr>
+  </table>
+    <button type="submit">Үнийг хадагалах</button>
+  </form>
+</div>
+{% endblock %}

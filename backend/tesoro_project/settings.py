@@ -105,13 +105,20 @@ WSGI_APPLICATION = 'tesoro_project.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        # 'NAME': 'tesoro_mn',
         'NAME': 'tesoro',
         'USER': 'root',
         'PASSWORD': 'Fa90101830#',
         'HOST': 'localhost',
         'PORT': '3306',
     }
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.mysql',
+    #     'NAME': 'tesoro',
+    #     'USER': 'root',
+    #     'PASSWORD': '',
+    #     'HOST': 'localhost',
+    #     'PORT': '3306',
+    # }
 }
 
 
