@@ -212,6 +212,7 @@ export default class Calculations extends Component {
     ) {
       addUrl = "";
     }
+
     var url ="http://" + this.props.ip_address + "/api/lounge/orders/" + addUrl;
     fetch(url, {
       method: "GET",
@@ -225,6 +226,7 @@ export default class Calculations extends Component {
         this.setState({
           orders: data,
         });
+        console.log(data)
       })
       .catch((error) => {
         store.addNotification({
