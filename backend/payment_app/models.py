@@ -173,7 +173,7 @@ class Bill(Modifiedinfo):
     date = models.CharField(null=True, blank=True, max_length=255)
     mac_address = models.CharField(null=True, blank=True, max_length=255)
     internal_code = models.CharField(null=True, blank=True, max_length=255)
-    qr_data = models.CharField(null=True, blank=True, max_length=255)
+    qr_data = models.TextField(null=True, blank=True)
     lottery = models.CharField(null=True, blank=True, max_length=255)
     lottery_warning_msg = models.CharField(null=True, blank=True, max_length=255)
 
