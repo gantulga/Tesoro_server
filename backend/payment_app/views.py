@@ -44,11 +44,11 @@ def printBill(bill, printer_number):
     # font = ImageFont.load_default()
 
     
-    unicode_font_22 = ImageFont.truetype("media/roboto.ttf", 22)
-    unicode_font_26 = ImageFont.truetype("media/roboto.ttf", 26)
-    unicode_font_32 = ImageFont.truetype("media/roboto.ttf", 32)
-    unicode_font_36 = ImageFont.truetype("media/roboto.ttf", 36)
-    unicode_font_48 = ImageFont.truetype("media/roboto.ttf", 48)
+    unicode_font_22 = ImageFont.truetype("/home/tesoro/Tesoro_server/backend/media/roboto.ttf", 22)
+    unicode_font_26 = ImageFont.truetype("/home/tesoro/Tesoro_server/backend/media/roboto.ttf", 26)
+    unicode_font_32 = ImageFont.truetype("/home/tesoro/Tesoro_server/backend/media/roboto.ttf", 32)
+    unicode_font_36 = ImageFont.truetype("/home/tesoro/Tesoro_server/backend/media/roboto.ttf", 36)
+    unicode_font_48 = ImageFont.truetype("/home/tesoro/Tesoro_server/backend/media/roboto.ttf", 48)
     y = 0
 
     text = "Tesoro Center"
