@@ -284,7 +284,6 @@ export default class Calculations extends Component {
           });
         });
     } else {
-      console.log("iishee")
       fetch("http://" + this.props.ip_address + "/api/lounge/orderDetials/", {
         method: "GET",
         headers: {
@@ -1194,12 +1193,12 @@ export default class Calculations extends Component {
       }
       if (!haveError) {
         this.printer(orderObj, this.state.orderingList)
-        await this.set_order_information(order);
         await this.setState({
           order_id: order,
           orderingList: [],
         });
       }
+      await this.set_order_information(order);
       await this.getOrderDetialsData();
     } else {
       if (!this.state.division_id || !this.state.table_id) {
@@ -1406,6 +1405,7 @@ export default class Calculations extends Component {
                 orderingList: [],
               });
             }
+            await this.set_order_information(this.state.order_id)
             await this.getOrderDetialsData();
           });
         } else {
