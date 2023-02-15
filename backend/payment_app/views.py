@@ -387,7 +387,7 @@ def putData(order, register, printer_number):
                 # ('4', 'Амжилттай буцаагдсан'),
                 # ('5', 'Дахин илгээгдсэн'),
                 # ('6', 'Татварлуу илгээгдсэн'),
-
+                print(temp['qrData'])
                 bill.status = "1"
                 bill.returnBillId = returnBillId
                 bill.lotteryWarningMsg = lotteryWarningMsg
