@@ -1194,13 +1194,13 @@ export default class Calculations extends Component {
       }
       if (!haveError) {
         this.printer(orderObj, this.state.orderingList)
-        this.set_order_information(order);
+        await this.set_order_information(order);
         await this.setState({
           order_id: order,
           orderingList: [],
         });
       }
-      this.getOrderDetialsData();
+      await this.getOrderDetialsData();
     } else {
       if (!this.state.division_id || !this.state.table_id) {
         store.addNotification({
@@ -1406,7 +1406,7 @@ export default class Calculations extends Component {
                 orderingList: [],
               });
             }
-            this.getOrderDetialsData();
+            await this.getOrderDetialsData();
           });
         } else {
           haveError = true
@@ -1479,11 +1479,11 @@ export default class Calculations extends Component {
     }
   }
 
-  paymentInfoReceiver(status) {
+  async paymentInfoReceiver(status) {
     if (status) {
-      this.getOrdersData();
-      this.getOrderDetialsData();
-      this.getOrderPaymentsData();
+      await this.getOrdersData();
+      await this.getOrderDetialsData();
+      await this.getOrderPaymentsData();
     }
   }
 
