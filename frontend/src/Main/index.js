@@ -18,7 +18,7 @@ export default class index extends Component {
       token: null,
       user: null,
       isAuthenticated: "",
-      ip_address: "192.168.1.8:8000",
+      ip_address: "112.72.8.158:8000",
       nextPath: "default",
     };
   }
