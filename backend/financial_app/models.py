@@ -103,6 +103,8 @@ class Wallet(Createdinfo):
     is_pos = models.BooleanField(default=0)
     parent = models.ForeignKey('self', null=True, blank=True, on_delete=models.PROTECT, related_name="pos_machines")
 
+    def __str__(self):
+        return self.name
 # Төсвийн ангилал
 
 
