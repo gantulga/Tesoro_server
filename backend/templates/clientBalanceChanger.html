@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% load static %}
+<div class="pageHeader">
+  Нэгжийн барааны үлдэгдэл хүчээр солих
+</div>
+<div class="pageBody">
+  <form method="POST">
+    <h3>Тоологддог бүтээгдэхүүн</h3>
+    {% csrf_token %}
+    <table>
+      <tr>
+        <th>№</th>
+        <th>Ангилал</div>
+        <th>Бүтээгдэхүүн</th>
+        <th>Үлдэгдэл</th>
+        <th>Шинэ үлдэгдэл</th>
+      </tr>
+    {% for balance in sh_product_balances %}
+      <tr>
+        <td>{{ forloop.counter }}</td>
+        <td>{{ balance.product.categories.all.0.name }}</td>
+        <td style="padding-left:15px">{{ balance.product.name }}</td>
+        <td style="padding-left:15px">{{ balance.quantity }}</td>
+        <td>
+          <input type="number" name="{{balance.id}}" value="{{balance.quantity}}"/>
+        </td>
+      </tr>
+    {% endfor %}
+  </table>
+  <h3>Граммаар зардаг бүтээгдэхүүн</h3>
+    {% csrf_token %}
+    <table>
+      <tr>
+        <th>№</th>
+        <th>Ангилал</div>
+        <th>Бүтээгдэхүүн</th>
+        <th>Үлдэгдэл</th>
+        <th>Шинэ үлдэгдэл</th>
+      </tr>
+    {% for balance in gr_product_balances %}
+      <tr>
+        <td>{{ forloop.counter }}</td>
+        <td>{{ balance.product.categories.all.0.name }}</td>
+        <td style="padding-left:15px">{{ balance.product.name }}</td>
+        <td style="padding-left:15px">{{ balance.size }}</td>
+        <td>
+          <input type="number" name="{{balance.id}}" value="{{balance.size}}"/>
+        </td>
+      </tr>
+    {% endfor %}
+  </table>
+  <h3>Тоологддог материал</h3>
+    {% csrf_token %}
+    <table>
+      <tr>
+        <th>№</th>
+        <th>Ангилал</div>
+        <th>Бүтээгдэхүүн</th>
+        <th>Үлдэгдэл</th>
+        <th>Шинэ үлдэгдэл</th>
+      </tr>
+    {% for balance in sh_commodity_balances %}
+      <tr>
+        <td>{{ forloop.counter }}</td>
+        <td>{{ balance.commodity.categories.all.0.name }}</td>
+        <td style="padding-left:15px">{{ balance.commodity.name }}</td>
+        <td style="padding-left:15px">{{ balance.quantity }}</td>
+        <td>
+          <input type="number" name="{{balance.id}}" value="{{balance.quantity}}"/>
+        </td>
+      </tr>
+    {% endfor %}
+  </table>
+  <h3>Граммлагддаг материал</h3>
+    {% csrf_token %}
+    <table>
+      <tr>
+        <th>№</th>
+        <th>Ангилал</div>
+        <th>Бүтээгдэхүүн</th>
+        <th>Үлдэгдэл</th>
+        <th>Шинэ үлдэгдэл</th>
+      </tr>
+    {% for balance in gr_commodity_balances %}
+      <tr>
+        <td>{{ forloop.counter }}</td>
+        <td>{{ balance.commodity.categories.all.0.name }}</td>
+        <td style="padding-left:15px">{{ balance.commodity.name }}</td>
+        <td style="padding-left:15px">{{ balance.size }}</td>
+        <td>
+          <input type="number" name="{{balance.id}}" value="{{balance.size}}"/>
+        </td>
+      </tr>
+    {% endfor %}
+  </table>
+    <button type="submit" class="defaultBtn">Үлдэгдлийг хадагалах</button>
+  </form>
+</div>
+{% endblock %}

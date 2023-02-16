@@ -3,6 +3,7 @@ from product_app.models import Product, Item_balance
 from structure_app.models import Client
 from django.shortcuts import render, redirect, get_list_or_404, get_object_or_404
 import math
+from django.contrib.auth.models import Group
 
 def balanceChecker(request, client_id, product_id):
     product = get_object_or_404(Product, pk=product_id)
@@ -47,3 +48,39 @@ def balanceChecker(request, client_id, product_id):
 
     print(balance)
     return JsonResponse({'division': client.division.id, 'client': client.number, 'product': product.name, 'balance':balance})
+
+
+def itemBalanceChanger(request, client_id):
+    group = Group.objects.get(pk=2)
+    if group in request.user.groups.all():
+        if request.method == 'POST':
+            for key in request.POST:
+                if key != 'csrfmiddlewaretoken':
+                    value = request.POST[key]
+                    balance = Item_balance.objects.get(pk=key)
+                    if balance.quantity != None and balance.size == None:
+                        balance.quantity = value
+                        balance.save()
+                    elif balance.quantity == None and balance.size != None:
+                        balance.size = value
+                        balance.save()
+                    else:
+                        print("ш, гр аль нь мэдэгдэхгүй item: ",balance)
+
+            return redirect('/itemBalanceChanger/' + str(client_id))
+        else:
+            # Lounge barmen - 19
+            sh_product_balances = Item_balance.objects.filter(client=client_id, product__isnull=False, quantity__isnull=False)
+            gr_product_balances = Item_balance.objects.filter(client=client_id, product__isnull=False, size__isnull=False)
+            
+            sh_commodity_balances = Item_balance.objects.filter(client=client_id, commodity__isnull=False, quantity__isnull=False)
+            gr_commodity_balances = Item_balance.objects.filter(client=client_id, commodity__isnull=False, size__isnull=False)
+            return render(request, 'clientBalanceChanger.html', {
+                'sh_product_balances':sh_product_balances, 
+                'gr_product_balances':gr_product_balances, 
+                'sh_commodity_balances':sh_commodity_balances, 
+                'gr_commodity_balances':gr_commodity_balances, 
+                })
+    else:
+        return redirect('/accounts/login/')
+    
