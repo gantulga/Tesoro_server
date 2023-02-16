@@ -197,7 +197,7 @@ export default class Calculations extends Component {
     var addUrl;
     if (this.state.division_id !== null && this.state.table_id !== null) {
       addUrl =
-        "?division=" +
+        "&division=" +
         this.state.division_id +
         "&client=" +
         this.state.table_id;
@@ -205,7 +205,7 @@ export default class Calculations extends Component {
       this.state.division_id !== null &&
       this.state.table_id === null
     ) {
-      addUrl = "?division=" + this.state.division_id;
+      addUrl = "&division=" + this.state.division_id;
     } else if (
       this.state.division_id === null &&
       this.state.table_id === null
@@ -213,8 +213,10 @@ export default class Calculations extends Component {
       addUrl = "";
     }
 
-    var url ="http://" + this.props.ip_address + "/api/lounge/orders/" + addUrl;
-    fetch(url, {
+    var url ="http://" + this.props.ip_address + "/api/lounge/orders/?shift_work=" + this.state.shiftWorker.id + addUrl;
+    
+    console.log(url)
+    await fetch(url, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -223,9 +225,10 @@ export default class Calculations extends Component {
     })
       .then(async (response) => {
         const data = await response.json();
-        this.setState({
+        await this.setState({
           orders: data,
         });
+        console.log(this.state.orders)
       })
       .catch((error) => {
         store.addNotification({
