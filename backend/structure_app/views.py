@@ -4,6 +4,9 @@ from product_app.models import Product, Product_category, Item_balance
 from django.db.models import Q
 from structure_app.models import Client, Division
 from django.contrib.auth import get_user_model
+from django.http import JsonResponse
+from .models import Shift_work
+from django.shortcuts import render, redirect, get_list_or_404, get_object_or_404
 import json
 
 User = get_user_model()
@@ -53,3 +56,10 @@ def index(request):
 def index(request):
     
     return HttpResponse('<h1>Page was found</h1>')
+
+def shiftWorkUnpaidOrderChecker(request, shift_work_id):
+    shift_work = get_object_or_404(Shift_work, pk=shift_work_id)
+    can_i_end = True
+    if len(shift_work.orders.filter(worker__isnull=True, customer__isnull=True).exclude(status="Төлбөр гүйцэт төлсөн.")) > 0:
+        can_i_end = False
+    return JsonResponse({"shift_work":shift_work_id, "can_i_end":can_i_end})

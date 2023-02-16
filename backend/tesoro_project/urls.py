@@ -13,7 +13,7 @@ from product_app.api import ItemTransfersViewSet, CommoditiesViewSet, ProductsVi
 from structure_app.api import SettingsViewSet, CustomersViewSet, UsersViewSet, DivisionsViewSet, ClientsViewSet, DivisionClientsViewSet, ShiftWorksViewSet, LastShiftWorkViewSet
 from financial_app.api import FinanceWalletsViewSet, BudgetsViewSet
 from rest_framework.authtoken import views as auth_views
-from structure_app.views import index as structure_app_index
+from structure_app.views import index as structure_app_index, shiftWorkUnpaidOrderChecker
 from django.views.generic.base import TemplateView # new
 from payment_app import views as payment_views
 
@@ -114,6 +114,7 @@ urlpatterns = [
     re_path('^api/lounge/balanceLogs/$', LoungeProductBalanceLogsViewSet.as_view()),
     re_path('^printer/$', views.printer),
     path('api/balanceChecker/<int:client_id>/<int:product_id>', balanceChecker),
+    path('api/shiftWorkUnpaidOrderChecker/<int:shift_work_id>', shiftWorkUnpaidOrderChecker),
 
     # re_path('^api/lounge/division/$', LoungeDivisionsViewSet.as_view()),
     # path('product/', include('product_app.urls')),

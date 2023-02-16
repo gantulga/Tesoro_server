@@ -226,7 +226,6 @@ export default class Calculations extends Component {
         this.setState({
           orders: data,
         });
-        console.log(data)
       })
       .catch((error) => {
         store.addNotification({
@@ -942,7 +941,7 @@ export default class Calculations extends Component {
       });
   }
 
-  async getUnpaidOrdersData() {
+  async getUnpaidOrdersData(id=null) {
     var url
     if(this.state.selected_shiftWorker !== null){
         url = "http://" + this.props.ip_address + "/api/lounge/unpaidOrders/?shift_work=" + this.state.selected_shiftWorker
@@ -1891,58 +1890,109 @@ export default class Calculations extends Component {
     this.getLastShiftWorker();
   }
 
-  async shift_work_close() {
-    if (this.state.shiftWorker.worker.id === getUserId()) {
-      var orderObj = {
-        finished: true,
-      };
-      const url =
-        "http://" +
-        this.props.ip_address +
-        "/api/lounge/shiftWorkUpdate/" +
-        this.state.shiftWorker.id.toString() +
-        "/";
-      await fetch(url, {
-        method: "PATCH",
+  async shiftWorkerUnpaidOrderChecker(id){
+      const turl = "http://" + this.props.ip_address + "/api/shiftWorkUnpaidOrderChecker/" + id.toString()
+      var response = await fetch(turl, {
+        method: "GET",
         headers: {
-          Accept: "application/json",
           "Content-Type": "application/json",
           Authorization: "Token " + this.props.token,
         },
-        withCredentials: true,
-        body: JSON.stringify(orderObj),
-      }).then((results) => {
-        if (results.ok) {
-          store.addNotification({
-            title: "Амжилттай!",
-            message: "Ээлжийг амжилттай хаалаа.",
-            type: "success",
-            insert: "top",
-            container: "bottom-right",
-            animationIn: ["animated", "fadeIn"],
-            animationOut: ["animated", "fadeOut"],
-            dismiss: {
-              duration: 2000,
-              onScreen: true,
-            },
-          });
-        } else {
-          store.addNotification({
-            title: "Амжилтгүй!",
-            message: "Ээлжийг хааж чадсангүй. Системийн инженерт хандана уу.",
-            type: "danger",
-            insert: "top",
-            container: "bottom-right",
-            animationIn: ["animated", "fadeIn"],
-            animationOut: ["animated", "fadeOut"],
-            dismiss: {
-              duration: 2000,
-              onScreen: true,
-            },
-          });
-        }
-        return results;
+      })
+      .then((response) => response.json())
+      .then(async (obj) => {
+        return obj.can_i_end
+      })
+      .catch((error) => {
+        store.addNotification({
+          title: "Анхаар!",
+          message:
+            "Ээлж хаах эрх үүссэн үгүйг шалгах явцад алдаа гарлаа. " +
+            error,
+          type: "danger",
+          insert: "top",
+          container: "bottom-right",
+          animationIn: ["animated", "fadeIn"],
+          animationOut: ["animated", "fadeOut"],
+          dismiss: {
+            duration: 2000,
+            onScreen: true,
+          },
+        });
       });
+
+    return response
+  }
+
+  async shift_work_close() {
+    if (this.state.shiftWorker.worker.id === getUserId()) {
+      var can_i_end = await this.shiftWorkerUnpaidOrderChecker(this.state.shiftWorker.id)
+      if(can_i_end){
+        var orderObj = {
+          finished: true,
+        };
+        const url =
+          "http://" +
+          this.props.ip_address +
+          "/api/lounge/shiftWorkUpdate/" +
+          this.state.shiftWorker.id.toString() +
+          "/";
+        await fetch(url, {
+          method: "PATCH",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            Authorization: "Token " + this.props.token,
+          },
+          withCredentials: true,
+          body: JSON.stringify(orderObj),
+        }).then((results) => {
+          if (results.ok) {
+            store.addNotification({
+              title: "Амжилттай!",
+              message: "Ээлжийг амжилттай хаалаа.",
+              type: "success",
+              insert: "top",
+              container: "bottom-right",
+              animationIn: ["animated", "fadeIn"],
+              animationOut: ["animated", "fadeOut"],
+              dismiss: {
+                duration: 2000,
+                onScreen: true,
+              },
+            });
+          } else {
+            store.addNotification({
+              title: "Амжилтгүй!",
+              message: "Ээлжийг хааж чадсангүй. Системийн инженерт хандана уу.",
+              type: "danger",
+              insert: "top",
+              container: "bottom-right",
+              animationIn: ["animated", "fadeIn"],
+              animationOut: ["animated", "fadeOut"],
+              dismiss: {
+                duration: 2000,
+                onScreen: true,
+              },
+            });
+          }
+          return results;
+        });
+      }else{
+        store.addNotification({
+          title: "Анхаар!",
+          message: "Ээлж хаахад төлбөр төлөгдөөгүй, хүнд харгалзаагүй Order байх ёсгүй!",
+          type: "warning",
+          insert: "top",
+          container: "bottom-right",
+          animationIn: ["animated", "fadeIn"],
+          animationOut: ["animated", "fadeOut"],
+          dismiss: {
+            duration: 2000,
+            onScreen: true,
+          },
+        });
+      }
       this.getLastShiftWorker();
     }else{
       store.addNotification({
