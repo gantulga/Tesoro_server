@@ -72,7 +72,7 @@ class Customer(Createdinfo):
     address2 = models.CharField(null=True, max_length=255, default='')
     workname = models.CharField(null=True, max_length=255, default='')
     workaddress = models.CharField(null=True, max_length=255, default='')
-    mobile = models.IntegerField(blank=True, null=True, default=0)
+    mobile = models.IntegerField(blank=True, null=True, default=0, unique=True)
     phone = models.IntegerField(blank=True, null=True, default=0)
     email = models.EmailField(blank=True, null=True, default=0)
     discount_rate = models.IntegerField(default=0, validators=[MinValueValidator(0), MaxValueValidator(100)], blank=True, null=True)

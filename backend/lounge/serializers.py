@@ -6,6 +6,8 @@ from payment_app.models import Order, Order_detial, Payment
 from structure_app.serializers import CustomersSerializer, ClientsSerializer
 from financial_app.models import Money_transfer, Currency, Money_transfer_type, Wallet
 import json
+import random
+import string
 from django.contrib.auth import get_user_model
 User = get_user_model()
 
@@ -311,10 +313,12 @@ class LoungeOrderUpdateSerializer(serializers.ModelSerializer):
             order.save()
 
         if self.context['request'].data['customer_mobile'] != None and order.customer == None:
-            mobile = self.context['request'].data['customer_mobile']
+            mobile = int(self.context['request'].data['customer_mobile'])
             customer = Customer.objects.filter(mobile=mobile)
             if len(customer) == 0:
-                newCustomer = Customer.objects.create(mobile=self.context['request'].data['customer_mobile'])
+                letters = string.digits
+                register = "RA" + ''.join(random.choice(letters) for i in range(8))
+                newCustomer = Customer.objects.create(mobile=mobile, register=register)
                 if newCustomer:
                     order.customer = newCustomer
                     order.save()
