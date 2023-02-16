@@ -175,4 +175,4 @@ class Shift_work(Createdinfo):
     finished = models.BooleanField(default=0)
 
     def __str__(self):
-        return self.worker.user_name
+        return self.worker.username
