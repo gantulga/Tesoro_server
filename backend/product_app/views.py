@@ -59,10 +59,10 @@ def itemBalanceChanger(request, client_id):
                     value = request.POST[key]
                     balance = Item_balance.objects.get(pk=key)
                     if balance.quantity != None and balance.size == None:
-                        balance.quantity = 0
+                        balance.quantity = value
                         balance.save()
                     elif balance.quantity == None and balance.size != None:
-                        balance.size = 0
+                        balance.size = value
                         balance.save()
                     else:
                         print("ш, гр аль нь мэдэгдэхгүй item: ",balance)
