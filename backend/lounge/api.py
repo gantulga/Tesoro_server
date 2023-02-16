@@ -54,15 +54,15 @@ class LoungeClientsViewSet(generics.ListAPIView):
     filterset_fields = ['division']
 
 class LoungeOrdersViewSet(generics.ListAPIView):
-    lounge_division = Division.objects.get(pk=5)
-    last_shift_work = Shift_work.objects.filter(division=lounge_division.id).order_by('-id')[0]
-    queryset = Order.objects.filter(shift_work=last_shift_work.id)
+    # lounge_division = Division.objects.get(pk=5)
+    # last_shift_work = Shift_work.objects.filter(division=lounge_division.id).order_by('-id')[0]
+    queryset = Order.objects.all()
     permission_classes = [permissions.AllowAny]
     serializer_class = LoungeOrdersSerializer
     authentication_classes = (TokenAuthentication,)
     # permission_classes = (IsAuthenticated,)
     filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['client', 'division', 'status']
+    filterset_fields = ['client', 'division', 'status', 'shift_work']
 
 class LoungeUnpaidOrdersViewSet(generics.ListAPIView):
     queryset = Order.objects.all().exclude(status="Төлбөр гүйцэт төлсөн.")
