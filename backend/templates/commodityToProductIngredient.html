@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% load static %}
+<div class="pageHeader">
+  <h3 style="margin-top: 50px;">Бараа материалын орцийн хүснэгт</h3>
+</div>
+<div class="pageBody">
+    <table>
+      <tr style="border-top: 1px solid black; border-collapse: collapse;">
+        <th>№</th>
+        <th>Бүтээгдэхүүн</div>
+        <th>Хэмжээ</th>
+        <th>Материал</th>
+        <th>Хэмжээ</th>
+        <th>Х/Н</th>
+      </tr>
+    {% for product in products %}
+      {% if product.ingredients.all|length > 0 %}
+        <tr style="border-top: 1px solid black; border-collapse: collapse;">
+          <td>{{ forloop.counter }}</td>
+          <td style="padding-left:15px">{{ product.name }}</td>
+          <td style="padding-left:15px">{% if product.gramm %}{{ product.gramm }}{% endif %}</td>
+          <td style="padding-left:15px">{{ product.ingredients.all.0.commodity.name }}</td>
+          <td style="padding-left:15px">{{ product.ingredients.all.0.size }}</td>
+          <td style="padding-left:15px">{{ product.ingredients.all.0.size_type.abbreviation }}</td>
+        </tr>
+        {% if product.ingredients.all|length > 1 %}
+          {% for ingredient in product.ingredients.all %}
+            {% if forloop.first != product.ingredients.all.0 %}
+              <tr>
+                <td></td>
+                <td style="padding-left:15px"></td>
+                <td style="padding-left:15px"></td>
+                <td style="padding-left:15px">{{ ingredient.commodity.name }}</td>
+                <td style="padding-left:15px">{{ ingredient.size }}</td>
+                <td style="padding-left:15px">{{ ingredient.size_type.abbreviation }}</td>
+              </tr>
+            {% endif %}
+          {% endfor %}
+        {% endif %}
+      {% endif %}
+    {% endfor %}
+  </table>
+  <h3 style="margin-top: 50px;">Материалын орцгүй шууд зарагддаг бүтээгдэхүүнүүд</h3>
+  <p>
+    {% for product in not_ingredient_products %}
+    {{product.name}}<br/>
+    {% endfor %}
+  </p>
+</div>
+{% endblock %}

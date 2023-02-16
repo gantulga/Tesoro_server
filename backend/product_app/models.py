@@ -137,7 +137,7 @@ class Ingredient_product(Createdinfo):
     product = models.ForeignKey(
         'Product', on_delete=models.CASCADE, related_name="ingredients_producted", verbose_name='Бүтээгдэхүүн')
     commodity = models.ForeignKey(
-        'Product', on_delete=models.CASCADE, related_name="ingredients_commoditied", verbose_name='Бүтээгдэхүүнд орох бүтээгдэхүүн')
+        'Product', on_delete=models.CASCADE, related_name="ingredients_commoditied", verbose_name='Бүтээгдэхүүнд орох орц бүтээгдэхүүн')
     size = models.PositiveIntegerField(null=False)
 
     class Meta:

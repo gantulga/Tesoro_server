@@ -18,23 +18,22 @@ from django.views.generic.base import TemplateView # new
 from payment_app import views as payment_views
 
 router = routers.DefaultRouter()
-router.register('hotel/clientlogs', HotelClientLogsViewSet, 'clientlogs') #hotel app
-router.register('hotel/rooms', HotelRoomsViewSet, 'rooms') #hotel app
+
+#HOTEL
+router.register('hotel/clientlogs', HotelClientLogsViewSet, 'clientlogs')
+router.register('hotel/rooms', HotelRoomsViewSet, 'rooms')
+router.register('hotel/beforereceivables', BeforeReceivablesViewSet, 'beforereceivables')
+router.register('hotel/workshiftorders', ShiftOrdersViewSet, 'workshiftorders')
+router.register('hotel/workshiftpayments', ShiftPaymentsViewSet, 'workshiftpayments')
+router.register('hotel/ordersForPayments', HotelOrdersViewSet2, 'ordersForPayments')
+
 # router.register('hotel/orders', HotelOrdersViewSet, 'hotelOrders')
-# router.register('hotel/newRoomOrder',
-#                 HotelOrdersNewHotelViewSet, 'newRoomOrder')
-# router.register('hotel/underpayments',
-#                 UnderpaymentsViewSet, 'hotelUnderpayments')
-router.register('hotel/beforereceivables', BeforeReceivablesViewSet, 'beforereceivables')  #hotel app
-router.register('hotel/workshiftorders', ShiftOrdersViewSet, 'workshiftorders')  #hotel app
-router.register('hotel/workshiftpayments', ShiftPaymentsViewSet, 'workshiftpayments')  #hotel app
+# router.register('hotel/newRoomOrder', HotelOrdersNewHotelViewSet, 'newRoomOrder')
+# router.register('hotel/underpayments', UnderpaymentsViewSet, 'hotelUnderpayments')
 
 # router.register('hotel/orders2', HotelOrdersViewSet4, 'hotelOrders2')
-router.register('hotel/ordersForPayments', HotelOrdersViewSet2, 'ordersForPayments')
-# router.register('hotel/ordersDetials',
-#                 HotelOrderDetialsViewSet, 'hotelOrdersDetials')
-# router.register('hotel/ordersDetials2',
-#                 HotelOrderDetialsViewSet2, 'hotelOrdersDetials2')
+# router.register('hotel/ordersDetials', HotelOrderDetialsViewSet, 'hotelOrdersDetials')
+# router.register('hotel/ordersDetials2', HotelOrderDetialsViewSet2, 'hotelOrdersDetials2')
 # router.register('hotel/products', HotelProductsViewSet, 'hotelProducts')
 # router.register('hotel/payments', HotelPaymentsViewSet, 'hotelPayments')
 # router.register('hotel/shiftWorks', ShiftWorksViewSet, 'shiftWorks')
@@ -46,6 +45,7 @@ router.register('hotel/ordersForPayments', HotelOrdersViewSet2, 'ordersForPaymen
 # router.register('item/transfers', ItemTransfersViewSet, 'itemTransfers')
 # router.register('item/transferTypes', TransferTypesViewSet, 'transferTypes')
 
+#LOUNGE
 router.register('lounge/productCategories', ProductCategoriesViewSet, 'productCategories')
 router.register('lounge/divisions', LoungeDivisionsViewSet, 'divisions')
 router.register('lounge/postOrder', OrderRecieverViewSet, 'postOrder')
@@ -62,12 +62,13 @@ router.register('lounge/loungeMoneyTransferTypes', LoungeMoneyTransferTypesViewS
 router.register('lounge/BarmenProductBalances', BarmenProductBalancesViewSet, 'BarmenProductBalances')
 
 
+#CUSTOM
 router.register('settings', SettingsViewSet, 'settings') #hotel app
 router.register('finance/wallets', FinanceWalletsViewSet, 'wallets')
-# router.register('finance/budgets', BudgetsViewSet, 'budgets')
 router.register('finance/postMoneyTransfer', LoungeMoneyTransferPostViewSet, 'postMoneyTransfer')
 router.register('customers', CustomersViewSet, 'customers')
 router.register('users', UsersViewSet, 'users')
+# router.register('finance/budgets', BudgetsViewSet, 'budgets')
 # router.register('divisions', DivisionsViewSet, 'divisions')
 # router.register('clients', ClientsViewSet, 'clients')
 # router.register('stores', StoresViewSet, 'stores')
@@ -88,23 +89,16 @@ urlpatterns = [
     path('api/', include(router.urls)),
     path('generate_token/', auth_views.obtain_auth_token, name='generate_token'),
     re_path('^api/hotel/ordersForClients/(?P<client>.+)/$', HotelOrdersViewSet3.as_view()),
-
-    # re_path('^api/client/(?P<client>.+)/products/$',
-    #     ClientProductsViewSet.as_view()),
-    # re_path('^api/client/(?P<client>.+)/commodities/$',
-    #     ClientCommoditiesViewSet.as_view()),
-
-    # re_path('^api/user/(?P<user>.+)/products/$',
-    #     UserProductsViewSet.as_view()),
-    # re_path('^api/user/(?P<user>.+)/commodities/$',
-    #     UserCommoditiesViewSet.as_view()),
-
     re_path('^api/division=(?P<division>.+)/clients/$', DivisionClientsViewSet.as_view()), #hotel app
     re_path('^api/division=(?P<division>.+)/item/balances/$', DivisionItemBalancesViewSet.as_view()), #hotel app
     re_path('^api/hotel/shiftWorks/last$', LastShiftWorkViewSet.as_view()), #hotel app
 
+    # re_path('^api/client/(?P<client>.+)/products/$', ClientProductsViewSet.as_view()),
+    # re_path('^api/client/(?P<client>.+)/commodities/$', ClientCommoditiesViewSet.as_view()),
+    # re_path('^api/user/(?P<user>.+)/products/$', UserProductsViewSet.as_view()),
+    # re_path('^api/user/(?P<user>.+)/commodities/$', UserCommoditiesViewSet.as_view()),
 
-
+    #LOUNGE
     re_path('^api/lounge/products/$', LoungeProductsViewSet.as_view()),
     re_path('^api/lounge/clients/$', LoungeClientsViewSet.as_view()),
     re_path('^api/lounge/orders/$', LoungeOrdersViewSet.as_view()),
@@ -112,13 +106,19 @@ urlpatterns = [
     re_path('^api/lounge/orderDetials/$', LoungeOrderDetialsViewSet.as_view()),
     re_path('^api/lounge/orderPayments/$', LoungeOrderPaymentsViewSet.as_view()),
     re_path('^api/lounge/balanceLogs/$', LoungeProductBalanceLogsViewSet.as_view()),
-    re_path('^printer/$', views.printer),
+
+
     path('api/balanceChecker/<int:client_id>/<int:product_id>', balanceChecker),
     path('api/shiftWorkUnpaidOrderChecker/<int:shift_work_id>', shiftWorkUnpaidOrderChecker),
+    path('api/commodityInfo/<int:commodity_id>', views.commodityInformation),
+    path('api/productBalance/<int:client_id>/<int:product_id>', views.productBalance),
+    path('api/commodityBalance/<int:client_id>/<int:commodity_id>', views.commodityBalance),
 
     # re_path('^api/lounge/division/$', LoungeDivisionsViewSet.as_view()),
     # path('product/', include('product_app.urls')),
     # path('basic_asset/', views.Basic_asset_function, name='Basic_asset'),
+
+    #UDIRDLAGA
     path('', views.home, name='home'),
     path('itembalances', views.itemBalance, name='itemBalance'),
     path('loungeItemBalances', views.loungeItemBalances, name='loungeItemBalances'),
@@ -131,20 +131,21 @@ urlpatterns = [
     path('posNegtgel', views.posNegtgel, name='posNegtgel'),
     path('dailyReport', views.dailyReport, name='dailyReport'),
     path('sendBillToTatvar', views.sendBillToTatvar, name='sendBillToTatvar'),
-    path('api/commodityInfo/<int:commodity_id>', views.commodityInformation),
-    path('api/productBalance/<int:client_id>/<int:product_id>', views.productBalance),
-    path('api/commodityBalance/<int:client_id>/<int:commodity_id>', views.commodityBalance),
     path('kitchen', views.kitchenFoods, name='kitchenFoods'),
+    path('productToProductIngredient', views.productToProductIngredient),
+    path('commodityToProductIngredient', views.commodityToProductIngredient),
+    re_path('^printer/$', views.printer),
 
+    #EBARIMT
     path('api/bill/getInformation', payment_views.getInformation),
     path('api/bill/checkApi', payment_views.checkApi),
     path('api/bill/sendData', payment_views.sendData),
-    # path('api/bill/putData', payment_views.putData),
     path('api/bill/createBill', payment_views.createBill),
     path('api/bill/registerChecker', payment_views.registerChecker),
+    # path('api/bill/putData', payment_views.putData),
 
     #tur zuuriin
-    path('itemBalanceChanger/<int:client_id>', itemBalanceChanger)
+    path('itemBalanceChanger/<int:client_id>', itemBalanceChanger) #uil ajillagaa jigdreheer idevhgui bolgoh
 ]
 
 if settings.DEBUG:

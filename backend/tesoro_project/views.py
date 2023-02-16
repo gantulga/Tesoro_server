@@ -636,3 +636,14 @@ def sendBillToTatvar(request):
             return render(request, 'sendBillToTatvar.html', {'bills':bills})
     else:
         return redirect('/accounts/login/')
+    
+
+def productToProductIngredient(request):
+    products = Product.objects.all()
+    return render(request, 'productToProductIngredient.html', {'products':products})
+    
+
+def commodityToProductIngredient(request):
+    products = Product.objects.all()
+    not_ingredient_products = Product.objects.filter(ingredients__isnull=True).exclude(division=3)
+    return render(request, 'commodityToProductIngredient.html', {'products':products, 'not_ingredient_products':not_ingredient_products})

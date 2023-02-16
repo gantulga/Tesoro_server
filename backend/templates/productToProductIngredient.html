@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% load static %}
+<div class="pageHeader">
+  <h3 style="margin-top: 50px;">Бараа барааны орцийн хүснэгт</h3>
+</div>
+<div class="pageBody">
+    <table>
+      <tr style="border-top: 1px solid black; border-collapse: collapse;">
+        <th>№</th>
+        <th>Бүтээгдэхүүн</div>
+        <th>Материал</th>
+        <th>Хэмжээ</th>
+      </tr>
+    {% for product in products %}
+      {% if product.ingredients_producted.all|length > 0 %}
+        <tr style="border-top: 1px solid black; border-collapse: collapse;">
+          <td>{{ forloop.counter }}</td>
+          <td style="padding-left:15px">{{ product.name }}</td>
+          <td style="padding-left:15px">{{ product.ingredients_producted.all.0.commodity.name }}</td>
+          <td style="padding-left:15px">{{ product.ingredients_producted.all.0.size }}</td>
+        </tr>
+        {% if product.ingredients_producted.all|length > 1 %}
+          {% for ingredient in product.ingredients_producted.all %}
+            {% if forloop.first != product.ingredients_producted.all.0 %}
+              <tr>
+                <td></td>
+                <td style="padding-left:15px"></td>
+                <td style="padding-left:15px"></td>
+                <td style="padding-left:15px">{{ ingredient.commodity.name }}</td>
+                <td style="padding-left:15px">{{ ingredient.size }}</td>
+              </tr>
+            {% endif %}
+          {% endfor %}
+        {% endif %}
+      {% endif %}
+    {% endfor %}
+  </table>
+</div>
+{% endblock %}
