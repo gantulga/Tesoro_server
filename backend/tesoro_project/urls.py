@@ -10,7 +10,7 @@ from rest_framework import routers
 from hotel.api import HotelClientLogsViewSet, HotelRoomsViewSet, HotelOrdersViewSet, HotelOrdersViewSet2, HotelOrdersViewSet3, HotelOrdersViewSet4, HotelOrderDetialsViewSet, HotelPaymentsViewSet, HotelProductsViewSet, HotelOrderDetialsViewSet2, UnderpaymentsViewSet, HotelOrdersNewHotelViewSet, BeforeReceivablesViewSet, ShiftOrdersViewSet, ShiftPaymentsViewSet
 from lounge.api import ProductCategoriesViewSet, LoungeProductsViewSet, LoungeDivisionsViewSet, LoungeClientsViewSet, LoungeOrdersViewSet, LoungeOrderDetialsViewSet, LoungeOrderPaymentsViewSet, OrderRecieverViewSet, OrderDetailRecieverViewSet, LoungeShiftWorksViewSet, LoungeLastShiftWorksViewSet, LoungePaymentsViewSet, LoungeOrderUpdateViewSet, unSafe_WorkersViewSet, LoungeUnderPaymentsViewSet, LoungeMoneyTransfersViewSet, LoungeMoneyTransferTypesViewSet, LoungeMoneyTransferPostViewSet, BarmenProductBalancesViewSet, LoungeLastShiftWorkUpdateViewSet, LoungeProductBalanceLogsViewSet, LoungeUnpaidOrdersViewSet
 from product_app.api import ItemTransfersViewSet, CommoditiesViewSet, ProductsViewSet, StoresViewSet, TransferTypesViewSet, ClientProductsViewSet, ClientCommoditiesViewSet, UserProductsViewSet, UserCommoditiesViewSet, BalancesViewSet, DivisionItemBalancesViewSet
-from structure_app.api import SettingsViewSet, CustomersViewSet, UsersViewSet, DivisionsViewSet, ClientsViewSet, DivisionClientsViewSet, ShiftWorksViewSet, LastShiftWorkViewSet
+from structure_app.api import SettingsViewSet, CustomersViewSet, UsersViewSet, DivisionsViewSet, ClientsViewSet, DivisionClientsViewSet, ShiftWorksViewSet, LastShiftWorkViewSet, ErrorListViewSet
 from financial_app.api import FinanceWalletsViewSet, BudgetsViewSet
 from rest_framework.authtoken import views as auth_views
 from structure_app.views import index as structure_app_index, shiftWorkUnpaidOrderChecker
@@ -68,6 +68,7 @@ router.register('finance/wallets', FinanceWalletsViewSet, 'wallets')
 router.register('finance/postMoneyTransfer', LoungeMoneyTransferPostViewSet, 'postMoneyTransfer')
 router.register('customers', CustomersViewSet, 'customers')
 router.register('users', UsersViewSet, 'users')
+router.register('error', ErrorListViewSet, 'error')
 # router.register('finance/budgets', BudgetsViewSet, 'budgets')
 # router.register('divisions', DivisionsViewSet, 'divisions')
 # router.register('clients', ClientsViewSet, 'clients')

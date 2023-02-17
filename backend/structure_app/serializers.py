@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Configuration_value, Customer, Division, Client, Shift_work
+from .models import Configuration_value, Customer, Division, Client, Shift_work, Error_list
 from payment_app.models import Order, Order_detial, Payment
 from product_app.models import Item_balance, Item_balance_log
 from financial_app.models import Wallet, Money_transfer, Money_transfer_type, Currency
@@ -38,7 +38,6 @@ class DivisionsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Division
         fields = '__all__'
-
 
 class ClientsSerializer(serializers.ModelSerializer):
     class Meta:
@@ -114,3 +113,10 @@ class ShiftWorksSerializer(serializers.ModelSerializer):
                         user=validated_data.get('worker')
                     )
         return instance
+
+
+
+class ErrorListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Error_list
+        fields = '__all__'

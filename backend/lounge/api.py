@@ -74,8 +74,8 @@ class LoungeUnpaidOrdersViewSet(generics.ListAPIView):
     filterset_fields = ['shift_work']
 
 class LoungeOrderDetialsViewSet(generics.ListAPIView):
-    lounge_division = Division.objects.get(pk=5)
-    last_shift_work = Shift_work.objects.filter(division=lounge_division.id).order_by('-id')[0]
+    # lounge_division = Division.objects.get(pk=5)
+    # last_shift_work = Shift_work.objects.filter(division=lounge_division.id).order_by('-id')[0]
     # queryset = Order_detial.objects.filter(shift_work=last_shift_work.id)
     queryset = Order_detial.objects.all()
 

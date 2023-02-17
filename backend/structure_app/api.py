@@ -1,6 +1,6 @@
-from .models import Configuration_value, Customer, Division, Client, Shift_work
+from .models import Configuration_value, Customer, Division, Client, Shift_work, Error_list
 from rest_framework import viewsets, permissions, generics
-from .serializers import SettingsSerializer, CustomersSerializer, UsersSerializer, DivisionsSerializer, ClientsSerializer, ShiftWorksSerializer
+from .serializers import SettingsSerializer, CustomersSerializer, UsersSerializer, DivisionsSerializer, ClientsSerializer, ShiftWorksSerializer, ErrorListSerializer
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth.models import User
@@ -80,3 +80,9 @@ class LastShiftWorkViewSet(generics.ListAPIView):
     def get_queryset(self):
         queryset = Shift_work.objects.filter(division=3).order_by('-id')[:1]
         return queryset
+    
+class ErrorListViewSet(viewsets.ModelViewSet):
+    queryset = Error_list.objects.all()
+    serializer_class = ErrorListSerializer
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = [permissions.AllowAny]

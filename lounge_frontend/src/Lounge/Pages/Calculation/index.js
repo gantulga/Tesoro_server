@@ -93,6 +93,25 @@ export default class Calculations extends Component {
     this.print_bill = this.print_bill.bind(this)
   }
 
+  sendError(error){
+    var myHeaders = new Headers();
+    error = "shift_work: " + this.state.shiftWorker.id + ", user_id: " + getUserId() + ", error: " + error
+    myHeaders.append("Content-Type", "application/json");
+    var raw = "{\"error_value\": \"" + error.toString() + "\"}";
+
+    var requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: raw,
+      redirect: 'follow'
+    };
+
+    fetch("http://" + this.props.ip_address + "/api/error/", requestOptions)
+      .then(response => response.text())
+      .then(result => console.log(result))
+      .catch(error => console.log('error', error));
+  }
+
   async getWorkersData() {
     await fetch("http://" + this.props.ip_address + "/api/users/", {
       method: "GET",
@@ -108,9 +127,7 @@ export default class Calculations extends Component {
       .catch((error) => {
         store.addNotification({
           title: "Анхаар!",
-          message:
-            "Үйлчилүүлэгчдийн мэдээллийг сервер чадсангүй. Системийн инженерт хандаж хэлнэ үү. " +
-            error,
+          message: "Үйлчилүүлэгчдийн мэдээллийг серверээс татаж чадсангүй. Системийн инженерт хандаж хэлнэ үү. " + error,
           type: "danger",
           insert: "top",
           container: "bottom-right",
@@ -121,7 +138,8 @@ export default class Calculations extends Component {
             onScreen: true,
           },
         });
-      });
+        this.sendError("fetchError, getWorkersData")
+    });
   }
 
   async getCategoriesData() {
@@ -157,6 +175,8 @@ export default class Calculations extends Component {
             onScreen: true,
           },
         });
+        
+        this.sendError("fetchError, getCategoriesData")
       });
   }
 
@@ -190,6 +210,8 @@ export default class Calculations extends Component {
             onScreen: true,
           },
         });
+        
+        this.sendError("fetchError, getLastShiftWorker")
       });
   }
 
@@ -215,7 +237,6 @@ export default class Calculations extends Component {
 
     var url ="http://" + this.props.ip_address + "/api/lounge/orders/?shift_work=" + this.state.shiftWorker.id + addUrl;
     
-    console.log(url)
     await fetch(url, {
       method: "GET",
       headers: {
@@ -246,6 +267,8 @@ export default class Calculations extends Component {
             onScreen: true,
           },
         });
+        
+        this.sendError("fetchError, getOrdersData")
       });
   }
 
@@ -286,6 +309,8 @@ export default class Calculations extends Component {
               onScreen: true,
             },
           });
+          
+          this.sendError("fetchError, getOrderDetialsData - 1")
         });
     } else {
       fetch("http://" + this.props.ip_address + "/api/lounge/orderDetials/", {
@@ -317,6 +342,7 @@ export default class Calculations extends Component {
               onScreen: true,
             },
           });
+          this.sendError("fetchError, getOrderDetialsData - 2")
         });
     }
   }
@@ -358,6 +384,7 @@ export default class Calculations extends Component {
               onScreen: true,
             },
           });
+          this.sendError("fetchError, getOrderPaymentsData")
         });
       } 
     // else {
@@ -424,6 +451,7 @@ export default class Calculations extends Component {
             onScreen: true,
           },
         });
+        this.sendError("fetchError, getDivisionsData")
       });
   }
 
@@ -463,6 +491,7 @@ export default class Calculations extends Component {
             onScreen: true,
           },
         });
+        this.sendError("fetchError, getClientsData")
       });
   }
 
@@ -498,6 +527,7 @@ export default class Calculations extends Component {
               onScreen: true,
             },
           });
+          this.sendError("fetchError, getProductsData - 1")
         });
     } else {
       if (this.state.sel_parent_cat != null && this.state.sel_cat == null) {
@@ -535,6 +565,7 @@ export default class Calculations extends Component {
                 onScreen: true,
               },
             });
+            this.sendError("fetchError, getProductsData - 2")
           });
       }
       if (this.state.sel_cat != null) {
@@ -572,6 +603,7 @@ export default class Calculations extends Component {
                 onScreen: true,
               },
             });
+            this.sendError("fetchError, getProductsData - 3")
           });
       }
     }
@@ -794,6 +826,7 @@ export default class Calculations extends Component {
             onScreen: true,
           },
         });
+        this.sendError("fetchError, checkBalance")
       });
 
     return response
@@ -831,6 +864,7 @@ export default class Calculations extends Component {
             onScreen: true,
           },
         });
+        this.sendError("fetchError, product_plus - 1")
       }
     } else {
       if(balance_obj['balance'] > this.state.orderingList[index].quantity){
@@ -855,6 +889,7 @@ export default class Calculations extends Component {
             onScreen: true,
           },
         });
+        this.sendError("fetchError, product_plus - 2")
       }
     }
   }
@@ -904,6 +939,7 @@ export default class Calculations extends Component {
             onScreen: true,
           },
         });
+        this.sendError("fetchError, getProductBalancesData")
       });
   }
 
@@ -941,6 +977,7 @@ export default class Calculations extends Component {
             onScreen: true,
           },
         });
+        this.sendError("fetchError, getMTransfersData")
       });
   }
 
@@ -983,6 +1020,7 @@ export default class Calculations extends Component {
             onScreen: true,
           },
         });
+        this.sendError("fetchError, getUnpaidOrdersData")
       });
   }
 
@@ -1162,6 +1200,7 @@ export default class Calculations extends Component {
                 onScreen: true,
               },
             });
+            this.sendError("fetchError, doOrderButton - 1")
           } else {
             haveError = true;
             store.addNotification({
@@ -1178,6 +1217,7 @@ export default class Calculations extends Component {
                 onScreen: true,
               },
             });
+            this.sendError("fetchError, doOrderButton - 2")
           }
         });
       } else {
@@ -1194,6 +1234,7 @@ export default class Calculations extends Component {
             onScreen: true,
           },
         });
+        this.sendError("fetchError, doOrderButton - 3")
       }
       if (!haveError) {
         this.printer(orderObj, this.state.orderingList)
@@ -1249,6 +1290,7 @@ export default class Calculations extends Component {
             onScreen: true,
           },
         });
+        this.sendError("fetchError, doOrderButton - 4")
       }
     }
   }
@@ -1296,6 +1338,7 @@ export default class Calculations extends Component {
               onScreen: true,
             },
           });
+          this.sendError("fetchError, updateOrderButton - 1")
         });
       if (getOrderStatus) {
         orderData.amount = parseInt(orderData.amount);
@@ -1403,6 +1446,7 @@ export default class Calculations extends Component {
                   onScreen: true,
                 },
               });
+              this.sendError("fetchError, updateOrderButton - 2")
             }
             if (!haveError) {
               await this.setState({
@@ -1427,6 +1471,7 @@ export default class Calculations extends Component {
               onScreen: true,
             },
           });
+          this.sendError("fetchError, updateOrderButton - 3")
         }
         var orderObj = {
           client: this.state.table_id,
@@ -1588,6 +1633,7 @@ export default class Calculations extends Component {
               onScreen: true,
             },
           });
+          this.sendError("fetchError, print_bill")
         }
       })
     }
@@ -1694,6 +1740,7 @@ export default class Calculations extends Component {
             onScreen: true,
           },
         });
+        this.sendError("fetchError, getPrevBalancesData")
       });
   }
 
@@ -1731,6 +1778,7 @@ export default class Calculations extends Component {
             onScreen: true,
           },
         });
+        this.sendError("fetchError, getShiftWorksData")
       });
   }
 
@@ -1887,6 +1935,7 @@ export default class Calculations extends Component {
             onScreen: true,
           },
         });
+        this.sendError("fetchError, shift_work_open")
       }
       return results;
     });
@@ -1922,6 +1971,7 @@ export default class Calculations extends Component {
             onScreen: true,
           },
         });
+        this.sendError("fetchError, shiftWorkerUnpaidOrderChecker")
       });
 
     return response
@@ -1978,6 +2028,7 @@ export default class Calculations extends Component {
                 onScreen: true,
               },
             });
+            this.sendError("fetchError, shift_work_close - 1")
           }
           return results;
         });

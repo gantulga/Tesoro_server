@@ -116,8 +116,7 @@ class OrderDetailRecieverSerializer(serializers.ModelSerializer):
         last_notFinished_shiftWork = Shift_work.objects.filter(
             finished=False, division=division).order_by('-id')[0]
         if last_notFinished_shiftWork:
-            detial = Order_detial.objects.create(
-                **validated_data)
+            detial = Order_detial.objects.create(**validated_data)
             if detial:
                 itemTransferType = Item_transfer_type.objects.get(pk=3)
                 itemTransferType4 = Item_transfer_type.objects.get(pk=4)
