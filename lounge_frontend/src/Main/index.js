@@ -22,6 +22,8 @@ export default class index extends Component {
       nextPath: "default",
     };
   }
+  // ip_address: "127.0.0.1:8000",
+  // ip_address: "112.72.8.158:8000",
 
   async signIn(username, token) {
     await setUserSession(token, username, this.state.ip_address);

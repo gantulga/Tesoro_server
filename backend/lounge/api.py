@@ -29,9 +29,10 @@ class LoungeProductsViewSet(generics.ListAPIView):
     serializer_class = ProductsSerializer
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
+    # permission_classes = [permissions.AllowAny]
     filter_backends = [SearchFilter, OrderingFilter, DjangoFilterBackend]
     filterset_fields = ['categories', 'categories__parent']
-    search_fields = ['name']
+    search_fields = ['name', 'cost']
 
 
 class LoungeDivisionsViewSet(viewsets.ModelViewSet):

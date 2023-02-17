@@ -33,6 +33,23 @@ export default class ProductList extends Component {
                         return null;
                     }
                     })}
+                    <input 
+                        placeholder='Хайлт' 
+                        className="searchProductInput"
+                        type="text"
+                        name="searching_value"
+                        value={this.props.searching_value}
+                        onChange={(e) => this.props.searchingProduct(e, "input")}
+                    />
+                    <button
+                        type="button"
+                        onClick={() => {
+                            this.props.clearFilter()
+                        }}
+                        className="refreshBtn"
+                    >
+                        <i className="fas fa-refresh"></i>
+                    </button>
                 </div>
                 <div className="body-side" ref={this.bodyRef}>
                     <div className="child-cat">

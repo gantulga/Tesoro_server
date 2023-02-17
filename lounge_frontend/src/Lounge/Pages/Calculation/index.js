@@ -12,24 +12,34 @@ import Clients from "./Components/Clients";
 import Order from "./Components/Order";
 import Orders from "./Components/Orders";
 import Ebarimt from "./Components/Modals/Ebarimt";
+import Dashboard from "./Components/Dashboard";
 
 export default class Calculations extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      user_id: getUserId(),
       categories: [],
       products: [],
       clients: [],
       divisions: [],
       orders: [],
+      underPaymentOrders: [],
       order_detials: [],
       order_payments: [],
       orderingList: [],
       shiftWorkers: [],
       unpaidOrders: [],
+      productBalances: [],
+      prevProductBalances: [],
+      selected_shiftWorker: null,
+      mTransfersData: [],
+      workersData: [],
+
       shiftWorker: null,
       sel_parent_cat: null,
       sel_cat: null,
+      show_dashboard: true,
       show_tables: false,
       show_orders: false,
       show_order: false,
@@ -39,28 +49,24 @@ export default class Calculations extends Component {
       show_ebarimt: false,
       show_unpaidOrders: false,
       show_addProducts: false,
+      keyboardBoxShow: false,
+      productBoxShow: false,
+      show_money_transfer_modal: false,
+      show_product_balances_modal: false,
+
       table_id: null,
       table_number: null,
       order_id: null,
       order_amount: null,
       division_id: null,
-      keyboardBoxShow: false,
-      productBoxShow: false,
-      user_id: getUserId(),
-      workersData: [],
-      customer_mobile: "",
       worker_id: null,
       order_information: null,
-      session_secund: 60,
-
-      show_money_transfer_modal: false,
-      show_product_balances_modal: false,
-      productBalances: [],
-      prevProductBalances: [],
-      selected_shiftWorker: null,
-      mTransfersData: [],
       company_register: null,
-      company_register_status: "0"
+
+      session_secund: 60,
+      company_register_status: "0",
+      searching_value: "",
+      customer_mobile: ""
     };
     this.set_parent_cat = this.set_parent_cat.bind(this);
     this.set_cat = this.set_cat.bind(this);
@@ -249,7 +255,6 @@ export default class Calculations extends Component {
         await this.setState({
           orders: data,
         });
-        console.log(this.state.orders)
       })
       .catch((error) => {
         store.addNotification({
@@ -495,10 +500,37 @@ export default class Calculations extends Component {
       });
   }
 
+  async clearFilter(){
+    await this.setState({
+      searching_value: "",
+      sel_parent_cat: null,
+      sel_cat: null
+    });
+    this.getProductsData()
+  }
+
+  async searchingProduct(e, vtype){
+    if(vtype === "input"){
+      e.persist();
+      e = e.target.value
+    }
+    
+    await this.setState({
+      searching_value: e,
+      sel_parent_cat: null,
+      sel_cat: null
+    });
+    this.getProductsData()
+  }
+
   async getProductsData() {
     var url;
     if (this.state.sel_parent_cat == null && this.state.sel_cat == null) {
-      fetch("http://" + this.props.ip_address + "/api/lounge/products/", {
+      url = "http://" + this.props.ip_address + "/api/lounge/products/"
+      if(this.state.searching_value !== ""){
+        url = url + "?search=" + this.state.searching_value
+      }
+      fetch(url, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -536,6 +568,9 @@ export default class Calculations extends Component {
           this.props.ip_address +
           "/api/lounge/products/?categories=" +
           this.state.sel_parent_cat.toString();
+        if(this.state.searching_value !== ""){
+          url = url + "&search=" + this.state.searching_value
+        }
         fetch(url, {
           method: "GET",
           headers: {
@@ -574,6 +609,10 @@ export default class Calculations extends Component {
           this.props.ip_address +
           "/api/lounge/products/?categories=" +
           this.state.sel_cat.toString();
+        
+        if(this.state.searching_value !== ""){
+          url = url + "&search=" + this.state.searching_value
+        }
         fetch(url, {
           method: "GET",
           headers: {
@@ -613,6 +652,7 @@ export default class Calculations extends Component {
     await this.setState({
       sel_parent_cat: e,
       sel_cat: null,
+      searching_value: ""
     });
     await this.getProductsData();
   }
@@ -620,12 +660,30 @@ export default class Calculations extends Component {
   async set_cat(e) {
     await this.setState({
       sel_cat: e,
+      searching_value: ""
     });
     await this.getProductsData();
   }
 
+  async show_dashboard() {
+    await this.getUnderPaymentOrders()
+    await this.setState({
+      show_dashboard: true,
+      show_tables: false,
+      show_order: false,
+      show_orders: false,
+      show_payment: false,
+      show_detial: false,
+      keyboardBoxShow: false,
+      show_customer: false,
+      show_ebarimt: false,
+      order_information: null,
+    });
+  }
+
   async show_tables() {
     await this.setState({
+      show_dashboard: false,
       show_tables: true,
       show_order: false,
       show_orders: false,
@@ -640,6 +698,7 @@ export default class Calculations extends Component {
 
   async show_orders() {
     await this.setState({
+      show_dashboard: false,
       show_tables: false,
       show_order: false,
       show_orders: true,
@@ -660,6 +719,7 @@ export default class Calculations extends Component {
 
   async show_order() {
     await this.setState({
+      show_dashboard: false,
       show_tables: false,
       show_order: true,
       show_orders: false,
@@ -689,6 +749,7 @@ export default class Calculations extends Component {
 
   async show_payment() {
     await this.setState({
+      show_dashboard: false,
       show_tables: false,
       show_order: false,
       show_orders: false,
@@ -702,6 +763,7 @@ export default class Calculations extends Component {
 
   async show_detial(index) {
     await this.setState({
+      show_dashboard: false,
       show_tables: false,
       show_order: true,
       show_orders: false,
@@ -729,6 +791,7 @@ export default class Calculations extends Component {
       table_id: id,
       table_number: number,
       order_id: null,
+      show_dashboard: false,
       show_tables: false,
       show_orders: true,
       show_order: false,
@@ -743,6 +806,7 @@ export default class Calculations extends Component {
       order_id: id,
       order_amount: amount,
       show_orders: false,
+      show_dashboard: false,
       show_tables: false,
       show_order: true,
       keyboardBoxShow: true,
@@ -794,6 +858,38 @@ export default class Calculations extends Component {
       }
     }
     return -1; //to handle the case where the value doesn't exist
+  }
+
+  async getUnderPaymentOrders() {
+    await fetch(
+      "http://" + this.props.ip_address + "/api/lounge/loungeUnderPayments/",
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    )
+      .then((response) => response.json())
+      .then(async (orders) => {
+        await this.setState({ underPaymentOrders: orders });
+        console.log(this.state.underPaymentOrders)
+      })
+      .catch((error) => {
+        store.addNotification({
+          title: "Анхаар!",
+          message: "Backend сервертэй холбогдож чадсангүй." + error,
+          type: "danger",
+          insert: "top",
+          container: "bottom-right",
+          animationIn: ["animated", "fadeIn"],
+          animationOut: ["animated", "fadeOut"],
+          dismiss: {
+            duration: 5000,
+            onScreen: true,
+          },
+        });
+      });
   }
 
   async checkBalance(id) {
@@ -895,6 +991,7 @@ export default class Calculations extends Component {
   }
 
   UNSAFE_componentWillMount() {
+    this.getUnderPaymentOrders();
     this.getCategoriesData();
     this.getProductsData();
     this.getDivisionsData();
@@ -2184,6 +2281,12 @@ export default class Calculations extends Component {
           </div>
         </div>
         <div className="main">
+          <Dashboard
+            show_modal={this.state.show_dashboard}
+            orders={this.state.underPaymentOrders}
+            set_order={this.set_order}
+            {...this.props}
+          />
           <Clients
             modalHide={this.modalHide.bind(this)}
             show_modal={this.state.show_tables}
@@ -2229,6 +2332,9 @@ export default class Calculations extends Component {
             show_customer={this.show_customer.bind(this)}
             show_ebarimt={this.show_ebarimt.bind(this)}
             passenger={this.customerChanger}
+            searchingProduct={this.searchingProduct.bind(this)}
+            searching_value={this.state.searching_value}
+            clearFilter={this.clearFilter.bind(this)}
 
             categories={this.state.categories}
             products={this.state.products}
@@ -2248,8 +2354,11 @@ export default class Calculations extends Component {
           />
         </div>
         <div className="footer">
-          <button className="d-inline-block per" onClick={() => this.show_tables()}>
+          <button className="d-inline-block per" onClick={() => this.show_dashboard()}>
               <i className="fa fa-home" />
+          </button>
+          <button className="d-inline-block per" onClick={() => this.show_tables()}>
+              <i className="fa fa-map-marker" />
           </button>
           <button className="d-inline-block per" onClick={() => this.show_orders()}>
               <i className="fas fa-bars" />

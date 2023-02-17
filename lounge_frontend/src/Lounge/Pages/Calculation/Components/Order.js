@@ -184,7 +184,7 @@ export default class componentName extends Component {
                 {this.props.order_detials.map((detial, index)=>{
                   product_index = product_index + 1
                   return (
-                    <button className="order" key={index}>
+                    <button className="order" key={index} onClick={()=>{this.props.searchingProduct(detial.product.name, "text")}}>
                       <div className="white">
                         <div className="field index">
                           {index + 1}
@@ -211,7 +211,7 @@ export default class componentName extends Component {
                   /* Show OrderingList */
                   this.props.orderingList.map((detial, index) => {
                     return (
-                      <button className="order new" key={index}>
+                      <button className="order new" key={index} onClick={()=>{this.props.searchingProduct(detial.name, "text")}}>
                         <div className="white">
                           <div className="field index">
                             {index + 1 + product_index}

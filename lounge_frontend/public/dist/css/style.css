@@ -1615,3 +1615,99 @@
 .ebarimt .status.green{
   color: #028602;
 }
+
+.searchProductInput {
+  padding: 5px 20px;
+  border-radius: 17px;
+  border: none;
+  outline: none;
+  background: #ffc5aa;
+  width: 180px;
+}
+
+.refreshBtn {
+  background: #28a745 !important;
+  color: #fff !important;
+  margin-left: 10px;
+}
+
+.dashboard {
+  padding: 10px 15px !important;
+}
+
+.dashboard .dashboard-body {
+  column-count: 3;
+  column-gap: 20px;
+}
+
+.dashboard figure {
+  margin: 0;
+  display: grid;
+  grid-template-rows: 1fr auto;
+  margin-bottom: 20px;
+  break-inside: avoid;
+  background: #fff;
+  border-radius: 15px;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.dashboard figure .address{
+  padding: 5px 15px;
+  color: #fff;
+  font-weight: 600;
+}
+
+.dashboard figure .address.lounge{
+  background: #ff5f15;
+}
+
+.dashboard figure .address.hotel{
+  background: #28a745;
+}
+
+.dashboard figure .address.karaoke{
+  background: #17a2b8;
+}
+
+.dashboard figure .address.restaurant{
+  background: #3a17b8;
+}
+
+.dashboard figure .address.office{
+  background: #b81747;
+}
+
+.dashboard figure .details{
+  width: 100%;
+  padding: 15px;
+}
+
+.dashboard figure .detail{
+  width: 100%;
+}
+
+.dashboard figure .detail .product{
+  width: calc(100% - 140px);
+  text-align: left;
+  display: inline-block;
+}
+
+.dashboard figure .detail .quantity{
+  width: 40px;
+  text-align: right;
+  display: inline-block;
+}
+
+.dashboard figure .detail .subtotal{
+  width: 100px;
+  text-align: right;
+  display: inline-block;
+}
+
+.dashboard figure .amount{
+  background: #e7e7e7;
+  padding: 5px 15px;
+  font-weight: 600;
+  text-align: right;
+}

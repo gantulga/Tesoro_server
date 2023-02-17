@@ -245,7 +245,7 @@ export default class Keyboard extends Component {
           type="text"
           name="moneyValue"
           value={this.state.moneyValue ? this.state.moneyValue.replace(/\B(?=(\d{3})+(?!\d))/g, ",") : 0}
-          onChange={(e) => console.log(e.target.value)}
+          onChange={(e) => console.log(e.target.value)} 
         />
         <div className="keyboard">
           <div className="too">
