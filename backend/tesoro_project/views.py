@@ -585,7 +585,7 @@ def printer(request):
         unicode_font_22 = ImageFont.truetype("/home/tesoro/Tesoro_server/backend/media/roboto.ttf", 22)
         y = 0
         
-        date = date + " - Дугаар: " + bill_number
+        date = date + " - Дугаар: " + str(bill_number)
         y = y + 30
         draw.text((30, y), date, fill="black", font=unicode_font_22)
         y = y + 30
