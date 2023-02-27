@@ -31,6 +31,10 @@ from rest_framework.decorators import api_view
 import socket
 from rest_framework.response import Response
 from payment_app.models import Bill
+from PIL import Image, ImageDraw, ImageFont, ImageOps
+import struct
+import qrcode
+import textwrap
 
 def home(request):
     group = Group.objects.get(pk=2)
@@ -563,8 +567,23 @@ def printer(request):
             division = "Unkhown"
         
         where = "Where: " + str(division) + "\n"
+        configure = Configuration_value.objects.get(pk=1)
+        bill_number = configure.kitchen_bill_number
+        configure.kitchen_bill_number = configure.kitchen_bill_number + 1
+        configure.save()
         
-        text = date + where
+        mysocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        mysocket.connect(("192.168.1.10", 9100))
+
+        width = 600
+
+        height = len(res['detials']) * 70
+        image = Image.new("RGB", (width, height), "white")
+        draw = ImageDraw.Draw(image)
+        # font = ImageFont.load_default()
+
+        unicode_font_22 = ImageFont.truetype("/home/tesoro/Tesoro_server/backend/media/roboto.ttf", 22)
+        y = 0
 
         bill_included_food = False
         number = 1
@@ -578,27 +597,46 @@ def printer(request):
             if is_food:
                 bill_included_food = True
                 product = Product.objects.get(pk=detail['id'])
+                y = y + 30
                 food = str(number) + ". " + str(product.print_name + " - " + str(detail['quantity'])) + "\n"
-                text = text + food
+                draw.text((30, y), food, fill="black", font=unicode_font_22)
                 number = number + 1
         
         if bill_included_food:
-            mysocket = socket.socket(socket.AF_INET,socket.SOCK_STREAM)         
-            host = "192.168.1.9" 
-            port = 9100
-            mysocket.connect((host, port))
+            image.save("/home/tesoro/Tesoro_server/backend/media/kitchen-bill/test.jpg")
+            im = Image.open("/home/tesoro/Tesoro_server/backend/media/kitchen-bill/test.jpg")
+            # if image is not 1-bit, convert it
+            if im.mode != '1':
+                im = im.convert('1')
+            # if image width is not a multiple of 8 pixels, fix that
+            if im.size[0] % 8:
+                im2 = Image.new('1', (im.size[0] + 8 - im.size[0] % 8, im.size[1]), 'white')
+                im2.paste(im, (0, 0))
+                im = im2
 
-            bill_number = Configuration_value.objects.get(pk=1)
-            bill_number.kitchen_bill_number = bill_number.kitchen_bill_number + 1
-            bill_number.save()
+            # Invert image, via greyscale for compatibility
+            #  (no, I don't know why I need to do this)
+            im = ImageOps.invert(im.convert('L'))
+            # ... and now convert back to single bit
+            im = im.convert('1')
 
-            text = "-------------------------------------\nNumber" + str(bill_number.kitchen_bill_number) + "\n" + text + "-------------------------------------\n\n\n\n\n\n\n\n\n\n\n"
-            mysocket.send(text.encode('utf-8'))
+            job = [(b''.join((bytearray(b'\x1d\x76\x30\x00'),
+                        struct.pack('2B', int(im.size[0] / 8 % 256),
+                                    int(im.size[0] / 8 / 256)),
+                        struct.pack('2B', int(im.size[1] % 256),
+                                    int(im.size[1] / 256)),
+                        im.tobytes()))),
+                    b'\x1b\r\n',
+                    b'\x1b\r\n',
+                    b'\x1b\r\n',
+                    b'\x1b\r\n',
+                    b'\x1b\x69'
+                ]
+            
+            for b in job:
+                mysocket.sendall(b)
             mysocket.close()
-
-        return JsonResponse("Done", status=200, safe=False)
-    else:
-        return JsonResponse("Done", status=404, safe=False)
+        return HttpResponse("done")
 
 @never_cache
 def changePriceProduct(request):

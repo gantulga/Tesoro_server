@@ -1232,18 +1232,18 @@ export default class Calculations extends Component {
   }
 
   async printer(order, detials) {
-    // var Obj = {
-    //   order: order,
-    //   detials: detials,
-    // };
-    // const url = "http://" + this.props.ip_address + "/printer/";
-    // await fetch(url, {
-    //   method: "POST",
-    //   body: JSON.stringify(Obj),
-    // })
-    // .then((results) => {
-    //   return results;
-    // })
+    var Obj = {
+      order: order,
+      detials: detials,
+    };
+    const url = "http://" + this.props.ip_address + "/printer/";
+    await fetch(url, {
+      method: "POST",
+      body: JSON.stringify(Obj),
+    })
+    .then((results) => {
+      return results;
+    })
   }
 
   async doOrderButton() {
