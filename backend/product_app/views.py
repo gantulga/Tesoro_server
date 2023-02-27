@@ -1,5 +1,5 @@
 from django.http import JsonResponse
-from product_app.models import Product, Item_balance
+from product_app.models import Product, Item_balance, Item_transfer, Item_transfer_type
 from structure_app.models import Client
 from django.shortcuts import render, redirect, get_list_or_404, get_object_or_404
 import math
@@ -107,6 +107,11 @@ def productToCommodity(request, client_id, product_id):
                         commodity_balance[0].save()
                     else:
                         commodity_balance = Item_balance.objects.create(client_id=client_id, commodity=product.same_commodity, size=product.gramm)
+                    
+                    item_transfer_type = Item_transfer_type.objects.get(pk=6)
+                    client = Client.objects.get(pk=client_id)
+                    Item_transfer.objects.create(item_transfer_type=item_transfer_type, product=product, commodity=product.same_commodity, fr_client=client, to_client=client, fr_division=client.division, to_division=client.division, quantity=1, size=product.gramm)
+                        
                     return JsonResponse({'okey':True})
                 else:
                     print("Productiin uldegdel hureltsehgui bn1")
