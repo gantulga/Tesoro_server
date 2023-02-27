@@ -5,8 +5,8 @@ export default class Dashboard extends Component {
     return (
       <div className={this.props.show_modal ? "show" : "hide" }>
         {this.props.orders.length > 0 ? (
-            <div class="dashboard">
-                <div class="dashboard-body">
+            <div className="dashboard">
+                <div className="dashboard-body">
                     {this.props.orders.map((order, index) => {
                         var payments_total = 0
                         order.payments.map((payment)=>{
@@ -28,10 +28,10 @@ export default class Dashboard extends Component {
 
                         return (
                             <figure key={index} onClick={() =>this.props.set_order(order.id, order.amount)}>
-                                <div class={color + " address"}>
+                                <div className={color + " address"}>
                                     {order.division.name} - {order.client.number}
                                 </div>
-                                <div class="details">
+                                <div className="details">
                                     {order.order_detials.map((detail, index) => {
                                         return (
                                         <div className="detail" key={index}>
@@ -44,7 +44,7 @@ export default class Dashboard extends Component {
                                         );
                                     })}
                                 </div>
-                                <div class="amount">
+                                <div className="amount">
                                     Нийт: {order.discounted_amount - payments_total}₮
                                 </div>
                             </figure>

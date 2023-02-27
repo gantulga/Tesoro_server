@@ -13,11 +13,13 @@ import Order from "./Components/Order";
 import Orders from "./Components/Orders";
 import Ebarimt from "./Components/Modals/Ebarimt";
 import Dashboard from "./Components/Dashboard";
+import ProductOpen from "./Components/Modals/ProductOpen"
 
 export default class Calculations extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      loading: false,
       user_id: getUserId(),
       categories: [],
       products: [],
@@ -35,6 +37,7 @@ export default class Calculations extends Component {
       selected_shiftWorker: null,
       mTransfersData: [],
       workersData: [],
+      can_open_products: [],
 
       shiftWorker: null,
       sel_parent_cat: null,
@@ -49,6 +52,7 @@ export default class Calculations extends Component {
       show_ebarimt: false,
       show_unpaidOrders: false,
       show_addProducts: false,
+      show_product_open: false,
       keyboardBoxShow: false,
       productBoxShow: false,
       show_money_transfer_modal: false,
@@ -97,6 +101,21 @@ export default class Calculations extends Component {
     this.checkBalance = this.checkBalance.bind(this)
     this.printer = this.printer.bind(this)
     this.print_bill = this.print_bill.bind(this)
+    this.show_product_open_function = this.show_product_open_function.bind(this)
+    this.loadingTrue = this.loadingTrue.bind(this)
+    this.loadingFalse = this.loadingFalse.bind(this)
+  }
+
+  async loadingTrue(){
+    await this.setState({
+      loading:true
+    });
+  }
+
+  async loadingFalse(){
+    await this.setState({
+      loading:false
+    });
   }
 
   sendError(error){
@@ -873,7 +892,6 @@ export default class Calculations extends Component {
       .then((response) => response.json())
       .then(async (orders) => {
         await this.setState({ underPaymentOrders: orders });
-        console.log(this.state.underPaymentOrders)
       })
       .catch((error) => {
         store.addNotification({
@@ -905,6 +923,7 @@ export default class Calculations extends Component {
     )
       .then(async (response) => {
         const data = await response.json();
+        console.log(data)
         return data
       })
       .catch((error) => {
@@ -924,7 +943,6 @@ export default class Calculations extends Component {
         });
         this.sendError("fetchError, checkBalance")
       });
-
     return response
   }
 
@@ -947,6 +965,20 @@ export default class Calculations extends Component {
           ],
         });
       }else{
+        var can_open = false
+        balance_obj['zadlah_product'].map(async (p_product)=>{
+          if(p_product['quantity'] > 0){
+            can_open = true
+          }
+          return null
+        })
+
+        if(can_open){
+          await this.setState({
+            can_open_products: balance_obj['zadlah_product'],
+          });
+          await this.show_product_open_function()
+        }
         store.addNotification({
           title: "Анхаар!",
           message: "Бараа гарах боломжгүй.",
@@ -1135,6 +1167,8 @@ export default class Calculations extends Component {
       show_customer: false,
       show_ebarimt: false,
       show_unpaidOrders: false,
+      show_product_open:false,
+      can_open_products: []
     });
   }
 
@@ -1169,6 +1203,12 @@ export default class Calculations extends Component {
       show_payment: false,
       productBoxShow: false,
       keyboardBoxShow: false,
+    });
+  }
+
+  async show_product_open_function() {
+    await this.setState({
+      show_product_open: true
     });
   }
 
@@ -1207,6 +1247,7 @@ export default class Calculations extends Component {
   }
 
   async doOrderButton() {
+    await this.loadingTrue()
     if (
       this.state.division_id &&
       this.state.table_id &&
@@ -1390,6 +1431,7 @@ export default class Calculations extends Component {
         this.sendError("fetchError, doOrderButton - 4")
       }
     }
+    await this.loadingFalse()
   }
 
   async updateOrderButton() {
@@ -2181,6 +2223,58 @@ export default class Calculations extends Component {
     this.getOrdersData()
   }
 
+  async product_convert_to_commodity(id){
+    this.modalHide()
+    var requestOptions = {
+      method: 'POST',
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: "Token " + this.props.token,
+      },
+      redirect: 'follow'
+    };
+    var url = "http://" + this.props.ip_address + "/productToCommodity/19/" + id
+    await fetch(url, requestOptions)
+      .then(response => response.text())
+      .then(async (result) => {
+        console.log(result)
+        if(result['okey'] === true){
+          store.addNotification({
+            title: "Амжилттай!",
+            message: "Амжилттай задаллаа",
+            type: "success",
+            insert: "top",
+            container: "bottom-right",
+            animationIn: ["animated", "fadeIn"],
+            animationOut: ["animated", "fadeOut"],
+            dismiss: {
+              duration: 2000,
+              onScreen: true,
+            },
+          });
+        }
+      })
+      .catch((error) => {
+        store.addNotification({
+          title: "Анхаар!",
+          message:
+            "Бүтээгдэхүүнийг материал болгох хувиргах явцад алдаа гарлаа. Системийн инженерт хандана уу!" +
+            error,
+          type: "danger",
+          insert: "top",
+          container: "bottom-right",
+          animationIn: ["animated", "fadeIn"],
+          animationOut: ["animated", "fadeOut"],
+          dismiss: {
+            duration: 2000,
+            onScreen: true,
+          },
+        });
+        this.sendError("fetchError, product_convert_to_commodity - 1")
+      })
+  }
+
   render() {
     var orderingTotalAmount = 0;
     this.state.orderingList.map(
@@ -2191,6 +2285,11 @@ export default class Calculations extends Component {
 
     return (
       <div className="body">
+        {this.state.loading ? 
+        <div className="loadingBox">
+          <div className="lds-default"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+        </div>
+        : null}
         <IdleTimer
           ref={(ref) => {
             this.idleTimer = ref;
@@ -2430,6 +2529,14 @@ export default class Calculations extends Component {
           company_name={this.state.company_name}
           company_register_status={this.state.company_register_status}
           print_bill = {this.print_bill}
+          {...this.props}
+        />
+
+        <ProductOpen
+          modalHide={this.modalHide.bind(this)}
+          show_modal={this.state.show_product_open}
+          products={this.state.can_open_products}
+          product_convert_to_commodity={this.product_convert_to_commodity.bind(this)}
           {...this.props}
         />
       </div>

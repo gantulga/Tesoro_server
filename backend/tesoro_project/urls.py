@@ -5,7 +5,7 @@ from django.conf import settings
 from django.urls import include, re_path
 from django.conf.urls.static import static
 from . import views
-from product_app.views import balanceChecker, itemBalanceChanger
+from product_app.views import balanceChecker, itemBalanceChanger, productToCommodity
 from rest_framework import routers
 from hotel.api import HotelClientLogsViewSet, HotelRoomsViewSet, HotelOrdersViewSet, HotelOrdersViewSet2, HotelOrdersViewSet3, HotelOrdersViewSet4, HotelOrderDetialsViewSet, HotelPaymentsViewSet, HotelProductsViewSet, HotelOrderDetialsViewSet2, UnderpaymentsViewSet, HotelOrdersNewHotelViewSet, BeforeReceivablesViewSet, ShiftOrdersViewSet, ShiftPaymentsViewSet
 from lounge.api import ProductCategoriesViewSet, LoungeProductsViewSet, LoungeDivisionsViewSet, LoungeClientsViewSet, LoungeOrdersViewSet, LoungeOrderDetialsViewSet, LoungeOrderPaymentsViewSet, OrderRecieverViewSet, OrderDetailRecieverViewSet, LoungeShiftWorksViewSet, LoungeLastShiftWorksViewSet, LoungePaymentsViewSet, LoungeOrderUpdateViewSet, unSafe_WorkersViewSet, LoungeUnderPaymentsViewSet, LoungeMoneyTransfersViewSet, LoungeMoneyTransferTypesViewSet, LoungeMoneyTransferPostViewSet, BarmenProductBalancesViewSet, LoungeLastShiftWorkUpdateViewSet, LoungeProductBalanceLogsViewSet, LoungeUnpaidOrdersViewSet
@@ -144,6 +144,9 @@ urlpatterns = [
     path('api/bill/createBill', payment_views.createBill),
     path('api/bill/registerChecker', payment_views.registerChecker),
     # path('api/bill/putData', payment_views.putData),
+
+    # Productiig material bolgoh function
+    path('productToCommodity/<int:client_id>/<int:product_id>', productToCommodity),
 
     #tur zuuriin
     path('itemBalanceChanger/<int:client_id>', itemBalanceChanger) #uil ajillagaa jigdreheer idevhgui bolgoh

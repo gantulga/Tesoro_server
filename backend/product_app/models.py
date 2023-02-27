@@ -26,10 +26,8 @@ class Createdinfo(models.Model):
 class Modifiedinfo(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
-    created_by = models.ForeignKey(
-        User, related_name='%(class)s_createdby', null=True, blank=True, on_delete=models.DO_NOTHING)
-    updated_by = models.ForeignKey(
-        User, related_name='%(class)s_modifiedby', null=True, blank=True, on_delete=models.DO_NOTHING)
+    created_by = models.ForeignKey(User, related_name='%(class)s_createdby', null=True, blank=True, on_delete=models.DO_NOTHING)
+    updated_by = models.ForeignKey(User, related_name='%(class)s_modifiedby', null=True, blank=True, on_delete=models.DO_NOTHING)
 
     class Meta:
         abstract = True
@@ -38,8 +36,7 @@ class Modifiedinfo(models.Model):
 
 
 class Product_category(Createdinfo):
-    parent = models.ForeignKey('self', null=True, blank=True,
-                               on_delete=models.PROTECT, related_name="child_categories")
+    parent = models.ForeignKey('self', null=True, blank=True, on_delete=models.PROTECT, related_name="child_categories")
     name = models.CharField(null=False, blank=False, max_length=255)
     description = models.TextField(null=True, blank=True, max_length=255)
     is_created = models.BooleanField(default=0)
@@ -51,12 +48,10 @@ class Product_category(Createdinfo):
 
 
 class Commodity_category(Createdinfo):
-    parent = models.ForeignKey('self', null=True, blank=True,
-                               on_delete=models.PROTECT, related_name="child_categories")
+    parent = models.ForeignKey('self', null=True, blank=True, on_delete=models.PROTECT, related_name="child_categories")
     name = models.CharField(null=False, max_length=255)
     description = models.TextField(null=False, max_length=255)
-    Division = models.ManyToManyField(
-        'structure_app.Division', db_table="product_app_division_commodity_categories")
+    Division = models.ManyToManyField('structure_app.Division', db_table="product_app_division_commodity_categories")
 
     def __str__(self):
         return self.name
@@ -67,13 +62,10 @@ class Commodity_category(Createdinfo):
 class Commodity(Createdinfo):
     name = models.CharField(null=False, max_length=255)
     description = models.TextField(null=True, max_length=255)
-    size_type = models.ForeignKey(
-        'Size_type', on_delete=models.DO_NOTHING, null=True, related_name="commodities")
+    size_type = models.ForeignKey('Size_type', on_delete=models.DO_NOTHING, null=True, related_name="commodities")
     unit_size = models.PositiveIntegerField(null=False, blank=False, default=1)
-    categories = models.ManyToManyField(
-        'Commodity_category', db_table="product_app_commodity_categories", related_name="commodities")
-    image = models.ImageField(
-        upload_to='commodity-images', null=True, blank=True)
+    categories = models.ManyToManyField('Commodity_category', db_table="product_app_commodity_categories", related_name="commodities")
+    image = models.ImageField(upload_to='commodity-images', null=True, blank=True)
 
     def __str__(self):
         return self.name
@@ -87,13 +79,12 @@ class Product(Createdinfo):
     cost = models.DecimalField(max_digits=14, decimal_places=2)
     categories = models.ManyToManyField('Product_category', db_table="product_app_product_categories", related_name="products")
     commodities = models.ManyToManyField('Commodity', through='Ingredient')
-    client = models.ForeignKey('structure_app.Client', related_name='client_products',
-                               on_delete=models.DO_NOTHING, null=True, blank=True)
-    division = models.ForeignKey('structure_app.Division', related_name='division_products',
-                                 on_delete=models.DO_NOTHING, null=True, blank=True)
+    client = models.ForeignKey('structure_app.Client', related_name='client_products', on_delete=models.DO_NOTHING, null=True, blank=True)
+    division = models.ForeignKey('structure_app.Division', related_name='division_products', on_delete=models.DO_NOTHING, null=True, blank=True)
     image = models.ImageField(upload_to='product-images', null=True, blank=True)
-    is_ingrediented = models.BooleanField(default=0)
-    gramm = models.PositiveIntegerField(null=True, blank=True)
+    is_ingrediented = models.BooleanField(default=0, verbose_name='Орцтой бүтээгдэхүүн?')
+    gramm = models.PositiveIntegerField(null=True, blank=True, verbose_name='Хэдэн граммын бүтээгдэхүүн вэ?')
+    same_commodity = models.ForeignKey('Commodity', related_name='same_products', on_delete=models.DO_NOTHING, null=True, blank=True, verbose_name='Материалруу хөрвүүлвэл ямар материал болох вэ?')
 
     def __str__(self):
         return self.name
@@ -116,10 +107,8 @@ class Size_type(Createdinfo):
 
 
 class Ingredient(Createdinfo):
-    product = models.ForeignKey(
-        'Product', on_delete=models.CASCADE, related_name="ingredients", verbose_name='Бүтээгдэхүүн')
-    commodity = models.ForeignKey(
-        'Commodity', on_delete=models.CASCADE, related_name="ingredients", verbose_name='Бүтээгдэхүүнд орох материал')
+    product = models.ForeignKey('Product', on_delete=models.CASCADE, related_name="ingredients", verbose_name='Бүтээгдэхүүн')
+    commodity = models.ForeignKey('Commodity', on_delete=models.CASCADE, related_name="ingredients", verbose_name='Бүтээгдэхүүнд орох материал')
     size = models.PositiveIntegerField(null=False)
     size_type = models.ForeignKey('Size_type', on_delete=models.DO_NOTHING, null=False, related_name="ingredients")
 
@@ -134,10 +123,8 @@ class Ingredient(Createdinfo):
         
 
 class Ingredient_product(Createdinfo):
-    product = models.ForeignKey(
-        'Product', on_delete=models.CASCADE, related_name="ingredients_producted", verbose_name='Бүтээгдэхүүн')
-    commodity = models.ForeignKey(
-        'Product', on_delete=models.CASCADE, related_name="ingredients_commoditied", verbose_name='Бүтээгдэхүүнд орох орц бүтээгдэхүүн')
+    product = models.ForeignKey('Product', on_delete=models.CASCADE, related_name="ingredients_producted", verbose_name='Бүтээгдэхүүн')
+    commodity = models.ForeignKey('Product', on_delete=models.CASCADE, related_name="ingredients_commoditied", verbose_name='Бүтээгдэхүүнд орох орц бүтээгдэхүүн')
     size = models.PositiveIntegerField(null=False)
 
     class Meta:
@@ -171,7 +158,7 @@ class Store(Createdinfo):
 
 class Item_transfer(Modifiedinfo):
     item_transfer_type = models.ForeignKey('Item_transfer_type', related_name='item_transfers', on_delete=models.PROTECT, null=False)
-    commodity = models.ForeignKey('Commodity', on_delete=models.DO_NOTHING, null=True, blank=True, related_name="transfers")
+    commodity = models.ForeignKey('Commodity', on_delete=models.CASCADE, null=True, blank=True, related_name="transfers")
     product = models.ForeignKey('Product', on_delete=models.DO_NOTHING, null=True, blank=True, related_name="transfers")
     # Хоолны болон Коктейлийн орцонд орох
     to_product = models.ForeignKey('Product', on_delete=models.DO_NOTHING, null=True, blank=True, related_name="ingredients_transfer")
@@ -206,28 +193,20 @@ class Item_balance(Modifiedinfo):
     division = models.ForeignKey('structure_app.Division', related_name='item_balances', null=True, blank=True, on_delete=models.DO_NOTHING)
     client = models.ForeignKey('structure_app.Client', related_name='item_balances', null=True, blank=True, on_delete=models.DO_NOTHING)
     user = models.ForeignKey(User, related_name='item_balances', null=True, blank=True, on_delete=models.DO_NOTHING)
-    commodity = models.ForeignKey(
-        'Commodity', on_delete=models.DO_NOTHING, null=True, blank=True, related_name="balances")
-    product = models.ForeignKey(
-        'Product', on_delete=models.DO_NOTHING, null=True, blank=True, related_name="balances")
+    commodity = models.ForeignKey('Commodity', on_delete=models.CASCADE, null=True, blank=True, related_name="balances")
+    product = models.ForeignKey('Product', on_delete=models.DO_NOTHING, null=True, blank=True, related_name="balances")
     # Түүхий эдийн хэмжээ
     quantity = models.PositiveIntegerField(null=True, blank=True)
     size = models.PositiveIntegerField(null=True, blank=True)
 
 
 class Item_balance_log(Modifiedinfo):
-    shift_work = models.ForeignKey('structure_app.Shift_work', related_name='item_balance_logs',
-                                   null=False, blank=False, on_delete=models.DO_NOTHING)
-    division = models.ForeignKey('structure_app.Division', related_name='item_balance_logs',
-                                 null=True, blank=True, on_delete=models.DO_NOTHING)
-    client = models.ForeignKey('structure_app.Client', related_name='item_balance_logs',
-                               null=True, blank=True, on_delete=models.DO_NOTHING)
-    user = models.ForeignKey(User, related_name='item_balance_logs',
-                             null=True, blank=True, on_delete=models.DO_NOTHING)
-    commodity = models.ForeignKey(
-        'Commodity', on_delete=models.DO_NOTHING, null=True, blank=True, related_name="item_balance_logs")
-    product = models.ForeignKey(
-        'Product', on_delete=models.DO_NOTHING, null=True, blank=True, related_name="item_balance_logs")
+    shift_work = models.ForeignKey('structure_app.Shift_work', related_name='item_balance_logs',null=False, blank=False, on_delete=models.DO_NOTHING)
+    division = models.ForeignKey('structure_app.Division', related_name='item_balance_logs',null=True, blank=True, on_delete=models.DO_NOTHING)
+    client = models.ForeignKey('structure_app.Client', related_name='item_balance_logs',null=True, blank=True, on_delete=models.DO_NOTHING)
+    user = models.ForeignKey(User, related_name='item_balance_logs',null=True, blank=True, on_delete=models.DO_NOTHING)
+    commodity = models.ForeignKey('Commodity', on_delete=models.CASCADE, null=True, blank=True, related_name="item_balance_logs")
+    product = models.ForeignKey('Product', on_delete=models.DO_NOTHING, null=True, blank=True, related_name="item_balance_logs")
     # Түүхий эдийн хэмжээ
     quantity = models.PositiveIntegerField(null=True, blank=True)
     size = models.PositiveIntegerField(null=True, blank=True)
@@ -235,8 +214,7 @@ class Item_balance_log(Modifiedinfo):
 
 # Барилгын үндсэн хөрөнгийн жагсаалт байх юм.
 class Basic_asset(Modifiedinfo):
-    division = models.ForeignKey('structure_app.Division', related_name='basic_assets',
-                                 null=True, blank=True, on_delete=models.DO_NOTHING)
+    division = models.ForeignKey('structure_app.Division', related_name='basic_assets', null=True, blank=True, on_delete=models.DO_NOTHING)
     name = models.CharField(null=False, max_length=30)
     description = models.TextField(null=True, max_length=255)
     real_price = models.DecimalField(max_digits=14, decimal_places=2)
@@ -252,36 +230,27 @@ class Basic_asset(Modifiedinfo):
 
 
 class Basic_asset_count(Modifiedinfo):
-    basic_asset = models.ForeignKey(
-        Basic_asset, related_name='counts', null=False, blank=False, on_delete=models.DO_NOTHING)
+    basic_asset = models.ForeignKey(Basic_asset, related_name='counts', null=False, blank=False, on_delete=models.DO_NOTHING)
     counted_day = models.DateField(null=False)
     prev_quantity = models.PositiveIntegerField(null=False)
     quantity_balance = models.PositiveIntegerField(null=False)
     quantity_increased = models.PositiveIntegerField(null=False)
     quantity_deducted = models.PositiveIntegerField(null=False)
     information = models.TextField(null=True)
-    counted_by = models.ForeignKey(
-        User, related_name='counted_by', null=False, blank=False, on_delete=models.DO_NOTHING)
-    controlled_by = models.ForeignKey(
-        User, related_name='controlled_by', null=True, blank=True, on_delete=models.DO_NOTHING)
+    counted_by = models.ForeignKey(User, related_name='counted_by', null=False, blank=False, on_delete=models.DO_NOTHING)
+    controlled_by = models.ForeignKey(User, related_name='controlled_by', null=True, blank=True, on_delete=models.DO_NOTHING)
     controll_confirmed = models.BooleanField(default=0)
 
 # Барилгын эд зүйлсийн эвдрэлийн бүртгэл.
 
 
 class broken_item (Modifiedinfo):
-    basic_asset = models.ForeignKey(
-        'Basic_asset', related_name='broken_basic_assets', null=False, blank=False, on_delete=models.DO_NOTHING)
-    product = models.ForeignKey('Product', related_name='broken_products',
-                                null=False, blank=False, on_delete=models.DO_NOTHING)
-    commodity = models.ForeignKey('Commodity', related_name='broken_commodities',
-                                  null=False, blank=False, on_delete=models.DO_NOTHING)
+    basic_asset = models.ForeignKey('Basic_asset', related_name='broken_basic_assets', null=False, blank=False, on_delete=models.DO_NOTHING)
+    product = models.ForeignKey('Product', related_name='broken_products', null=False, blank=False, on_delete=models.DO_NOTHING)
+    commodity = models.ForeignKey('Commodity', related_name='broken_commodities', null=False, blank=False, on_delete=models.DO_NOTHING)
     size = models.PositiveIntegerField(null=False)
-    size_type = models.ForeignKey(
-        'Size_type', on_delete=models.DO_NOTHING, null=True, related_name="broken_items")
+    size_type = models.ForeignKey('Size_type', on_delete=models.DO_NOTHING, null=True, related_name="broken_items")
     description = models.TextField(null=True, max_length=255)
     damage_paid = models.BooleanField(default=0)
-    money_transfer = models.ForeignKey(
-        'financial_app.Money_transfer', related_name='broken_items_money', null=False, blank=False, on_delete=models.DO_NOTHING)
-    money_transfer_status = models.CharField(
-        null=False, default='тодорхойгүй', max_length=30)
+    money_transfer = models.ForeignKey('financial_app.Money_transfer', related_name='broken_items_money', null=False, blank=False, on_delete=models.DO_NOTHING)
+    money_transfer_status = models.CharField(null=False, default='тодорхойгүй', max_length=30)
