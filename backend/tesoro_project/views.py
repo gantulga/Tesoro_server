@@ -549,7 +549,7 @@ def printer(request):
         body = request.body
         res = json.loads(body.decode('utf-8'))
         
-        date = "When: " + str(datetime.datetime.now()) + "\n"
+        date = "When: " + str(datetime.datetime.now())
         division = Division.objects.get(pk=res['order']['division'])
         if division.id == 3:
             division = "Hotel"
@@ -591,7 +591,7 @@ def printer(request):
         y = y + 30
         draw.text((30, y), where, fill="black", font=unicode_font_22)
         y = y + 30
-        draw.text((30, y), where, fill="black", font=unicode_font_22)
+        draw.text((30, y), "----------------------------------------", fill="black", font=unicode_font_22)
         
         bill_included_food = False
         number = 1
