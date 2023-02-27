@@ -577,24 +577,24 @@ def printer(request):
         mysocket.connect(("192.168.1.10", 9100))
 
         width = 600
-        height = (len(res['detials']) + 6) * 30
+        height = (len(res['detials']) + 6) * 36
 
         image = Image.new("RGB", (width, height), "white")
         draw = ImageDraw.Draw(image)
         # font = ImageFont.load_default()
 
-        unicode_font_22 = ImageFont.truetype("/home/tesoro/Tesoro_server/backend/media/roboto.ttf", 22)
+        unicode_font_22 = ImageFont.truetype("/home/tesoro/Tesoro_server/backend/media/roboto.ttf", 28)
         y = 0
         
         nnn = "Дугаар: " + str(bill_number)
-        y = y + 30
-        draw.text((30, y), nnn, fill="black", font=unicode_font_22)
-        y = y + 30
-        draw.text((30, y), date, fill="black", font=unicode_font_22)
-        y = y + 30
-        draw.text((30, y), where, fill="black", font=unicode_font_22)
-        y = y + 30
-        draw.text((30, y), "----------------------------------------", fill="black", font=unicode_font_22)
+        y = y + 36
+        draw.text((36, y), nnn, fill="black", font=unicode_font_22)
+        y = y + 36
+        draw.text((36, y), date, fill="black", font=unicode_font_22)
+        y = y + 36
+        draw.text((36, y), where, fill="black", font=unicode_font_22)
+        y = y + 36
+        draw.text((36, y), "----------------------------------------", fill="black", font=unicode_font_22)
         
         bill_included_food = False
         number = 1
@@ -608,9 +608,9 @@ def printer(request):
             if is_food:
                 bill_included_food = True
                 product = Product.objects.get(pk=detail['id'])
-                y = y + 30
+                y = y + 36
                 food = str(number) + ". " + str(product.name + " - " + str(detail['quantity'])) + "\n"
-                draw.text((30, y), food, fill="black", font=unicode_font_22)
+                draw.text((36, y), food, fill="black", font=unicode_font_22)
                 number = number + 1
         
         if bill_included_food:
