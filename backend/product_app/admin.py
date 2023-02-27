@@ -40,6 +40,7 @@ class ProductAdmin(admin.ModelAdmin):
         for cat in obj.categories.all():
             categories.append(cat.name)
         return categories
+    get_categories.admin_order_field = 'categories'
 
 
 # Register your models here.
