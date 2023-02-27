@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from hotel.models import Hotel_client_log, Hotel_client_item
-from structure_app.models import Client, Division, Shift_work, Customer
+from structure_app.models import Client, Division, Shift_work, Customer, Configuration_value
 from product_app.models import Product, Commodity, Product_category, Item_transfer, Item_transfer_type, Item_balance, Item_balance_log
 from payment_app.models import Order, Order_detial, Payment
 from structure_app.serializers import CustomersSerializer, ClientsSerializer
@@ -232,6 +232,11 @@ class LoungeShiftWorkUpdateSerializer(serializers.ModelSerializer):
                                 commodity=balance.commodity, client=client, division=division, size=balance.size, created_by=instance.worker, shift_work=instance)
                         else:
                             pass
+
+            #Gal togoonii billnii dugaariig reset hiih
+            config = Configuration_value.objects.get(pk=1)
+            config.kitchen_bill_number = 1
+            config.save()
 
         return instance
 
