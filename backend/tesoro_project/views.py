@@ -549,24 +549,25 @@ def printer(request):
         body = request.body
         res = json.loads(body.decode('utf-8'))
         
-        date = "When: " + str(datetime.datetime.now())
+        date = "Хэзээ: " + str(datetime.datetime.now())
+        print(res)
         division = Division.objects.get(pk=res['order']['division'])
         if division.id == 3:
-            division = "Hotel"
+            division = "Зочид буудал"
         elif division.id == 4:
-            division = "Restaurant"
+            division = "Ресторан"
         elif division.id == 5:
-            division = "Lounge"
+            division = "Лоунж"
         elif division.id == 6:
-            division = "Karaoke"
+            division = "Караоке"
         elif division.id == 1:
-            division = "Office"
+            division = "Оффис"
         elif division.id == 7:
-            division = "Sauna Spa"
+            division = "Спа саун"
         else: 
-            division = "Unkhown"
+            division = "Мэдэгдэхгүй"
         
-        where = "Where: " + str(division) + "\n"
+        where = "Хаашаа: " + str(division) + "\n"
         configure = Configuration_value.objects.get(pk=1)
         bill_number = configure.kitchen_bill_number
         configure.kitchen_bill_number = configure.kitchen_bill_number + 1
@@ -585,7 +586,9 @@ def printer(request):
         unicode_font_22 = ImageFont.truetype("/home/tesoro/Tesoro_server/backend/media/roboto.ttf", 22)
         y = 0
         
-        date = date + " - Дугаар: " + str(bill_number)
+        nnn = "Дугаар: " + str(bill_number)
+        y = y + 30
+        draw.text((30, y), nnn, fill="black", font=unicode_font_22)
         y = y + 30
         draw.text((30, y), date, fill="black", font=unicode_font_22)
         y = y + 30
