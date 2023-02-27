@@ -25,15 +25,21 @@ class ProductCategoryAdmin(admin.ModelAdmin):
 
 
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ('name', 'is_ingrediented', 'get_ingredients', 'is_gramm', 'gramm', 'same_commodity', 'cost')
+    list_display = ('name', 'get_categories', 'is_ingrediented', 'get_ingredients', 'is_gramm', 'gramm', 'same_commodity', 'cost')
     list_per_page = 500
     exclude = ['created_by']
-    ordering = ('is_ingrediented', 'is_gramm', 'name')
+    ordering = ('get_categories', 'name')
     def get_ingredients(self, obj):
         ingredients = []
         for ingredient in obj.ingredients.all():
             ingredients.append(ingredient.commodity.name)
         return ingredients
+    
+    def get_categories(self, obj):
+        categories = []
+        for cat in obj.categories.all():
+            categories.append(cat.name)
+        return categories
 
 
 # Register your models here.
