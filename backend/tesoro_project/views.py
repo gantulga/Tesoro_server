@@ -598,7 +598,7 @@ def printer(request):
                 bill_included_food = True
                 product = Product.objects.get(pk=detail['id'])
                 y = y + 30
-                food = str(number) + ". " + str(product.print_name + " - " + str(detail['quantity'])) + "\n"
+                food = str(number) + ". " + str(product.name + " - " + str(detail['quantity'])) + "\n"
                 draw.text((30, y), food, fill="black", font=unicode_font_22)
                 number = number + 1
         
