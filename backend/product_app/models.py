@@ -83,8 +83,9 @@ class Product(Createdinfo):
     division = models.ForeignKey('structure_app.Division', related_name='division_products', on_delete=models.DO_NOTHING, null=True, blank=True)
     image = models.ImageField(upload_to='product-images', null=True, blank=True)
     is_ingrediented = models.BooleanField(default=0, verbose_name='Орцтой бүтээгдэхүүн?')
-    gramm = models.PositiveIntegerField(null=True, blank=True, verbose_name='Хэдэн граммын бүтээгдэхүүн вэ?')
-    same_commodity = models.ForeignKey('Commodity', related_name='same_products', on_delete=models.DO_NOTHING, null=True, blank=True, verbose_name='Материалруу хөрвүүлвэл ямар материал болох вэ?')
+    is_gramm = models.BooleanField(default=0, verbose_name='Граммын бүтээгдэхүүн?')
+    gramm = models.PositiveIntegerField(null=True, blank=True, verbose_name='Грамм?')
+    same_commodity = models.ForeignKey('Commodity', related_name='same_products', on_delete=models.DO_NOTHING, null=True, blank=True, verbose_name='Адил материал?')
 
     def __str__(self):
         return self.name
