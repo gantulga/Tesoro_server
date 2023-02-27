@@ -577,7 +577,7 @@ def printer(request):
         mysocket.connect(("192.168.1.10", 9100))
 
         width = 600
-        height = (len(res['detials']) + 4) * 30
+        height = (len(res['detials']) + 6) * 30
 
         image = Image.new("RGB", (width, height), "white")
         draw = ImageDraw.Draw(image)
