@@ -576,15 +576,23 @@ def printer(request):
         mysocket.connect(("192.168.1.10", 9100))
 
         width = 600
+        height = (len(res['detials']) + 3) * 30
 
-        height = len(res['detials']) * 70
         image = Image.new("RGB", (width, height), "white")
         draw = ImageDraw.Draw(image)
         # font = ImageFont.load_default()
 
         unicode_font_22 = ImageFont.truetype("/home/tesoro/Tesoro_server/backend/media/roboto.ttf", 22)
         y = 0
-
+        
+        date = date + " - Дугаар: " + bill_number
+        y = y + 30
+        draw.text((30, y), date, fill="black", font=unicode_font_22)
+        y = y + 30
+        draw.text((30, y), where, fill="black", font=unicode_font_22)
+        y = y + 30
+        draw.text((30, y), where, fill="black", font=unicode_font_22)
+        
         bill_included_food = False
         number = 1
         for detail in res['detials']:
