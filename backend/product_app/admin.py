@@ -28,7 +28,7 @@ class ProductAdmin(admin.ModelAdmin):
     list_display = ('name', 'is_ingrediented', 'get_ingredients', 'is_gramm', 'gramm', 'same_commodity', 'cost')
     list_per_page = 500
     exclude = ['created_by']
-    ordering = ('is_ingredient', 'is_gramm', 'name')
+    ordering = ('is_ingrediented', 'is_gramm', 'name')
     def get_ingredients(self, obj):
         ingredients = []
         for ingredient in obj.ingredients.all():
