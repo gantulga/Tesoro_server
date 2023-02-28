@@ -486,7 +486,7 @@ def dailyReport(request):
                     if order.customer.firstname:
                         cus = order.customer.firstname + "(" + order.customer.id + ")"
                     else:
-                        cus = order.customer.mobile + "(" + order.customer.id + ")"
+                        cus = str(order.customer.mobile) + "(" + str(order.customer.id) + ")"
                     if index < 0:
                         customer_under.append({'id':order.customer.id, 'customer': cus, 'total_amount':order.amount, 'discount':order.discount, 'under_amount':under_payment, 'paid':payment_t})
                     else:
