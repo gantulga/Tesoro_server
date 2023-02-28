@@ -483,8 +483,12 @@ def dailyReport(request):
                         payment_t = payment_t + payment.amount
 
                     under_payment = order.discounted_amount - payment_t
+                    if order.customer.first_name:
+                        cus = order.customer.first_name + "(" + order.customer.id + ")"
+                    else:
+                        cus = order.customer.mobile + "(" + order.customer.id + ")"
                     if index < 0:
-                        customer_under.append({'id':order.customer.id, 'customer': order.customer.first_name, 'total_amount':order.amount, 'discount':order.discount, 'under_amount':under_payment, 'paid':payment_t})
+                        customer_under.append({'id':order.customer.id, 'customer': cus, 'total_amount':order.amount, 'discount':order.discount, 'under_amount':under_payment, 'paid':payment_t})
                     else:
                         customer_under[index]['total_amount'] = int(customer_under[index]['total_amount']) + int(order.amount)
                         customer_under[index]['discount'] = int(customer_under[index]['discount']) + int(order.discount)
