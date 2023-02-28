@@ -483,7 +483,7 @@ def dailyReport(request):
                         payment_t = payment_t + payment.amount
 
                     under_payment = order.discounted_amount - payment_t
-                    if "firstname" in order.customer:
+                    if order.customer.firstname:
                         cus = order.customer.firstname + "(" + order.customer.id + ")"
                     else:
                         cus = order.customer.mobile + "(" + order.customer.id + ")"
