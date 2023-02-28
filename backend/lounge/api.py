@@ -66,7 +66,8 @@ class LoungeOrdersViewSet(generics.ListAPIView):
     filterset_fields = ['client', 'division', 'status', 'shift_work']
 
 class LoungeUnpaidOrdersViewSet(generics.ListAPIView):
-    queryset = Order.objects.all().exclude(status="Төлбөр гүйцэт төлсөн.")
+
+    queryset = Order.objects.all().exclude(status="Төлбөр гүйцэт төлсөн.").exclude(worker__id__in=[1, 2, 3, 4])
     permission_classes = [permissions.AllowAny]
     serializer_class = LoungeOrdersSerializer
     authentication_classes = (TokenAuthentication,)
