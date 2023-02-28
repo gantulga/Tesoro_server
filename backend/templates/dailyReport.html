@@ -99,6 +99,27 @@
       </div>
     {% endfor %}
   </div>
+  <div class="walletInfo">
+    <div class="info-header">5. Үйлчлүүлэгчдийн төлбөрийн мэдээлэл</div>
+    <div class="wallet head">
+      <div class="index">№</div>
+      <div class="name">Үйлчлүүлэгч</div>
+      <div class="amount under">Дутуу ₮</div>
+      <div class="amount paid">Төлсөн ₮</div>
+      <div class="amount">Хөнгөлөлт ₮</div>
+      <div class="amount">Нийт ₮</div>
+    </div>
+    {% for customer in customer_under %}
+      <div class="wallet">
+        <div class="index">{{ forloop.counter }}</div>
+        <div class="name">{{customer.customer}}</div>
+        <div class="amount under">{{customer.under_amount}} ₮</div>
+        <div class="amount paid">{{customer.paid}} ₮</div>
+        <div class="amount">{{customer.discount}} ₮</div>
+        <div class="amount">{{customer.total_amount}} ₮</div>
+      </div>
+    {% endfor %}
+  </div>
 </div>
 {% endif %}
 <script>

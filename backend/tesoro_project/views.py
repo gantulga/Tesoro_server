@@ -472,7 +472,25 @@ def dailyReport(request):
                         worker_under[index]['paid'] = int(worker_under[index]['paid']) + int(payment_t)
 
                 all_parent_cats = Product_category.objects.filter(parent__isnull=True)
-                print(all_parent_cats)
+
+
+                customer_under = []
+                all_customer_orders = Order.objects.filter(shift_work=shift_work.id, customer__isnull=False).order_by('customer')
+                for order in all_customer_orders:
+                    index = next((i for i, item in enumerate(customer_under) if item['id'] == int(order.customer.id)), -1)
+                    payment_t = 0
+                    for payment in order.payments.all():
+                        payment_t = payment_t + payment.amount
+
+                    under_payment = order.discounted_amount - payment_t
+                    if index < 0:
+                        customer_under.append({'id':order.customer.id, 'customer': order.customer.first_name, 'total_amount':order.amount, 'discount':order.discount, 'under_amount':under_payment, 'paid':payment_t})
+                    else:
+                        customer_under[index]['total_amount'] = int(customer_under[index]['total_amount']) + int(order.amount)
+                        customer_under[index]['discount'] = int(customer_under[index]['discount']) + int(order.discount)
+                        customer_under[index]['under_amount'] = int(customer_under[index]['under_amount']) + int(under_payment)
+                        customer_under[index]['paid'] = int(customer_under[index]['paid']) + int(payment_t)
+                
 
                 return render(request, 'dailyReport.html', {
                     'all_shift_workers':all_shift_workers, 
@@ -486,6 +504,7 @@ def dailyReport(request):
                     'total_under_amount_worker':total_under_amount_worker,
                     'total_under_amount_guest': total_under_amount_guest,
                     'worker_under':worker_under,
+                    'customer_under':customer_under,
                     'all_parent_cats':all_parent_cats })
             else:
                 all_shift_workers = Shift_work.objects.all().order_by('-id')
