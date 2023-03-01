@@ -38,7 +38,7 @@ class BillAdmin(admin.ModelAdmin):
 
 class PaymentAdmin(admin.ModelAdmin):
 	exclude = ['created_by', 'updated_by']
-	list_display = ('id', 'wallet', 'shift_work', 'amount')
+	list_display = ('id','order', 'created_at', 'wallet', 'shift_work', 'amount')
 	def save_model(self, request, obj, form, change):
 		if not change:
 			obj.created_by = request.user
