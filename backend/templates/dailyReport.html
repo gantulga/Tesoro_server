@@ -20,7 +20,7 @@
     <div class="info-header">1. Орлогын мэдээлэл</div>
     <div class="wallet">
       <div class="index">1</div>
-      <div class="name">Нийт орлого</div>
+      <div class="name">Өдрийн нийт орлого</div>
       <div class="amount">{{total_order_amount}} ₮</div>
     </div>
     <div class="wallet">
@@ -43,6 +43,30 @@
       <div class="name">Төлөгдсөн</div>
       <div class="amount">{{total_payment_balanace}} ₮</div>
     </div>
+  </div>
+
+  <div class="walletInfo">
+    <div class="info-header">2. Өр төлсөн байдал</div>
+    {% for payment in umnu_tavisan_uriin_guilgee %}
+    <div class="wallet">
+      <div class="index">{{ forloop.counter }}</div>
+      <div class="name">
+        {% if payment.orders.all.0.customer %}
+          {% if payment.orders.all.0.customer.firstname %}
+            Үйлчлүүлэгч: {{payment.orders.all.0.customer.firstname}}
+          {% else %}
+            Үйлчлүүлэгч: {{payment.orders.all.0.customer.mobile}}
+          {% endif %}
+        {% elif payment.orders.all.0.worker %}
+          Ажилтан: {{payment.orders.all.0.worker.first_name}}
+        {% else %}
+          Order дугаар: {{payment.orders.all.0.id}}
+        {% endif %}
+      </div>
+      <div class="amount">{{payment.amount}} ₮</div>
+    </div>
+    {% endfor %}
+    <div class="total">Нийт: {{umnu_tavisan_uriin_guilgee_dun}} ₮</div>
   </div>
 
   <div class="walletInfo">

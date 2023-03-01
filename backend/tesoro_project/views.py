@@ -409,12 +409,25 @@ def dailyReport(request):
                 all_wallet = Wallet.objects.all()
                 total_payment_balanace = 0
                 wallet_balances = []
+                umnu_tavisan_uriin_guilgee = []
+                umnu_tavisan_uriin_guilgee_dun = 0
                 for wallet in all_wallet:
                     wallet_balance = 0
                     payments = Payment.objects.filter(wallet=wallet.id, shift_work=shift_work.id)
                     for payment in payments:
                         wallet_balance = wallet_balance + payment.amount
-                        total_payment_balanace = total_payment_balanace + payment.amount
+
+                        umnuh_eeljiin_order = False
+                        for ord in payment.orders.all():
+                            if ord.shift_work != shift_work:
+                                umnuh_eeljiin_order = True
+                        if umnuh_eeljiin_order:
+                            umnu_tavisan_uriin_guilgee.append(payment)
+                            umnu_tavisan_uriin_guilgee_dun = umnu_tavisan_uriin_guilgee_dun + payment.amount
+                        else:
+                            #yag tuhain udriin order bolhoor paymentiig totalruu append hj bn
+                            total_payment_balanace = total_payment_balanace + payment.amount
+
 
                     wallet_balances.append({'wallet':wallet, 'balance':int(wallet_balance)})
 
@@ -441,7 +454,6 @@ def dailyReport(request):
                 total_under_amount_guest = 0
                 total_under_amount_worker = 0
                 for order in all_orders:
-                    print(order.shift_work.id)
                     total_order_amount = total_order_amount + order.amount
                     total_discount = total_discount + order.discount
                     total_discounted_amount = total_discounted_amount + order.discounted_amount
@@ -510,7 +522,9 @@ def dailyReport(request):
                     'total_under_amount_guest': total_under_amount_guest,
                     'worker_under':worker_under,
                     'customer_under':customer_under,
-                    'all_parent_cats':all_parent_cats })
+                    'all_parent_cats':all_parent_cats,
+                    'umnu_tavisan_uriin_guilgee':umnu_tavisan_uriin_guilgee,
+                    'umnu_tavisan_uriin_guilgee_dun':umnu_tavisan_uriin_guilgee_dun })
             else:
                 all_shift_workers = Shift_work.objects.all().order_by('-id')
                 return render(request, 'dailyReport.html', {'all_shift_workers':all_shift_workers})
