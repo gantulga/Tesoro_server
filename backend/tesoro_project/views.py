@@ -441,6 +441,7 @@ def dailyReport(request):
                 total_under_amount_guest = 0
                 total_under_amount_worker = 0
                 for order in all_orders:
+                    print(order.shift_work.id)
                     total_order_amount = total_order_amount + order.amount
                     total_discount = total_discount + order.discount
                     total_discounted_amount = total_discounted_amount + order.discounted_amount
