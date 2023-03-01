@@ -5,3 +5,4 @@ lounge_frontend/build
 backend/media
 */__pycache__/*
 __pycache__/
+backend/tesoro_project/settings.py

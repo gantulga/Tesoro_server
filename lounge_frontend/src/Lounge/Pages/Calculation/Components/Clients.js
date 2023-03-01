@@ -33,7 +33,7 @@ export default class Clients extends Component {
                                         client.number
                                     )
                                 }>
-                                {client.number}
+                                {client.description ? client.description : client.number}
                             </button>
                         </div>
                     )
