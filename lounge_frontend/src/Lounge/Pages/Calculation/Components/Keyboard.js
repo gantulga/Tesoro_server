@@ -127,6 +127,7 @@ export default class Keyboard extends Component {
       if (response) {
         await this.setState({
           moneyValue: "",
+          wallet_id: 0,
         });
         this.props.paymentInfoReceiver(response);
         store.addNotification({
