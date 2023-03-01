@@ -4,3 +4,4 @@ lounge_frontend/node_modules
 lounge_frontend/build
 backend/media
 */__pycache__/*
+__pycache__/
