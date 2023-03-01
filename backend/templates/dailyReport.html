@@ -62,6 +62,8 @@
         {% else %}
           Order дугаар: {{payment.orders.all.0.id}}
         {% endif %}
+        ,
+        {{payment.orders.all.0.division.name}} - {{payment.orders.all.0.client.number}}
       </div>
       <div class="amount">{{payment.amount}} ₮</div>
     </div>
