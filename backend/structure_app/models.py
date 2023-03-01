@@ -47,9 +47,9 @@ class Client(Createdinfo):
     division = models.ForeignKey('Division', null=False, blank=False, on_delete=models.PROTECT, related_name="clients")
     number = models.IntegerField(null=False)
     description = models.TextField(null=False, max_length=255)
-    free = models.BooleanField(default=1)
-    clean = models.BooleanField(default=1)
-    minibarFull = models.BooleanField(default=1)
+    free = models.BooleanField(default=True)
+    clean = models.BooleanField(default=True)
+    minibarFull = models.BooleanField(default=True)
     # name = models.CharField(null=True, blank=True, max_length=10)
 
     class Meta:
