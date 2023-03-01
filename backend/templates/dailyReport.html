@@ -50,21 +50,21 @@
     {% for payment in umnu_tavisan_uriin_guilgee %}
     <div class="wallet">
       <div class="index">{{ forloop.counter }}</div>
-      <div class="name">
-        {{payment.orders.all.0.created_at|date:"Y M d"}} - 
+      <div class="name"><b>Хэзээ:</b>
+        {{payment.orders.all.0.created_at|date:"Y M d"}} | 
         {% if payment.orders.all.0.customer %}
           {% if payment.orders.all.0.customer.firstname %}
-            Үйлчлүүлэгч: {{payment.orders.all.0.customer.firstname}}
+          <b>Үйлчлүүлэгч:</b> {{payment.orders.all.0.customer.firstname}}
           {% else %}
-            Үйлчлүүлэгч: {{payment.orders.all.0.customer.mobile}}
+          <b>Үйлчлүүлэгч:</b> {{payment.orders.all.0.customer.mobile}}
           {% endif %}
         {% elif payment.orders.all.0.worker %}
-          Ажилтан: {{payment.orders.all.0.worker.first_name}}
+        <b>Ажилтан:</b> {{payment.orders.all.0.worker.first_name}}
         {% else %}
-          Order дугаар: {{payment.orders.all.0.id}}
+        <b>Order дугаар:</b> {{payment.orders.all.0.id}}
         {% endif %}
-        ,
-        {{payment.orders.all.0.division.name}} - {{payment.orders.all.0.client.number}}
+        |
+        <b>Хаана:</b> {{payment.orders.all.0.division.name}} - {{payment.orders.all.0.client.number}}
       </div>
       <div class="amount">{{payment.amount}} ₮</div>
     </div>
