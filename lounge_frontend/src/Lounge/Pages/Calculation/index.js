@@ -65,9 +65,11 @@ export default class Calculations extends Component {
       division_id: null,
       worker_id: null,
       order_information: null,
-      company_register: null,
 
       session_secund: 60,
+
+      company_name: null,
+      company_register: null,
       company_register_status: "0",
       searching_value: "",
       customer_mobile: ""
@@ -729,6 +731,7 @@ export default class Calculations extends Component {
       order_information: null,
       order_id: null,
       order_detials: [],
+      
       company_name: null,
       company_register: null,
       company_register_status: "0"
@@ -1222,6 +1225,10 @@ export default class Calculations extends Component {
       show_payment: false,
       productBoxShow: false,
       keyboardBoxShow: false,
+
+      company_name: null,
+      company_register: null,
+      company_register_status: "0",
     });
   }
 
