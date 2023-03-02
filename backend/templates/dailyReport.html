@@ -73,7 +73,7 @@
   </div>
 
   <div class="walletInfo">
-    <div class="info-header">2. Дансны орлогын мэдээлэл</div>
+    <div class="info-header">3. Дансны орлогын мэдээлэл</div>
     {% for temp in wallet_balances %}
       {% if temp.balance > 0 %}
         <div class="wallet">
@@ -83,11 +83,11 @@
         </div>
       {% endif %}
     {% endfor %}
-    <div class="total">Нийт: {{total_payment_balanace}} ₮</div>
+    <div class="total">Нийт: {{total_payment_balanace + umnu_tavisan_uriin_guilgee_dun}} ₮</div>
   </div>
 
   <div class="walletInfo">
-    <div class="info-header">3. Борлуулсан бүтээгдэхүүний тоо, дүн</div>
+    <div class="info-header">4. Борлуулсан бүтээгдэхүүний тоо, дүн</div>
     {% for cat in all_parent_cats %}
       {% if cat.id > 4 %}
         <div class="cat-name">{{cat.name}}</div>
@@ -106,7 +106,7 @@
     {% endfor %}
   </div>
   <div class="walletInfo">
-    <div class="info-header">4. Ажилчдын төлбөрийн мэдээлэл</div>
+    <div class="info-header">5. Ажилчдын төлбөрийн мэдээлэл</div>
     <div class="wallet head">
       <div class="index">№</div>
       <div class="name">Ажилчин</div>
@@ -127,7 +127,7 @@
     {% endfor %}
   </div>
   <div class="walletInfo">
-    <div class="info-header">5. Үйлчлүүлэгчдийн төлбөрийн мэдээлэл</div>
+    <div class="info-header">6. Үйлчлүүлэгчдийн төлбөрийн мэдээлэл</div>
     <div class="wallet head">
       <div class="index">№</div>
       <div class="name">Үйлчлүүлэгч</div>
