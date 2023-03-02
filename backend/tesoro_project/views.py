@@ -590,6 +590,7 @@ def printer(request):
         date = "Хэзээ: " + str(datetime.datetime.now())
         print(res)
         division = Division.objects.get(pk=res['order']['division'])
+        client = Division.objects.get(pk=res['order']['client'])
         if division.id == 3:
             division = "Зочид буудал"
         elif division.id == 4:
@@ -605,7 +606,7 @@ def printer(request):
         else: 
             division = "Мэдэгдэхгүй"
         
-        where = "Хаашаа: " + str(division) + "\n"
+        where = "Хаашаа: " + str(division) + " - " + client.description + "\n"
         configure = Configuration_value.objects.get(pk=1)
         bill_number = configure.kitchen_bill_number
         configure.kitchen_bill_number = configure.kitchen_bill_number + 1
