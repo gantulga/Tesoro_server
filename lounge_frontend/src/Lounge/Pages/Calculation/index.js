@@ -2301,7 +2301,7 @@ export default class Calculations extends Component {
           ref={(ref) => {
             this.idleTimer = ref;
           }}
-          timeout={1000 * this.state.session_secund * 60}
+          timeout={1000 * this.state.session_secund}
           onActive={this.handleOnActive}
           onIdle={this.handleOnIdle}
           onAction={this.handleOnAction}
