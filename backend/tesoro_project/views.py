@@ -591,7 +591,7 @@ def printer(request):
         date = "Хэзээ: " + str(datetime.datetime.now())
         print(res)
         division = Division.objects.get(pk=res['order']['division'])
-        client = Division.objects.get(pk=res['order']['client'])
+        client = Client.objects.get(pk=res['order']['client'])
         if division.id == 3:
             division = "Зочид буудал"
         elif division.id == 4:
