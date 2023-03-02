@@ -643,7 +643,7 @@ def printer(request):
             food_cat = Product_category.objects.get(pk=5)
             product = Product.objects.get(pk=detail['id'])
             for pcat in product.categories.all():
-                if pcat in food_cat.child_categories.all():
+                if pcat in food_cat.child_categories.all() or pcat == food_cat:
                     is_food = True
             if is_food:
                 bill_included_food = True
