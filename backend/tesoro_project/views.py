@@ -524,7 +524,8 @@ def dailyReport(request):
                     'customer_under':customer_under,
                     'all_parent_cats':all_parent_cats,
                     'umnu_tavisan_uriin_guilgee':umnu_tavisan_uriin_guilgee,
-                    'umnu_tavisan_uriin_guilgee_dun':umnu_tavisan_uriin_guilgee_dun })
+                    'umnu_tavisan_uriin_guilgee_dun':umnu_tavisan_uriin_guilgee_dun,
+                    'payment_total_plus_umnuh_payment_all_total': total_payment_balanace + umnu_tavisan_uriin_guilgee_dun })
             else:
                 all_shift_workers = Shift_work.objects.all().order_by('-id')
                 return render(request, 'dailyReport.html', {'all_shift_workers':all_shift_workers})
