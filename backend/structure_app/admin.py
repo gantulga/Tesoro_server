@@ -5,7 +5,7 @@ from .models import *
 admin.site.site_header = 'Tesoro Center - Хэрэглэгчийн програм'
 
 class ClientAdmin(admin.ModelAdmin):
-	list_display = ('division', 'description')
+	list_display = ('id', 'division', 'description')
 	exclude = ['created_by']
 
 	def save_model(self, request, obj, form, change):
