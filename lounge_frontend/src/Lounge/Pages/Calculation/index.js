@@ -1449,12 +1449,7 @@ export default class Calculations extends Component {
       !this.state.shiftWorker.finished
     ) {
       var getOrderStatus = false;
-      var url =
-        "http://" +
-        this.props.ip_address +
-        "/api/lounge/postOrder/" +
-        this.state.order_id.toString() +
-        "/";
+      var url = "http://" + this.props.ip_address + "/api/lounge/postOrder/" + this.state.order_id.toString() + "/";
 
       var orderData = await fetch(url, {
         method: "GET",
@@ -1472,7 +1467,7 @@ export default class Calculations extends Component {
           store.addNotification({
             title: "Анхаар!",
             message:
-              "Алдаа гарлаа. Системийн инженертэй холбогдож хэлнэ үү! Алдааны мэдээлэл: " +
+              "Алдаа гарлаа. Системийн инженертэй холбогдож хэлнэ үү! Алдааны мэдээлэл:" +
               error,
             type: "danger",
             insert: "top",
@@ -1505,12 +1500,7 @@ export default class Calculations extends Component {
         orderData.updated_by = this.state.user_id;
         orderData.updated_at = new Date();
 
-        var url2 =
-          "http://" +
-          this.props.ip_address +
-          "/api/lounge/postOrder/" +
-          this.state.order_id.toString() +
-          "/";
+        var url2 = "http://" + this.props.ip_address + "/api/lounge/postOrder/" + this.state.order_id.toString() + "/";
 
         var response = await fetch(url2, {
           method: "PUT",
