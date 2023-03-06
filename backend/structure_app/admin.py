@@ -18,8 +18,4 @@ admin.site.register(Client, ClientAdmin)
 admin.site.register(Customer)
 admin.site.register(Configuration_value)
 admin.site.register(Shift_work)
-
-class Error_listAdmin(admin.ModelAdmin):
-	list_display = ('error_value')
-
-admin.site.register(Error_list, Error_listAdmin)
+admin.site.register(Error_list)
