@@ -1280,7 +1280,7 @@ export default class Calculations extends Component {
         shift_work: this.state.shiftWorker.id,
       };
       let status;
-      const url = "http://" + this.props.ip_address + "/api/lounge/postOrder/";
+      const url = "http://192.168.1.8:8000/api/lounge/postOrder/";
       var response = await fetch(url, {
         method: "POST",
         headers: {
@@ -1318,7 +1318,7 @@ export default class Calculations extends Component {
             shift_work: this.state.shiftWorker.id,
           };
           const url =
-            "http://" + this.props.ip_address + "/api/lounge/postOrderDetail/";
+            "http://192.168.1.8:8000/api/lounge/postOrderDetail/";
           var detailResponse = await fetch(url, {
             method: "POST",
             headers: {
