@@ -1633,6 +1633,8 @@
 
 .dashboard {
   padding: 10px 15px !important;
+  max-height: 100%;
+  overflow-y: scroll;
 }
 
 .dashboard .dashboard-body {
