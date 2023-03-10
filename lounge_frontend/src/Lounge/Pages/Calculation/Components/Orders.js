@@ -93,7 +93,7 @@ export default class Orders extends Component {
                 </div>
               </div>
                 {this.props.orders.map((order, index)=>{
-                    if(parseInt(order.amount) - this.calculator(order.payments) > 0 && order.worker === null){
+                    if(parseInt(order.amount) - this.calculator(order.payments) > 0 && order.worker === null  && order.customer === null){
                       return (
                         <button className="order" key={index} onClick={() =>
                           this.props.set_order(order.id, order.amount)
@@ -167,7 +167,7 @@ export default class Orders extends Component {
                     }
                 })}
                 {this.props.orders.map((order, index)=>{
-                    if(parseInt(order.amount) - this.calculator(order.payments) <= 0 || order.worker !== null){
+                    if(parseInt(order.amount) - this.calculator(order.payments) <= 0 || order.worker !== null || order.customer !== null){
                       return (
                         <button className="order" key={index} onClick={() =>
                           this.props.set_order(order.id, order.amount)
