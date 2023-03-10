@@ -223,7 +223,7 @@ export default class Orders extends Component {
                                     />₮
                                   </div>
                                 }
-                                {parseInt(order.discounted_amount) - this.calculator(order.payments) > 0 && order.worker === null ? (
+                                {parseInt(order.discounted_amount) - this.calculator(order.payments) > 0 && order.worker === null && order.customer === null ? (
                                   <div className="field amount under">
                                     <NumberFormat
                                       value={parseInt(order.discounted_amount) - this.calculator(order.payments)}
