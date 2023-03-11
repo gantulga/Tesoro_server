@@ -152,8 +152,8 @@ urlpatterns = [
     #tur zuuriin
     path('itemBalanceChanger/<int:client_id>', itemBalanceChanger), #uil ajillagaa jigdreheer idevhgui bolgoh
 
-    url(r'^media/(?P<path>.*)$', serve,{'document_root': settings.MEDIA_ROOT}), 
-    url(r'^static/(?P<path>.*)$', serve,{'document_root': settings.STATIC_ROOT}), 
+    re_path(r'^media/(?P<path>.*)$', serve,{'document_root': settings.MEDIA_ROOT}), 
+    re_path(r'^static/(?P<path>.*)$', serve,{'document_root': settings.STATIC_ROOT}), 
 ]
 
 if settings.DEBUG:
