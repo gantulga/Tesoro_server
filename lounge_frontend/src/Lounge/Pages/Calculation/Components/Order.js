@@ -20,6 +20,45 @@ export default class componentName extends Component {
     return payment_total
   }
 
+  order_print(order_id) {
+    var url = "http://" + this.props.ip_address + "/api/order/print?order=" + order_id + "&printer=1"
+    fetch(url, {
+      method: "GET",
+    })
+    .then(response=>response.json())
+    .then(data=>{
+      if(data['success']){
+        store.addNotification({
+          message: "Order амжилттай хэвлэгдлээ.",
+          type: "success",
+          insert: "top",
+          container: "bottom-right",
+          animationIn: ["animated", "fadeIn"],
+          animationOut: ["animated", "fadeOut"],
+          dismiss: {
+            duration: 3000,
+            onScreen: true,
+          },
+        });
+        this.modalHide()
+      }else{
+        store.addNotification({
+          message: data['errorCode'],
+          type: "danger",
+          insert: "top",
+          container: "bottom-right",
+          animationIn: ["animated", "fadeIn"],
+          animationOut: ["animated", "fadeOut"],
+          dismiss: {
+            duration: 3000,
+            onScreen: true,
+          },
+        });
+        this.sendError("fetchError, print_bill")
+      }
+    })
+  }
+
   render() {
     var paymentTotalAmount = 0;
     this.props.order_payments.map(
@@ -59,8 +98,13 @@ export default class componentName extends Component {
               </button>
             </div>
             <div className="button">
+              <button className="white" onClick={() => this.props.order_print(this.props.order_id)}>
+              <i className="fa fa-print" aria-hidden="true"></i> Нэхэмжлэл
+              </button>
+            </div>
+            <div className="button">
               <button className={this.props.order_id !== null && this.props.order_information && this.props.order_information.discounted_amount - paymentTotalAmount === 0 ? "white" : "white disabled"} onClick={() => this.props.show_ebarimt(this.props.order_id)} disabled={this.props.order_id !== null && this.props.order_information && this.props.order_information.discounted_amount - paymentTotalAmount === 0 ? false : true}>
-              <i className="fa fa-print" aria-hidden="true"></i>Баримт
+              <i className="fa fa-print" aria-hidden="true"></i> Баримт
               </button>
             </div>
           </div>
