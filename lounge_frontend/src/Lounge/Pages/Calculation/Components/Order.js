@@ -3,6 +3,7 @@ import NumberFormat from 'react-number-format';
 import Moment from "moment";
 import Keyboard from './Keyboard';
 import ProductList from './ProductList';
+import { store } from "react-notifications-component";
 
 export default class componentName extends Component {
   constructor(props) {
