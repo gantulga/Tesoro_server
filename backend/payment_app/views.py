@@ -603,7 +603,7 @@ def printOrder(request):
 
         signature = "Үйлчлүүлэгчийн гарын үсэг: "
         y = y + 30
-        draw.text((30, y), tailbar, fill="black", font=unicode_font_26)
+        draw.text((30, y), signature, fill="black", font=unicode_font_26)
 
         tailbar = "Нэмэлт тайлбар: "
         y = y + 70
