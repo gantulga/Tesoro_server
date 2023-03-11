@@ -1776,10 +1776,10 @@ export default class Calculations extends Component {
     }
   }
 
-  async order_print(order_id) {
+  order_print(order_id) {
     console.log("order_print")
     var url = "http://" + this.props.ip_address + "/api/order/print?order=" + order_id + "&printer=1"
-    await fetch(url, {
+    fetch(url, {
       method: "GET",
     })
     .then(response=>response.json())
@@ -1797,7 +1797,6 @@ export default class Calculations extends Component {
             onScreen: true,
           },
         });
-        this.modalHide()
       }else{
         store.addNotification({
           message: data['errorCode'],
@@ -1811,7 +1810,7 @@ export default class Calculations extends Component {
             onScreen: true,
           },
         });
-        this.sendError("fetchError, print_bill")
+        this.sendError("fetchError, order_print")
       }
     })
   }

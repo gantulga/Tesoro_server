@@ -642,6 +642,12 @@ def printOrder(request):
         for b in job:
             mysocket.sendall(b)
         mysocket.close()
-        return HttpResponse("done")
+        r = '{"success":true}'
+        r = json.dumps(r)
+        r = json.loads(r)
+        return HttpResponse(r)
     else:
-        return HttpResponse("error")
+        r = '{"errorCode":"Please insert values!", "success":false}'
+        r = json.dumps(r)
+        r = json.loads(r)
+        return HttpResponse(r)
