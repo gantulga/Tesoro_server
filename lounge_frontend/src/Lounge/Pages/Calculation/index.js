@@ -103,6 +103,7 @@ export default class Calculations extends Component {
     this.checkBalance = this.checkBalance.bind(this)
     this.printer = this.printer.bind(this)
     this.print_bill = this.print_bill.bind(this)
+    this.order_print = this.order_print.bind(this)
     this.show_product_open_function = this.show_product_open_function.bind(this)
     this.loadingTrue = this.loadingTrue.bind(this)
     this.loadingFalse = this.loadingFalse.bind(this)
@@ -1775,6 +1776,45 @@ export default class Calculations extends Component {
     }
   }
 
+  async order_print(order_id) {
+    var url = "http://" + this.props.ip_address + "/api/order/print?order=" + order_id + "&printer=1"
+    await fetch(url, {
+      method: "GET",
+    })
+    .then(response=>response.json())
+    .then(data=>{
+      if(data['success']){
+        store.addNotification({
+          message: "Order амжилттай хэвлэгдлээ.",
+          type: "success",
+          insert: "top",
+          container: "bottom-right",
+          animationIn: ["animated", "fadeIn"],
+          animationOut: ["animated", "fadeOut"],
+          dismiss: {
+            duration: 3000,
+            onScreen: true,
+          },
+        });
+        this.modalHide()
+      }else{
+        store.addNotification({
+          message: data['errorCode'],
+          type: "danger",
+          insert: "top",
+          container: "bottom-right",
+          animationIn: ["animated", "fadeIn"],
+          animationOut: ["animated", "fadeOut"],
+          dismiss: {
+            duration: 3000,
+            onScreen: true,
+          },
+        });
+        this.sendError("fetchError, print_bill")
+      }
+    })
+  }
+
   set_customer_order() {
     if (
       this.state.order_id !== null &&
@@ -2446,6 +2486,7 @@ export default class Calculations extends Component {
             clearButton={this.clearButton.bind(this)}
             updateOrderButton={this.updateOrderButton.bind(this)}
             doOrderButton={this.doOrderButton.bind(this)}
+            order_print = {this.order_print}
             {...this.props}
           />
         </div>

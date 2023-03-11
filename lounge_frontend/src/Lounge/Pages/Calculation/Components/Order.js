@@ -21,45 +21,6 @@ export default class componentName extends Component {
     return payment_total
   }
 
-  order_print(order_id) {
-    var url = "http://" + this.props.ip_address + "/api/order/print?order=" + order_id + "&printer=1"
-    fetch(url, {
-      method: "GET",
-    })
-    .then(response=>response.json())
-    .then(data=>{
-      if(data['success']){
-        store.addNotification({
-          message: "Order амжилттай хэвлэгдлээ.",
-          type: "success",
-          insert: "top",
-          container: "bottom-right",
-          animationIn: ["animated", "fadeIn"],
-          animationOut: ["animated", "fadeOut"],
-          dismiss: {
-            duration: 3000,
-            onScreen: true,
-          },
-        });
-        this.modalHide()
-      }else{
-        store.addNotification({
-          message: data['errorCode'],
-          type: "danger",
-          insert: "top",
-          container: "bottom-right",
-          animationIn: ["animated", "fadeIn"],
-          animationOut: ["animated", "fadeOut"],
-          dismiss: {
-            duration: 3000,
-            onScreen: true,
-          },
-        });
-        this.sendError("fetchError, print_bill")
-      }
-    })
-  }
-
   render() {
     var paymentTotalAmount = 0;
     this.props.order_payments.map(
