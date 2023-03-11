@@ -593,16 +593,20 @@ def printOrder(request):
 
         if order.customer:
             if order.customer.firstname:
-                customer = "Хүлээн авагч: " + order.customer.firstname
+                customer = "Үйлчлүүлэгч: " + order.customer.firstname
             else:
-                customer = "Хүлээн авагч: " + order.customer.mobile
+                customer = "Үйлчлүүлэгч: " + order.customer.mobile
         else:
-            customer = "Хүлээн авагч: ..........................."
+            customer = "Үйлчлүүлэгч: ..........................."
         y = y + 30
         draw.text((30, y), customer, fill="black", font=unicode_font_26)
 
-        tailbar = "Нэмэлт тайлбар: "
+        signature = "Үйлчлүүлэгчийн гарын үсэг: "
         y = y + 30
+        draw.text((30, y), tailbar, fill="black", font=unicode_font_26)
+
+        tailbar = "Нэмэлт тайлбар: "
+        y = y + 70
         draw.text((30, y), tailbar, fill="black", font=unicode_font_26)
 
         image.save("/home/tesoro/Tesoro_server/backend/media/orderPrint/" + str(order.id) + "-text.jpg")
