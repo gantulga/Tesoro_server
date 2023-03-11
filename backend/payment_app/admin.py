@@ -6,7 +6,7 @@ admin.site.site_header = 'Tesoro Center - Хэрэглэгчийн програ�
 class OrderAdmin(admin.ModelAdmin):
 	#list_display = ('name', 'division')
 	exclude = ['created_by', 'updated_by']
-	list_display = ('id', 'client', 'discount', 'discounted_amount', 'amount', 'status')
+	list_display = ('id', 'client', 'discount', 'discounted_amount', 'amount', 'status', 'worker', 'customer')
 	def save_model(self, request, obj, form, change):
 		if not change:
 			obj.created_by = request.user
