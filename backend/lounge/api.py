@@ -176,7 +176,7 @@ class LoungeUnderPaymentsViewSet(viewsets.ModelViewSet):
     lounge_division = Division.objects.get(pk=5)
     last_shift_work = Shift_work.objects.filter(
     division=lounge_division.id).order_by('-id')[0]
-    queryset = Order.objects.filter(shift_work=last_shift_work.id, status__in=["Төлбөр төлөгдөөгүй.", "Төлбөр дутуу төлсөн."], worker__isnull=True)
+    queryset = Order.objects.filter(shift_work=last_shift_work.id, status__in=["Төлбөр төлөгдөөгүй.", "Төлбөр дутуу төлсөн."], worker__isnull=True, customer__isnull=True)
     permission_classes = [permissions.AllowAny]
     serializer_class = unSafe_loungaUnderPaymentsSerializer
     authentication_classes = (TokenAuthentication,)
