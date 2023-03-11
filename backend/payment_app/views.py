@@ -531,7 +531,7 @@ def printOrder(request):
         mysocket.connect((printer.ip, printer.port))
 
         width = 600
-        add_h = 580
+        add_h = 100
 
         height = len(order.order_detials.all()) * 70 + add_h
         image = Image.new("RGB", (width, height), "white")
@@ -550,7 +550,7 @@ def printOrder(request):
         draw.text((160, y), text, fill="black", font=unicode_font_48)
 
         y = y + 70
-        draw.text((30, y), "Огноо: " + str(order.created_at), fill="black", font=unicode_font_22)
+        draw.text((30, y), "Огноо: " + str(order.created_at[0:18]), fill="black", font=unicode_font_22)
         draw.text((400, y), "Принтер №: " + printer.name, fill="black", font=unicode_font_22)
         
         y = y + 40
