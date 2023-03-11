@@ -531,7 +531,7 @@ def printOrder(request):
         mysocket.connect((printer.ip, printer.port))
 
         width = 600
-        add_h = 340
+        add_h = 450
 
         height = len(order.order_detials.all()) * 70 + add_h
         image = Image.new("RGB", (width, height), "white")
