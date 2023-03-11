@@ -1777,6 +1777,7 @@ export default class Calculations extends Component {
   }
 
   async order_print(order_id) {
+    console.log("order_print")
     var url = "http://" + this.props.ip_address + "/api/order/print?order=" + order_id + "&printer=1"
     await fetch(url, {
       method: "GET",
