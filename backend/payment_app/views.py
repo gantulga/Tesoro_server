@@ -531,7 +531,7 @@ def printOrder(request):
         mysocket.connect((printer.ip, printer.port))
 
         width = 600
-        add_h = 100
+        add_h = 340
 
         height = len(order.order_detials.all()) * 70 + add_h
         image = Image.new("RGB", (width, height), "white")
@@ -590,6 +590,20 @@ def printOrder(request):
 
         y = y + 30
         draw.text((30, y), "--------------------------------------------------------------------------------", fill="black", font=unicode_font_26)
+
+        if order.customer:
+            if order.customer.firstname:
+                customer = "Хүлээн авагч: " + order.customer.firstname
+            else:
+                customer = "Хүлээн авагч: " + order.customer.mobile
+        else:
+            customer = "Хүлээн авагч: ..........................."
+        y = y + 30
+        draw.text((30, y), customer, fill="black", font=unicode_font_26)
+
+        tailbar = "Нэмэлт тайлбар: "
+        y = y + 30
+        draw.text((30, y), tailbar, fill="black", font=unicode_font_26)
 
         image.save("/home/tesoro/Tesoro_server/backend/media/orderPrint/" + str(order.id) + "-text.jpg")
         im = Image.open("/home/tesoro/Tesoro_server/backend/media/orderPrint/" + str(order.id) + "-text.jpg")
