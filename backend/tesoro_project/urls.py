@@ -1,7 +1,8 @@
 from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
-# from django.conf.urls import url
+from django.conf.urls import url
+from django.views.static import serve 
 from django.urls import include, re_path
 from django.conf.urls.static import static
 from . import views
@@ -149,7 +150,10 @@ urlpatterns = [
     path('productToCommodity/<int:client_id>/<int:product_id>', productToCommodity),
 
     #tur zuuriin
-    path('itemBalanceChanger/<int:client_id>', itemBalanceChanger) #uil ajillagaa jigdreheer idevhgui bolgoh
+    path('itemBalanceChanger/<int:client_id>', itemBalanceChanger), #uil ajillagaa jigdreheer idevhgui bolgoh
+
+    url(r'^media/(?P<path>.*)$', serve,{'document_root': settings.MEDIA_ROOT}), 
+    url(r'^static/(?P<path>.*)$', serve,{'document_root': settings.STATIC_ROOT}), 
 ]
 
 if settings.DEBUG:
