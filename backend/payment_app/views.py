@@ -4,7 +4,7 @@ import requests
 from datetime import datetime
 from django.http import HttpResponse
 from .models import Order, Order_detial, Bill, Payment
-from structure_app.models import Configuration_value
+from structure_app.models import Configuration_value, Printer
 from django.shortcuts import render, redirect, get_list_or_404, get_object_or_404
 import socket
 from PIL import Image, ImageDraw, ImageFont, ImageOps
@@ -519,3 +519,111 @@ def sendData(request):
         r = json.dumps(r)
         r = json.loads(r)
     return HttpResponse(json.loads(r))
+
+
+def printOrder(request):
+    order = request.GET.get('order')
+    if request.GET.get('order') and request.GET.get('printer') and request.GET.get('printer') != "":
+        order = get_object_or_404(Order, pk=request.GET.get('order'))
+        printer = get_object_or_404(Printer, pk=request.GET.get('printer'))
+
+        mysocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        mysocket.connect((printer.ip, printer.port))
+
+        width = 600
+        add_h = 580
+
+        height = len(order.order_detials.all()) * 70 + add_h
+        image = Image.new("RGB", (width, height), "white")
+        draw = ImageDraw.Draw(image)
+        # font = ImageFont.load_default()
+
+        
+        unicode_font_22 = ImageFont.truetype("/home/tesoro/Tesoro_server/backend/media/roboto.ttf", 22)
+        unicode_font_26 = ImageFont.truetype("/home/tesoro/Tesoro_server/backend/media/roboto.ttf", 26)
+        unicode_font_32 = ImageFont.truetype("/home/tesoro/Tesoro_server/backend/media/roboto.ttf", 32)
+        unicode_font_36 = ImageFont.truetype("/home/tesoro/Tesoro_server/backend/media/roboto.ttf", 36)
+        unicode_font_48 = ImageFont.truetype("/home/tesoro/Tesoro_server/backend/media/roboto.ttf", 48)
+        y = 0
+
+        text = "Tesoro Center"
+        draw.text((160, y), text, fill="black", font=unicode_font_48)
+
+        y = y + 70
+        draw.text((30, y), "Огноо: " + order.created_at, fill="black", font=unicode_font_22)
+        draw.text((400, y), "Принтер №: " + printer.name, fill="black", font=unicode_font_22)
+        
+        y = y + 40
+        draw.text((60, y), "Тоо", fill="black", font=unicode_font_22)
+
+        draw.text((200, y), "Үнэ", fill="black", font=unicode_font_22)
+
+        draw.text((400, y), "Дүн", fill="black", font=unicode_font_22)
+
+        y = y + 15
+        draw.text((30, y), "--------------------------------------------------------------------------------", fill="black", font=unicode_font_26)
+        
+        row_number = 1
+        y = y + 30
+        for detail in order.order_detials.all():
+            det_text = str(row_number) + ". " + str(detail.product.name)
+            draw.text((30, y), det_text, fill="black", font=unicode_font_26)
+
+            quantity_text = str(detail.quantity)
+            draw.text((60, y + 30), quantity_text, fill="black", font=unicode_font_22)
+
+            price_text = str(detail.product.cost)
+            draw.text((170, y + 30), price_text, fill="black", font=unicode_font_22)
+
+            amount_text = str(detail.product.cost * detail.quantity)
+            w, h = draw.textsize(amount_text)
+            draw.text((width - w - 140, y + 30), amount_text, fill="black", font=unicode_font_22)
+
+            row_number = row_number + 1
+            y = y + 70
+
+        draw.text((30, y), "--------------------------------------------------------------------------------", fill="black", font=unicode_font_26)
+
+        niit_dun = "Нийт дүн: " + order.amount
+        y = y + 30
+        draw.text((30, y), niit_dun, fill="black", font=unicode_font_26)
+
+        y = y + 30
+        draw.text((30, y), "--------------------------------------------------------------------------------", fill="black", font=unicode_font_26)
+
+        image.save("/home/tesoro/Tesoro_server/backend/media/orderPrint/" + str(order.id) + "-text.jpg")
+        im = Image.open("/home/tesoro/Tesoro_server/backend/media/orderPrint/" + str(order.id) + "-text.jpg")
+        # if image is not 1-bit, convert it
+        if im.mode != '1':
+            im = im.convert('1')
+        # if image width is not a multiple of 8 pixels, fix that
+        if im.size[0] % 8:
+            im2 = Image.new('1', (im.size[0] + 8 - im.size[0] % 8, im.size[1]), 'white')
+            im2.paste(im, (0, 0))
+            im = im2
+
+        # Invert image, via greyscale for compatibility
+        #  (no, I don't know why I need to do this)
+        im = ImageOps.invert(im.convert('L'))
+        # ... and now convert back to single bit
+        im = im.convert('1')
+
+        job = [(b''.join((bytearray(b'\x1d\x76\x30\x00'),
+                    struct.pack('2B', int(im.size[0] / 8 % 256),
+                                int(im.size[0] / 8 / 256)),
+                    struct.pack('2B', int(im.size[1] % 256),
+                                int(im.size[1] / 256)),
+                    im.tobytes()))),
+                b'\x1b\r\n',
+                b'\x1b\r\n',
+                b'\x1b\r\n',
+                b'\x1b\r\n',
+                b'\x1b\x69'
+            ]
+
+        for b in job:
+            mysocket.sendall(b)
+        mysocket.close()
+        return HttpResponse("done")
+    else:
+        return HttpResponse("error")

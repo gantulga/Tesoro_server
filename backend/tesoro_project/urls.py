@@ -146,6 +146,9 @@ urlpatterns = [
     path('api/bill/registerChecker', payment_views.registerChecker),
     # path('api/bill/putData', payment_views.putData),
 
+    
+    path('api/order/print', payment_views.printOrder),
+
     # Productiig material bolgoh function
     path('productToCommodity/<int:client_id>/<int:product_id>', productToCommodity),
 

@@ -181,3 +181,11 @@ class Error_list(models.Model):
     error_value = models.TextField(null=False)
     def __str__(self):
         return self.error_value
+
+class Printer(models.Model):
+    name = models.CharField(null=False, max_length=255, default="Printer name")
+    ip = models.CharField(null=False, max_length=255, default="192.168.1.9")
+    port = models.IntegerField(null=False, default=9100)
+
+    def __str__(self):
+        return self.name
