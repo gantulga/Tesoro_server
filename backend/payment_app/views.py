@@ -584,7 +584,7 @@ def printOrder(request):
 
         draw.text((30, y), "--------------------------------------------------------------------------------", fill="black", font=unicode_font_26)
 
-        niit_dun = "Нийт дүн: " + order.amount
+        niit_dun = "Нийт дүн: " + str(order.amount)
         y = y + 30
         draw.text((30, y), niit_dun, fill="black", font=unicode_font_26)
 
