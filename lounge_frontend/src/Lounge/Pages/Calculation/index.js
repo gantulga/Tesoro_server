@@ -137,7 +137,6 @@ export default class Calculations extends Component {
 
     fetch("http://" + this.props.ip_address + "/api/error/", requestOptions)
       .then(response => response.text())
-      .then(result => console.log(result))
       .catch(error => console.log('error', error));
   }
 
@@ -929,7 +928,6 @@ export default class Calculations extends Component {
     )
       .then(async (response) => {
         const data = await response.json();
-        console.log(data)
         return data
       })
       .catch((error) => {
@@ -954,6 +952,7 @@ export default class Calculations extends Component {
 
   async product_plus(id, name, cost) {
     var balance_obj = await this.checkBalance(id)
+    console.log(balance_obj)
     const index = await this.getIndex(id);
     if (index === -1) {
       if(balance_obj['balance'] > 0){
@@ -972,6 +971,7 @@ export default class Calculations extends Component {
         });
       }else{
         var can_open = false
+        console.log(balance_obj['zadlah_product'])
         balance_obj['zadlah_product'].map(async (p_product)=>{
           if(p_product['quantity'] > 0){
             can_open = true

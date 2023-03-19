@@ -27,6 +27,7 @@ def balanceChecker(request, client_id, product_id):
 
                     # Үлдэгдэл 0 байвал задлаад материал болгох бүтээгдэхүүн байна уу? шалгах
                     p_products = ingredient.commodity.same_products.all()
+                    print(p_products)
                     for p_product in p_products:
                         p_product_balance = Item_balance.objects.filter(client=client.id, product=p_product.id)
                         if len(p_product_balance) > 0:
