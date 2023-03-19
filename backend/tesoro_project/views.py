@@ -394,6 +394,50 @@ def ingredientedBalance(request):
     else:
         return redirect('/accounts/login/')
 
+@never_cache
+def dailyReportSoldItems(request):
+    group = Group.objects.get(pk=2)
+    if group in request.user.groups.all():
+        if request.method == 'POST':
+            return redirect('/soldItems')
+        else:
+            shift_worker = request.GET.get('shiftWorker', None)
+            if shift_worker != None:
+                shift_work = get_object_or_404(Shift_work, pk=shift_worker)
+
+                all_parent_cats = Product_category.objects.filter(parent__isnull=True)
+                sold_items = []
+                all_order_details = Order_detial.objects.filter(shift_work=shift_work.id, is_deleted=False).order_by('product')
+                for detail in all_order_details:
+                    index = next((i for i, item in enumerate(sold_items) if item['id'] == int(detail.product.id)), -1)
+                    category = None
+                    for cat in detail.product.categories.all():
+                        if cat.parent == None:
+                            category = cat
+
+                    if index < 0:
+                        sold_items.append({'id':detail.product.id, 'product': detail.product.name, 'quantity':detail.quantity, 'amount':detail.subtotal, 'category':category})
+                    else:
+                        sold_items[index]['quantity'] = int(sold_items[index]['quantity']) + int(detail.quantity)
+                        sold_items[index]['amount'] = int(sold_items[index]['amount']) + int(detail.subtotal)
+
+                all_shift_workers = Shift_work.objects.all().order_by('-id')
+                all_orders = Order.objects.filter(shift_work=shift_work.id)
+                total_order_amount = 0
+                for order in all_orders:
+                    total_order_amount = total_order_amount + order.amount
+
+                return render(request, 'dailyReportSoldItems.html', {
+                    'all_shift_workers':all_shift_workers, 
+                    'shift_work':shift_work, 
+                    'sold_items': sold_items,
+                    'total_order_amount':total_order_amount, 
+                    'all_parent_cats':all_parent_cats})
+            else:
+                all_shift_workers = Shift_work.objects.all().order_by('-id')
+                return render(request, 'dailyReportSoldItems.html', {'all_shift_workers':all_shift_workers})
+    else:
+        return redirect('/accounts/login/')
 
 @never_cache
 def dailyReport(request):
@@ -430,21 +474,6 @@ def dailyReport(request):
 
 
                     wallet_balances.append({'wallet':wallet, 'balance':int(wallet_balance)})
-
-                sold_items = []
-                all_order_details = Order_detial.objects.filter(shift_work=shift_work.id, is_deleted=False).order_by('product')
-                for detail in all_order_details:
-                    index = next((i for i, item in enumerate(sold_items) if item['id'] == int(detail.product.id)), -1)
-                    category = None
-                    for cat in detail.product.categories.all():
-                        if cat.parent == None:
-                            category = cat
-
-                    if index < 0:
-                        sold_items.append({'id':detail.product.id, 'product': detail.product.name, 'quantity':detail.quantity, 'amount':detail.subtotal, 'category':category})
-                    else:
-                        sold_items[index]['quantity'] = int(sold_items[index]['quantity']) + int(detail.quantity)
-                        sold_items[index]['amount'] = int(sold_items[index]['amount']) + int(detail.subtotal)
 
                 all_shift_workers = Shift_work.objects.all().order_by('-id')
                 all_orders = Order.objects.filter(shift_work=shift_work.id)
@@ -508,13 +537,14 @@ def dailyReport(request):
                         customer_under[index]['under_amount'] = int(customer_under[index]['under_amount']) + int(under_payment)
                         customer_under[index]['paid'] = int(customer_under[index]['paid']) + int(payment_t)
                 
-
+                all_payments = Payment.objects.filter(shift_work=shift_work, is_deleted=False).values('wallet').annotate(dcount=Count('id'))
+                all_deleted_payments = Payment.objects.filter(shift_work=shift_work, is_deleted=True)
+                print(all_payments)
                 return render(request, 'dailyReport.html', {
                     'all_shift_workers':all_shift_workers, 
                     'wallet_balances':wallet_balances, 
                     'shift_work':shift_work, 
-                    'total_payment_balanace':int(total_payment_balanace), 
-                    'sold_items': sold_items,
+                    'total_payment_balanace':int(total_payment_balanace),
                     'total_order_amount':total_order_amount, 
                     'total_discount': total_discount,
                     'total_discounted_amount': total_discounted_amount, 

@@ -66,9 +66,9 @@ class Order(Modifiedinfo):
         new_discounted_amount = total - self.discount
         self.discounted_amount = new_discounted_amount
         if total > 0:
-            self.discount_rate = self.discount / total * 100
+            self.discounted_percent = self.discount / total * 100
         else:
-            self.discount_rate = 0
+            self.discounted_percent = 0
             self.discount = 0
         
         payment_total = 0

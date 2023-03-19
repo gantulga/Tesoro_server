@@ -87,26 +87,7 @@
   </div>
 
   <div class="walletInfo">
-    <div class="info-header">4. Борлуулсан бүтээгдэхүүний тоо, дүн</div>
-    {% for cat in all_parent_cats %}
-      {% if cat.id > 4 %}
-        <div class="cat-name">{{cat.name}}</div>
-        {% for temp in sold_items %}
-          {% if cat.id == temp.category.id %}
-            <div class="wallet">
-              <div class="index">{{ forloop.counter }}</div>
-              <div class="name">{{temp.product}}</div>
-              <div class="amount"><span id="item{{cat.id}}">{{temp.amount}}</span> ₮</div>
-              <div class="balance" >{{temp.quantity}}</div>
-            </div>
-          {% endif %}
-        {% endfor %}
-        <div class="total"><span class="percent">Хувь: <span id="percent{{cat.id}}"></span></span> Нийт: <span id="total{{cat.id}}"></span> ₮</div>
-      {% endif %}
-    {% endfor %}
-  </div>
-  <div class="walletInfo">
-    <div class="info-header">5. Ажилчдын төлбөрийн мэдээлэл</div>
+    <div class="info-header">4. Ажилчдын төлбөрийн мэдээлэл</div>
     <div class="wallet head">
       <div class="index">№</div>
       <div class="name">Ажилчин</div>
@@ -127,7 +108,7 @@
     {% endfor %}
   </div>
   <div class="walletInfo">
-    <div class="info-header">6. Үйлчлүүлэгчдийн төлбөрийн мэдээлэл</div>
+    <div class="info-header">5. Үйлчлүүлэгчдийн төлбөрийн мэдээлэл</div>
     <div class="wallet head">
       <div class="index">№</div>
       <div class="name">Үйлчлүүлэгч</div>
@@ -147,22 +128,32 @@
       </div>
     {% endfor %}
   </div>
+  <div class="walletInfo">
+    <div class="info-header">6. Гүйлгээний дэлгэрэнгүй</div>
+      <div class="row">
+        <div class="col-md-4">
+          <div class="walletInfo">
+            <div class="wallet head">
+              <div class="index">№</div>
+              <div class="name">Огноо</div>
+              <div class="name">Order</div>
+              <div class="name">Дүн</div>
+            </div>
+            {% for customer in customer_under %}
+              <div class="wallet">
+                <div class="index">{{ forloop.counter }}</div>
+                <div class="name">{{customer.customer}}</div>
+                <div class="amount under">{{customer.under_amount}} ₮</div>
+                <div class="amount paid">{{customer.paid}} ₮</div>
+                <div class="amount">{{customer.discount}} ₮</div>
+                <div class="amount">{{customer.total_amount}} ₮</div>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 {% endif %}
-<script>
-  var length = 50
-  var total_amount = "{{total_order_amount}}"
-  for (let i = 1; i < length; i++) {
-    var idx = "#item" + i
-    var amount_array = document.querySelectorAll(idx)
-    if(amount_array.length > 0){
-      var total = 0
-      amount_array.forEach(e => {
-        total = total + parseInt(e.innerHTML)
-      })
-      document.getElementById("total" + i).innerHTML = total;
-      document.getElementById("percent" + i).innerHTML = (total / total_amount * 100).toFixed(2) + "%";
-    }
-  }
-</script>
 {% endblock %}

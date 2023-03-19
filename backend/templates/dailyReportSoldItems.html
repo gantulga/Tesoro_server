@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% load static %}
+
+<div class="buttons">
+  {% for worker in all_shift_workers %}
+    <a href="/soldItems?shiftWorker={{worker.id}}">
+      <button type="button">{{worker.worker.first_name}} - {{worker.created_at}}</button>
+    </a>
+  {% endfor %}
+</div>
+
+{% if shift_work %}
+<div class="pageHeader">
+  Ээлжийн тайлан
+</div>
+<div class="pageBody">
+  <div class="walletInfo">
+    <div class="info-header">1. Орлогын мэдээлэл</div>
+    <div class="wallet">
+      <div class="index">1</div>
+      <div class="name">Өдрийн нийт орлого</div>
+      <div class="amount">{{total_order_amount}} ₮</div>
+    </div>
+  </div>
+
+  <div class="walletInfo">
+    <div class="info-header">2. Борлуулсан бүтээгдэхүүний тоо, дүн</div>
+    {% for cat in all_parent_cats %}
+      {% if cat.id > 4 %}
+        <div class="cat-name">{{cat.name}}</div>
+        {% for temp in sold_items %}
+          {% if cat.id == temp.category.id %}
+            <div class="wallet">
+              <div class="index">{{ forloop.counter }}</div>
+              <div class="name">{{temp.product}}</div>
+              <div class="amount"><span id="item{{cat.id}}">{{temp.amount}}</span> ₮</div>
+              <div class="balance" >{{temp.quantity}}</div>
+            </div>
+          {% endif %}
+        {% endfor %}
+        <div class="total"><span class="percent">Хувь: <span id="percent{{cat.id}}"></span></span> Нийт: <span id="total{{cat.id}}"></span> ₮</div>
+      {% endif %}
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+<script>
+  var length = 50
+  var total_amount = "{{total_order_amount}}"
+  for (let i = 1; i < length; i++) {
+    var idx = "#item" + i
+    var amount_array = document.querySelectorAll(idx)
+    if(amount_array.length > 0){
+      var total = 0
+      amount_array.forEach(e => {
+        total = total + parseInt(e.innerHTML)
+      })
+      document.getElementById("total" + i).innerHTML = total;
+      document.getElementById("percent" + i).innerHTML = (total / total_amount * 100).toFixed(2) + "%";
+    }
+  }
+</script>
+{% endblock %}

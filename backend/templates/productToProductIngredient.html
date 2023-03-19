@@ -25,7 +25,6 @@
           {% for ingredient in product.ingredients_producted.all %}
             {% if forloop.first != product.ingredients_producted.all.0 %}
               <tr>
-                <td></td>
                 <td style="padding-left:15px"></td>
                 <td style="padding-left:15px"></td>
                 <td style="padding-left:15px">{{ ingredient.commodity.name }}</td>

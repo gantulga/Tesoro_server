@@ -107,12 +107,6 @@ class LoungeOrderPaymentsSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class OrderRecieverSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Order
-        fields = '__all__'
-
-
 class OrderDetailRecieverSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order_detial
@@ -184,6 +178,21 @@ class OrderDetailRecieverSerializer(serializers.ModelSerializer):
                         else:
                             print("quantity bhgui")
             return detial
+
+class OrderRecieverSerializer(serializers.ModelSerializer):
+    order_detials = OrderDetailRecieverSerializer(many=True)
+    class Meta:
+        model = Order
+        fields = '__all__'
+
+    def create(self, validated_data):
+        # print(validated_data)
+        order_detials = validated_data.pop("order_detials")
+        order = Order.objects.create(**validated_data)
+        for detial in order_detials:
+            detial.pop('order')
+            det = Order_detial.objects.create(order=order, **detial)
+        return order
 
 
 class LoungeShiftWorksSerializer(serializers.ModelSerializer):

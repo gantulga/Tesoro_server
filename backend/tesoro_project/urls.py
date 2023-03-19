@@ -132,6 +132,7 @@ urlpatterns = [
     path('transferCommodity', views.transferCommodity, name='transferCommodity'),
     path('posNegtgel', views.posNegtgel, name='posNegtgel'),
     path('dailyReport', views.dailyReport, name='dailyReport'),
+    path('soldItems', views.dailyReportSoldItems, name='dailyReport'),
     path('sendBillToTatvar', views.sendBillToTatvar, name='sendBillToTatvar'),
     path('kitchen', views.kitchenFoods, name='kitchenFoods'),
     path('productToProductIngredient', views.productToProductIngredient),

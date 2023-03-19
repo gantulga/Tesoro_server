@@ -30,6 +30,7 @@ export default class Calculations extends Component {
       order_detials: [],
       order_payments: [],
       orderingList: [],
+      orderDetailsList: [],
       shiftWorkers: [],
       unpaidOrders: [],
       productBalances: [],
@@ -1262,16 +1263,31 @@ export default class Calculations extends Component {
       this.state.table_id &&
       !this.state.order_id &&
       !this.state.shiftWorker.finished
-    ) {
-      var orderAmount = 0;
-      await this.state.orderingList.map((detail) => {
-        orderAmount = orderAmount + parseInt(detail.subtotal);
-        return null;
+    ){
+      await this.state.orderingList.map(async (detail) => {
+        var detailObj = {
+          quantity: detail.quantity,
+          discount: parseInt(detail.cost) * parseInt(detail.quantity),
+          discount_rate: detail.discount_rate,
+          subtotal: detail.subtotal,
+          is_deleted: false,
+          created_by: this.state.user_id,
+          client: this.state.table_id,
+          fr_client: 19,
+          order: 1,
+          product: detail.id,
+          shift_work: this.state.shiftWorker.id,
+        };
+
+        await this.setState((prevState) => ({
+          orderDetailsList: [...prevState.orderDetailsList, detailObj]
+        }));
       });
+
       var orderObj = {
-        amount: orderAmount,
+        amount: 0,
         discount: 0,
-        discounted_amount: orderAmount,
+        discounted_amount: 0,
         discounted_percent: 0,
         is_now: true,
         status: "Төлбөр төлөгдөөгүй.",
@@ -1280,19 +1296,23 @@ export default class Calculations extends Component {
         created_by: this.state.user_id,
         required_date: new Date(),
         shift_work: this.state.shiftWorker.id,
+        order_detials : this.state.orderDetailsList,
       };
-      let status;
-      const url = "http://" + this.props.ip_address + "/api/lounge/postOrder/";
-      var response = await fetch(url, {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-          Authorization: "Token " + this.props.token,
-        },
-        withCredentials: true,
-        body: JSON.stringify(orderObj),
-      })
+
+      var myHeaders = new Headers();
+      myHeaders.append("Content-Type", "application/json");
+      myHeaders.append("Authorization", "Token " + this.props.token);
+
+      var raw = JSON.stringify(orderObj);
+
+      var requestOptions = {
+        method: 'POST',
+        headers: myHeaders,
+        body: raw,
+        redirect: 'follow'
+      };
+      var status = false
+      const response = await fetch("http://" + this.props.ip_address + "/api/lounge/postOrder/", requestOptions)
         .then((results) => {
           status = results.ok;
           return results;
@@ -1300,78 +1320,38 @@ export default class Calculations extends Component {
         .then((results) => {
           results = results.json();
           return results;
-        });
-
-      var haveError = false;
-      if (status) {
-        var order = response["id"];
-        await this.state.orderingList.map(async (detail) => {
-          var detailObj = {
-            quantity: detail.quantity,
-            discount: parseInt(detail.cost) * parseInt(detail.quantity),
-            discount_rate: detail.discount_rate,
-            subtotal: detail.subtotal,
-            is_deleted: false,
-            created_by: this.state.user_id,
-            client: this.state.table_id,
-            fr_client: 19,
-            order: order,
-            product: detail.id,
-            shift_work: this.state.shiftWorker.id,
-          };
-          const url =
-            "http://" + this.props.ip_address + "/api/lounge/postOrderDetail/";
-          var detailResponse = await fetch(url, {
-            method: "POST",
-            headers: {
-              Accept: "application/json",
-              "Content-Type": "application/json",
-              Authorization: "Token " + this.props.token,
+        })
+        .catch(error => {
+          store.addNotification({
+            title: "Анхаар!",
+            message:
+              "Захиалгын detail үүссэнгүй. Системийн инженерт хандана уу.",
+            type: "danger",
+            insert: "top",
+            container: "bottom-right",
+            animationIn: ["animated", "fadeIn"],
+            animationOut: ["animated", "fadeOut"],
+            dismiss: {
+              duration: 2000,
+              onScreen: true,
             },
-            withCredentials: true,
-            body: JSON.stringify(detailObj),
-          }).then((results) => {
-            return results;
           });
-          if (detailResponse.ok) {
-            store.addNotification({
-              title: "Захиалга амжилттай!",
-              message: "Захиалгын detail амжилттай үүслээ.",
-              type: "success",
-              insert: "top",
-              container: "bottom-right",
-              animationIn: ["animated", "fadeIn"],
-              animationOut: ["animated", "fadeOut"],
-              dismiss: {
-                duration: 2000,
-                onScreen: true,
-              },
-            });
-            this.sendError("fetchError, doOrderButton - 1")
-          } else {
-            haveError = true;
-            store.addNotification({
-              title: "Анхаар!",
-              message:
-                "Захиалгын detail үүссэнгүй. Системийн инженерт хандана уу.",
-              type: "danger",
-              insert: "top",
-              container: "bottom-right",
-              animationIn: ["animated", "fadeIn"],
-              animationOut: ["animated", "fadeOut"],
-              dismiss: {
-                duration: 2000,
-                onScreen: true,
-              },
-            });
-            this.sendError("fetchError, doOrderButton - 2")
-          }
+          this.sendError("fetchError, " + error)
         });
-      } else {
+      
+      if(status){
+        await this.setState({
+          order_id: response['id'],
+          orderingList: [],
+          orderDetailsList: [],
+        });
+        await this.set_order_information(response['id']);
+        await this.getOrderDetialsData();
         store.addNotification({
-          title: "Анхаар!",
-          message: "Захиалга үүссэнгүй. Системийн инженерт хандана уу.",
-          type: "danger",
+          title: "Амжилттай",
+          message:
+            "Захиалгын detail амжилттай үүслээ.",
+          type: "success",
           insert: "top",
           container: "bottom-right",
           animationIn: ["animated", "fadeIn"],
@@ -1381,17 +1361,12 @@ export default class Calculations extends Component {
             onScreen: true,
           },
         });
-        this.sendError("fetchError, doOrderButton - 3")
+        var printObj = {
+          client: this.state.table_id,
+          division: this.state.division_id,
+        };
+        this.printer(printObj, this.state.orderingList)
       }
-      if (!haveError) {
-        this.printer(orderObj, this.state.orderingList)
-        await this.setState({
-          order_id: order,
-          orderingList: [],
-        });
-      }
-      await this.set_order_information(order);
-      await this.getOrderDetialsData();
     } else {
       if (!this.state.division_id || !this.state.table_id) {
         store.addNotification({
@@ -1437,7 +1412,6 @@ export default class Calculations extends Component {
             onScreen: true,
           },
         });
-        this.sendError("fetchError, doOrderButton - 4")
       }
     }
     await this.loadingFalse()
@@ -1450,155 +1424,59 @@ export default class Calculations extends Component {
       this.state.order_id &&
       !this.state.shiftWorker.finished
     ) {
-      var getOrderStatus = false;
-      var url = "http://" + this.props.ip_address + "/api/lounge/postOrder/" + this.state.order_id.toString() + "/";
-
-      var orderData = await fetch(url, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Token " + this.props.token,
-        },
-      })
-        .then((results) => {
-          getOrderStatus = results.ok;
-          return results;
-        })
-        .then((results) => results.json())
-        .catch((error) => {
-          store.addNotification({
-            title: "Анхаар!",
-            message:
-              "Алдаа гарлаа. Системийн инженертэй холбогдож хэлнэ үү! Алдааны мэдээлэл:" +
-              error,
-            type: "danger",
-            insert: "top",
-            container: "bottom-right",
-            animationIn: ["animated", "fadeIn"],
-            animationOut: ["animated", "fadeOut"],
-            dismiss: {
-              duration: 2000,
-              onScreen: true,
-            },
-          });
-          this.sendError("fetchError, updateOrderButton - 1")
-        });
-      if (getOrderStatus) {
-        orderData.amount = parseInt(orderData.amount);
-        await this.state.orderingList.map((detail) => {
-          orderData.amount = orderData.amount + parseInt(detail.subtotal);
-          return null;
-        });
-
-        orderData.discounted_amount = parseInt(orderData.discounted_amount);
-        await this.state.orderingList.map((detail) => {
-          orderData.discounted_amount = orderData.discounted_amount + parseInt(detail.subtotal);
-          return null;
-        });
-
-        if (orderData.status === "Төлбөр гүйцэт төлсөн.") {
-          orderData.status = "Төлбөр дутуу төлсөн.";
-        }
-        orderData.updated_by = this.state.user_id;
-        orderData.updated_at = new Date();
-
-        var url2 = "http://" + this.props.ip_address + "/api/lounge/postOrder/" + this.state.order_id.toString() + "/";
-
-        var response = await fetch(url2, {
-          method: "PUT",
+      var haveError = false
+      this.state.orderingList.map(async (detail) => {
+        var detailObj = {
+          quantity: detail.quantity,
+          discount: parseInt(detail.cost) * parseInt(detail.quantity),
+          discount_rate: detail.discount_rate,
+          subtotal: detail.subtotal,
+          is_deleted: false,
+          created_by: this.state.user_id,
+          client: this.state.table_id,
+          fr_client: 19,
+          order: this.state.order_id,
+          product: detail.id,
+          shift_work: this.state.shiftWorker.id,
+        };
+        const url =
+          "http://" +
+          this.props.ip_address +
+          "/api/lounge/postOrderDetail/";
+        var detailResponse = await fetch(url, {
+          method: "POST",
+          redirect: "follow",
           headers: {
             Accept: "application/json",
             "Content-Type": "application/json",
             Authorization: "Token " + this.props.token,
           },
           withCredentials: true,
-          body: JSON.stringify(orderData),
-        })
-          .then((results) => {
-            return results;
-          })
-          .then((results) => {
-            return results;
-          });
-        var haveError = false;
-        if (response.ok) {
-          this.state.orderingList.map(async (detail) => {
-            var detailObj = {
-              quantity: detail.quantity,
-              discount: parseInt(detail.cost) * parseInt(detail.quantity),
-              discount_rate: detail.discount_rate,
-              subtotal: detail.subtotal,
-              is_deleted: false,
-              created_by: this.state.user_id,
-              client: this.state.table_id,
-              fr_client: 19,
-              order: this.state.order_id,
-              product: detail.id,
-              shift_work: this.state.shiftWorker.id,
-            };
-            const url =
-              "http://" +
-              this.props.ip_address +
-              "/api/lounge/postOrderDetail/";
-            var detailResponse = await fetch(url, {
-              method: "POST",
-              redirect: "follow",
-              headers: {
-                Accept: "application/json",
-                "Content-Type": "application/json",
-                Authorization: "Token " + this.props.token,
-              },
-              withCredentials: true,
-              body: JSON.stringify(detailObj),
-            }).then((results) => {
-              return results;
-            });
+          body: JSON.stringify(detailObj),
+        }).then((results) => {
+          return results;
+        });
 
-            if (detailResponse.ok) {
-              store.addNotification({
-                title: "Захиалга амжилттай!",
-                message: "Захиалгын detail амжилттай үүслээ.",
-                type: "success",
-                insert: "top",
-                container: "bottom-right",
-                animationIn: ["animated", "fadeIn"],
-                animationOut: ["animated", "fadeOut"],
-                dismiss: {
-                  duration: 2000,
-                  onScreen: true,
-                },
-              });
-            } else {
-              haveError = true;
-              store.addNotification({
-                title: "Анхаар!",
-                message:
-                  "Захиалгын detail үүссэнгүй. Системийн инженерт хандана уу.",
-                type: "danger",
-                insert: "top",
-                container: "bottom-right",
-                animationIn: ["animated", "fadeIn"],
-                animationOut: ["animated", "fadeOut"],
-                dismiss: {
-                  duration: 2000,
-                  onScreen: true,
-                },
-              });
-              this.sendError("fetchError, updateOrderButton - 2")
-            }
-            if (!haveError) {
-              await this.setState({
-                orderingList: [],
-              });
-            }
-            await this.set_order_information(this.state.order_id)
-            await this.getOrderDetialsData();
+        if (detailResponse.ok) {
+          store.addNotification({
+            title: "Захиалга амжилттай!",
+            message: "Захиалгын detail амжилттай үүслээ.",
+            type: "success",
+            insert: "top",
+            container: "bottom-right",
+            animationIn: ["animated", "fadeIn"],
+            animationOut: ["animated", "fadeOut"],
+            dismiss: {
+              duration: 2000,
+              onScreen: true,
+            },
           });
         } else {
-          haveError = true
+          haveError = true;
           store.addNotification({
             title: "Анхаар!",
-            message: "Захиалга үүссэнгүй. Системийн инженерт хандана уу.",
+            message:
+              "Захиалгын detail үүссэнгүй. Системийн инженерт хандана уу.",
             type: "danger",
             insert: "top",
             container: "bottom-right",
@@ -1609,45 +1487,23 @@ export default class Calculations extends Component {
               onScreen: true,
             },
           });
-          this.sendError("fetchError, updateOrderButton - 3")
+          this.sendError("fetchError, updateOrderButton - 2")
         }
-        var orderObj = {
-          client: this.state.table_id,
-          division: this.state.division_id,
-        };
-        this.printer(orderObj, this.state.orderingList)
-      }
-    } else {
-      if (this.state.shiftWorker.finished) {
-        store.addNotification({
-          title: "Анхаар!",
-          message: "Ээлж нээгээгүй байгаа тул захиалга авч болохгүй!",
-          type: "danger",
-          insert: "top",
-          container: "bottom-right",
-          animationIn: ["animated", "fadeIn"],
-          animationOut: ["animated", "fadeOut"],
-          dismiss: {
-            duration: 2000,
-            onScreen: true,
-          },
-        });
-      } else {
-        store.addNotification({
-          title: "Анхаар!",
-          message:
-            "Захиалгын мэдээлэл шинэчлэхэд алдаа гарлаа. Системийн инженерт хандана уу.",
-          type: "danger",
-          insert: "top",
-          container: "bottom-right",
-          animationIn: ["animated", "fadeIn"],
-          animationOut: ["animated", "fadeOut"],
-          dismiss: {
-            duration: 2000,
-            onScreen: true,
-          },
+      })
+
+      if(!haveError) {
+        await this.setState({
+          orderingList: [],
         });
       }
+      await this.set_order_information(this.state.order_id)
+      await this.getOrderDetialsData();
+    
+      var printerObj = {
+        client: this.state.table_id,
+        division: this.state.division_id,
+      };
+      this.printer(printerObj, this.state.orderingList)
     }
   }
 
@@ -1854,7 +1710,7 @@ export default class Calculations extends Component {
       company_register_status: status,
     });
   }
-
+ 
   async print_bill() {
     if(this.state.order_id){
       var urla = "http://" + this.props.ip_address + "/api/bill/createBill?order=" + this.state.order_id + "&printer_number=1"

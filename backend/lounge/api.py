@@ -114,7 +114,7 @@ class OrderRecieverViewSet(viewsets.ModelViewSet):
 
 class OrderDetailRecieverViewSet(viewsets.ModelViewSet):
     queryset = Order_detial.objects.all()
-    # permission_classes = [permissions.AllowAny]
+    permission_classes = (IsAuthenticated,)
     serializer_class = OrderDetailRecieverSerializer
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
