@@ -24,7 +24,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '^$ja78mdk!!43dl)7x1g5=@2wnmu018h1n#_(fr6qc&_*+s74h'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -103,22 +103,22 @@ WSGI_APPLICATION = 'tesoro_project.wsgi.application'
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'tesoro',
-        'USER': 'root',
-        'PASSWORD': 'Fa90101830#',
-        'HOST': 'localhost',
-        'PORT': '3306',
-    }
     # 'default': {
     #     'ENGINE': 'django.db.backends.mysql',
     #     'NAME': 'tesoro',
     #     'USER': 'root',
-    #     'PASSWORD': '',
+    #     'PASSWORD': 'Fa90101830#',
     #     'HOST': 'localhost',
     #     'PORT': '3306',
     # }
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'tesoro',
+        'USER': 'root',
+        'PASSWORD': '',
+        'HOST': 'localhost',
+        'PORT': '3306',
+    }
 }
 
 

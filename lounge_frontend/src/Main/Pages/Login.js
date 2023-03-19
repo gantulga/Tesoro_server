@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import { store } from "react-notifications-component";
 import Select from "react-select";
-import Moment from "moment";
 
 export default class Login extends Component {
   constructor(props) {
@@ -297,53 +296,53 @@ export default class Login extends Component {
           </form>
         </div>
         {this.state.ordersData.length > 0 ? (
-          <div className="right row m-0 p-2">
-            {this.state.ordersData.map((order, index) => {
-              var payments_total = 0
-              order.payments.map((payment)=>{
-                payments_total = payments_total + parseInt(payment.amount)
-                return null
-              })
-              return (
-                <div className="col-md-4 box" key={index}>
-                  <div className="order" key={index}>
-                    <div className="header1">
-                      <div className="table">
-                        {order.division.name} - {order.client.number}
-                      </div>
-                      <div className="date">
-                        {Moment(order.created_at).format("H:mm")}
-                      </div>
-                    </div>
-                    <div className="body">
-                      {order.order_detials.map((detail, index) => {
-                        return (
-                          <div className="detail" key={index}>
-                            <div className="product">{detail.product.name}</div>
-                            <div className="quantity">{detail.quantity}</div>
-                            <div className="subtotal">
-                              {detail.subtotal.slice(0, -3)}₮
+          <div className="dashboard">
+            <div className="dashboard-body">
+                {this.state.ordersData.map((order, index) => {
+                    var payments_total = 0
+                    order.payments.map((payment)=>{
+                        payments_total = payments_total + parseInt(payment.amount)
+                        return null
+                    })
+                    var color = "default"
+                    if(order.division.id === 1){
+                        color = "office"
+                    }else if(order.division.id === 3){
+                        color = "hotel"
+                    }else if(order.division.id === 4){
+                        color = "restaurant"
+                    }else if(order.division.id === 5){
+                        color = "lounge"
+                    }else if(order.division.id === 6){
+                        color = "karaoke"
+                    }
+
+                    return (
+                        <figure key={index} onClick={() =>this.props.set_order(order.id, order.amount)}>
+                            <div className={color + " address"}>
+                                {order.division.name} - {order.client.number}
                             </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                    <div
-                      className="footer1"
-                      style={
-                        order.status === "Төлбөр төлөгдөөгүй."
-                          ? { background: "#fedfdf" }
-                          : { background: "#fffabe" }
-                      }
-                    >
-                      {order.discounted_amount - payments_total}₮
-                    </div>
-                    {/* return (order.discounted_amount - payments_total).slice(0, -3) */}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+                            <div className="details">
+                                {order.order_detials.map((detail, index) => {
+                                    return (
+                                    <div className="detail" key={index}>
+                                        <div className="product">{detail.product.name}</div>
+                                        <div className="quantity">{detail.quantity}</div>
+                                        <div className="subtotal">
+                                        {detail.subtotal.slice(0, -3)}₮
+                                        </div>
+                                    </div>
+                                    );
+                                })}
+                            </div>
+                            <div className="amount">
+                                Нийт: {order.discounted_amount - payments_total}₮
+                            </div>
+                        </figure>
+                    );
+                })}
+            </div>
+        </div>
         ) : null}
       </div>
     );

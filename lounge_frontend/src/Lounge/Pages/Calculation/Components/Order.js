@@ -3,7 +3,6 @@ import NumberFormat from 'react-number-format';
 import Moment from "moment";
 import Keyboard from './Keyboard';
 import ProductList from './ProductList';
-import { store } from "react-notifications-component";
 
 export default class componentName extends Component {
   constructor(props) {
@@ -95,7 +94,7 @@ export default class componentName extends Component {
             </div>
             {this.props.order_detials.map((detial, index)=>{
               return (
-                <button className="order" key={index}>
+                <div className="order" key={index}>
                   <div className="white">
                     <div className="field index">
                       {index + 1}
@@ -107,6 +106,11 @@ export default class componentName extends Component {
                     </div>
                     <div className="field name">
                       {detial.product.name}
+                      {this.props.user_id < 4 ? 
+                        <button onClick={()=>this.props.orderDetailsBack(detial.id, detial.product.name, detial.quantity, detial.subtotal)}>
+                          <i className="fa fa-minus" aria-hidden="true"></i>
+                        </button>
+                        : null }
                     </div>
                     <div className="field amount">
                       <NumberFormat
@@ -126,7 +130,7 @@ export default class componentName extends Component {
                       />₮
                     </div>
                   </div>
-                </button>
+                </div>
               )
             })}
             {!this.props.show_keyboard ? (
@@ -360,6 +364,11 @@ export default class componentName extends Component {
                           displayType={'text'}
                           thousandSeparator={true}
                         />₮
+                      </div>
+                      <div className="removeBtn">
+                        <button onClick={() => this.props.paymentBack(payment.id, payment.wallet.name, payment.amount)}>
+                          <i className="fa fa-minus" aria-hidden="true"></i>
+                        </button>
                       </div>
                     </div>
                   );

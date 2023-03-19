@@ -177,7 +177,7 @@ class Shift_work(Createdinfo):
     def __str__(self):
         return self.worker.username
     
-class Error_list(models.Model):
+class Error_list(Createdinfo):
     error_value = models.TextField(null=False)
     def __str__(self):
         return self.error_value

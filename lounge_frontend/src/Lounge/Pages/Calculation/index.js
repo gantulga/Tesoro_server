@@ -66,7 +66,7 @@ export default class Calculations extends Component {
       worker_id: null,
       order_information: null,
 
-      session_secund: 60,
+      session_secund: 600,
 
       company_name: null,
       company_register: null,
@@ -890,6 +890,7 @@ export default class Calculations extends Component {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
+          Authorization: "Token " + this.props.token,
         },
       }
     )
@@ -1647,6 +1648,129 @@ export default class Calculations extends Component {
           },
         });
       }
+    }
+  }
+
+  async orderDetailsBack(id, name, quantity, subtotal) {
+    var text = "№" + id + ". " + name + " x " + quantity + " = " + subtotal + "₮-ийн захиалгыг та буцаахдаа итгэлтэй байна?"
+    let confirmAction = window.confirm(text);
+
+    if(confirmAction){
+      const url ="http://" + this.props.ip_address + "/api/lounge/postOrderDetail/" + id.toString() + "/";
+      var myHeaders = new Headers();
+      myHeaders.append("Accept", "application/json");
+      myHeaders.append("Content-Type", "application/json");
+      myHeaders.append("Authorization", "Token " + this.props.token);
+
+      var raw = JSON.stringify({
+        "is_deleted": true
+      });
+
+      var requestOptions = {
+        method: 'PATCH',
+        headers: myHeaders,
+        body: raw,
+        redirect: 'follow'
+      };
+
+      await fetch(url, requestOptions)
+        .then(response => response.text())
+        .then(async result => {
+          store.addNotification({
+            title: "Амжилттай",
+            message: "Order Detail амжилттай устгагдлаа.",
+            type: "success",
+            insert: "top",
+            container: "bottom-right",
+            animationIn: ["animated", "fadeIn"],
+            animationOut: ["animated", "fadeOut"],
+            dismiss: {
+              duration: 2000,
+              onScreen: true,
+            },
+          });
+          await this.set_order_information(this.state.order_id);
+          await this.getOrderDetialsData()
+        })
+        .catch(error => {
+          console.log('error', error)
+          store.addNotification({
+            title: "Анхаар!",
+            message:
+              "Order Detail буцаах үйлдэл амжилтгүй боллоо. Системийн инженерт хандана уу.",
+            type: "danger",
+            insert: "top",
+            container: "bottom-right",
+            animationIn: ["animated", "fadeIn"],
+            animationOut: ["animated", "fadeOut"],
+            dismiss: {
+              duration: 2000,
+              onScreen: true,
+            },
+          });
+          this.sendError("fetchError, orderDetailsBack")
+        });
+    }
+  }
+
+  async paymentBack(id, name, amount) {
+    var text = "№" + id + ". " + name + "-аас " + amount + "₮-ийн гүйлгээг та буцаахдаа итгэлтэй байна?"
+    let confirmAction = window.confirm(text);
+
+    if(confirmAction){
+      const url ="http://" + this.props.ip_address + "/api/lounge/payments/" + id.toString() + "/";
+      var myHeaders = new Headers();
+      myHeaders.append("Accept", "application/json");
+      myHeaders.append("Content-Type", "application/json");
+      myHeaders.append("Authorization", "Token " + this.props.token);
+
+      var raw = JSON.stringify({
+        "is_deleted": true
+      });
+
+      var requestOptions = {
+        method: 'PATCH',
+        headers: myHeaders,
+        body: raw,
+        redirect: 'follow'
+      };
+
+      await fetch(url, requestOptions)
+        .then(response => response.text())
+        .then(async result => {
+          store.addNotification({
+            title: "Амжилттай",
+            message: "Гүйлгээ амжилттай устгагдлаа.",
+            type: "success",
+            insert: "top",
+            container: "bottom-right",
+            animationIn: ["animated", "fadeIn"],
+            animationOut: ["animated", "fadeOut"],
+            dismiss: {
+              duration: 2000,
+              onScreen: true,
+            },
+          });
+          await this.getOrderPaymentsData();
+        })
+        .catch(error => {
+          console.log('error', error)
+          store.addNotification({
+            title: "Анхаар!",
+            message:
+              "Гүйлгээг буцаах үйлдэл амжилтгүй боллоо. Системийн инженерт хандана уу.",
+            type: "danger",
+            insert: "top",
+            container: "bottom-right",
+            animationIn: ["animated", "fadeIn"],
+            animationOut: ["animated", "fadeOut"],
+            dismiss: {
+              duration: 2000,
+              onScreen: true,
+            },
+          });
+          this.sendError("fetchError, orderDetailsBack")
+        });
     }
   }
 
@@ -2458,6 +2582,7 @@ export default class Calculations extends Component {
             shift_worker={this.state.shiftWorker}
             order_detials={this.state.order_detials}
             order_payments={this.state.order_payments}
+            user_id={this.state.user_id}
             back_orders = {this.back_orders.bind(this)}
             show_keyboard = {this.state.keyboardBoxShow}
             toggle_keyboard = {this.toggle_keyboardBox}
@@ -2487,6 +2612,8 @@ export default class Calculations extends Component {
             updateOrderButton={this.updateOrderButton.bind(this)}
             doOrderButton={this.doOrderButton.bind(this)}
             order_print = {this.order_print}
+            orderDetailsBack = {this.orderDetailsBack.bind(this)}
+            paymentBack = {this.paymentBack.bind(this)}
             {...this.props}
           />
         </div>

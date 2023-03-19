@@ -6,3 +6,7 @@ backend/media
 */__pycache__/*
 __pycache__/
 backend/tesoro_project/settings.py
+*/migrations/__pycache__/*
+*/__pycache__/*
+backend/*/migrations/__pycache__/*
+backend/*/__pycache__/*

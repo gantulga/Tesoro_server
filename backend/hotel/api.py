@@ -49,10 +49,10 @@ class HotelOrdersViewSet(viewsets.ModelViewSet):
 
 class HotelOrdersNewHotelViewSet(viewsets.ModelViewSet):
     queryset = Order.objects.filter(division=3).all()
-    permission_classes = [permissions.AllowAny]
+    # permission_classes = [permissions.AllowAny]
     serializer_class = HotelOrdersNewHotelSerializer
     authentication_classes = (TokenAuthentication,)
-    #permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthenticated,)
 
 
 class UnderpaymentsViewSet(viewsets.ModelViewSet):

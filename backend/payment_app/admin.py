@@ -46,9 +46,20 @@ class PaymentAdmin(admin.ModelAdmin):
 			obj.updated_by = request.user
 		obj.save()
 
+class OrderPaymentsAdmin(admin.ModelAdmin):
+	exclude = ['created_by', 'updated_by']
+	list_display = ('id', 'created_at', 'order', 'payment')
+	ordering = ('-order', '-created_at')
+	def save_model(self, request, obj, form, change):
+		if not change:
+			obj.created_by = request.user
+		elif change:
+			obj.updated_by = request.user
+		obj.save()
+
 # Register your models here.
 admin.site.register(Order, OrderAdmin)
 admin.site.register(Order_detial, OrderDetialAdmin)
 admin.site.register(Bill, BillAdmin)
 admin.site.register(Payment, PaymentAdmin)
-admin.site.register(Order_payments)
+admin.site.register(Order_payments, OrderPaymentsAdmin)

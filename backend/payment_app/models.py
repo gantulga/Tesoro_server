@@ -5,7 +5,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 import datetime
 from django.utils import timezone
 #from structure_app.models import Division, Client, Customer
-from product_app.models import Product, Item_balance
+from product_app.models import Product, Item_balance, Item_transfer, Item_transfer_type
 
 
 User = get_user_model()
@@ -54,6 +54,34 @@ class Order(Modifiedinfo):
 
     def __str__(self):
         return str(self.id)
+    
+    def save(self, *args, **kwargs):
+        total = 0
+        for det in self.order_detials.all():
+            if not det.is_deleted:
+                total = total + det.subtotal
+
+        self.amount = total
+        new_discounted_amount = total - self.discount
+        self.discounted_amount = new_discounted_amount
+        if total > 0:
+            self.discount_rate = self.discount / total * 100
+        else:
+            self.discount_rate = 0
+            self.discount = 0
+        
+        payment_total = 0
+        for payment in self.payments.filter(is_deleted=False):
+            payment_total = payment_total + payment.amount
+
+        if payment_total >= new_discounted_amount:
+            self.status = "Төлбөр гүйцэт төлсөн."
+        elif payment_total < new_discounted_amount and payment_total == 0:
+            self.status = "Төлбөр төлөгдөөгүй."
+        elif payment_total < new_discounted_amount and payment_total > 0:
+            self.status = "Төлбөр дутуу төлсөн."
+
+        super().save(*args, **kwargs)
 
 class Order_detial(Modifiedinfo):
     order = models.ForeignKey('Order', on_delete=models.DO_NOTHING, related_name="order_detials")
@@ -77,6 +105,7 @@ class Order_detial(Modifiedinfo):
     def __init__(self, *args, **kwargs):
         super(Order_detial, self).__init__(*args, **kwargs)
         self.__prev_quantity = self.quantity
+        self.__prev_is_deleted = self.is_deleted
 
     @property
     def elapsed_time(self):
@@ -89,30 +118,10 @@ class Order_detial(Modifiedinfo):
         if self.quantity * self.product.cost != self.subtotal or self.subtotal != self.discount:
             self.subtotal = self.quantity * self.product.cost
             self.discount = self.quantity * self.product.cost
-            super().save(*args, **kwargs)
-            total = 0
-            for det in self.order.order_detials.all():
-                total = total + det.subtotal
-            self.order.amount = total
-            new_discounted_amount = total - self.order.discount
-            self.order.discounted_amount = new_discounted_amount
-            self.order.discount_rate = self.order.discount / total * 100
-            
-            payment_total = 0
-            for payment in self.order.payments.all():
-                payment_total = payment_total + payment.amount
-
-            if payment_total >= new_discounted_amount:
-                self.order.status = "Төлбөр гүйцэт төлсөн."
-            elif payment_total < new_discounted_amount and payment_total == 0:
-                self.order.status = "Төлбөр төлөгдөөгүй."
-            elif payment_total < new_discounted_amount and payment_total > 0:
-                self.order.status = "Төлбөр дутуу төлсөн."
-
-            self.order.save()
-
+        
         if self.__prev_quantity != self.quantity:
-            item_transfer = self.item_transfers.first()
+            self.subtotal = self.quantity * self.product.cost
+            item_transfer = self.item_transfers.filter(item_transfer_type=3).first()
             item_transfer.quantity = self.quantity
             item_transfer.save()
             item_balance = Item_balance.objects.filter(client=item_transfer.fr_client.id, product=item_transfer.product.id).first()
@@ -121,8 +130,74 @@ class Order_detial(Modifiedinfo):
             if self.__prev_quantity < self.quantity:
                 item_balance.quantity = item_balance.quantity - (self.quantity - self.__prev_quantity)
             item_balance.save()
+
+        # print(self.__prev_is_deleted, self.is_deleted)
+        if self.__prev_is_deleted == False and self.is_deleted == True:
+            if not self.shift_work.finished: 
+                print("deleting")
+                transfer_type = Item_transfer_type.objects.get(pk=6)
+                
+                if self.product.is_ingrediented:
+                    for ingredents in self.product.ingredients.all():
+                        hemjee = self.quantity * ingredents.size
+                        if ingredents.size_type.id == 1:
+                            itemTransfer = Item_transfer.objects.create(commodity=ingredents.commodity, to_client=self.fr_client, to_division=self.fr_client.division, quantity=hemjee, order_detial=self, item_transfer_type=transfer_type, to_product=self.product, product_quantity=self.quantity)
+                        if ingredents.size_type.id == 2:
+                            itemTransfer = Item_transfer.objects.create(commodity=ingredents.commodity, to_client=self.fr_client, to_division=self.fr_client.division, size=hemjee, order_detial=self, item_transfer_type=transfer_type, to_product=self.product, product_quantity=self.quantity)
+                        
+                        
+                        if itemTransfer:
+                            to_client_item_balance = Item_balance.objects.filter(
+                                commodity=ingredents.commodity, client=self.fr_client).order_by('-id')[:1]
+                            if to_client_item_balance:
+                                balance = Item_balance.objects.get(
+                                    pk=to_client_item_balance[0].id)
+
+                                if ingredents.size_type.id == 1:
+                                    quantity = balance.quantity + hemjee
+                                    balance.quantity = quantity
+                                if ingredents.size_type.id == 2:
+                                    size = balance.size + hemjee
+                                    balance.size = size
+
+                                balance.save()
+
+                    for ingredents in self.product.ingredients_producted.all():
+                        hemjee = self.quantity * ingredents.size
+                        itemTransfer = Item_transfer.objects.create(product=ingredents.commodity, to_client=self.fr_client, to_division=self.fr_client.division, quantity=hemjee, order_detial=self, item_transfer_type=transfer_type, to_product=self.product, product_quantity=self.quantity)
+                        
+                        
+                        if itemTransfer:
+                            to_client_item_balance = Item_balance.objects.filter(
+                                product=ingredents.commodity, client=self.fr_client).order_by('-id')[:1]
+                            if len(to_client_item_balance) > 0:
+                                balance = to_client_item_balance.first()
+                                quantity = balance.quantity + hemjee
+                                balance.quantity = quantity
+                                
+                                balance.save()
+                else:
+                    itemTransfer = Item_transfer.objects.create(product=self.product, to_client=self.fr_client, to_division=self.fr_client.division, quantity=self.quantity, order_detial=self, item_transfer_type=transfer_type)
+                    if itemTransfer:
+                        to_client_item_balance = Item_balance.objects.filter(
+                            product=self.product, client=self.fr_client).order_by('-id')[:1]
+
+                        if to_client_item_balance:
+                            balance = Item_balance.objects.get(pk=to_client_item_balance[0].id)
+                            quantity = balance.quantity + self.quantity
+                            balance.quantity = quantity
+                            balance.save()
+                
+            else:
+                print("eelj ali hediin haagdsan tul detailiig uurchluh bolomjgui.")
+                self.is_deleted = True
+
+        elif self.__prev_is_deleted == True and self.is_deleted == False:
+            self.is_deleted = True
+            print("delete hiisen order detailiig restore hj bolohgui!")
         
         super().save(*args, **kwargs)
+        self.order.save()
 
     def __str__(self):
         return str(self.id)
@@ -198,9 +273,15 @@ class Payment(Modifiedinfo):
     wallet = models.ForeignKey('financial_app.Wallet', null=False, blank=False,on_delete=models.DO_NOTHING, default=999, related_name="payments")
     shift_work = models.ForeignKey('structure_app.Shift_work', related_name='payments', null=True, blank=True, on_delete=models.DO_NOTHING)
     division = models.ForeignKey('structure_app.Division', null=True, blank=True, on_delete=models.DO_NOTHING, related_name="payments")
+    is_deleted = models.BooleanField(default=0)
 
     def __str__(self):
         return str(self.id)
+    
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        for order in self.orders.all():
+            order.save()
         
 # POS машины нэгтгэл
 

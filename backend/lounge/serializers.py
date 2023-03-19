@@ -54,7 +54,7 @@ class LoungeClientsSerializer(serializers.ModelSerializer):
         model = Client
         fields = '__all__'
 
-class LoungePaymentsSerializer(serializers.ModelSerializer):
+class LoungePaymentsSerializerDefault(serializers.ModelSerializer):
 
     class Meta:
         model = Payment
@@ -74,10 +74,17 @@ class LoungeShowingCustomerSerializer(serializers.ModelSerializer):
 
 class LoungeOrdersSerializer(serializers.ModelSerializer):
     client = LoungeClientsSerializer(many=False)
-    payments = LoungePaymentsSerializer(many=True)
+    # payments = LoungePaymentsSerializerDefault(many=True)
     worker = LoungeShowingUserSerializer(many=False)
     customer = LoungeShowingCustomerSerializer(many=False)
     # order_detials = LoungeOrderDetialsSerializer(many=True)
+
+    payments = serializers.SerializerMethodField('get_payments')
+
+    def get_payments(self, order):
+        qs = Payment.objects.filter(orders=order, is_deleted=False)
+        serializer = LoungePaymentsSerializerDefault(instance=qs, many=True)
+        return serializer.data
 
     class Meta:
         model = Order
@@ -169,10 +176,8 @@ class OrderDetailRecieverSerializer(serializers.ModelSerializer):
                             product=validated_data['product'], client=client).order_by('-id')[:1]
 
                         if fr_client_item_balance:
-                            balance = Item_balance.objects.get(
-                                pk=fr_client_item_balance[0].id)
-                            quantity = balance.quantity - \
-                                validated_data['quantity']
+                            balance = Item_balance.objects.get(pk=fr_client_item_balance[0].id)
+                            quantity = balance.quantity - validated_data['quantity']
                             balance.updated_by = validated_data['created_by']
                             balance.quantity = quantity
                             balance.save()
