@@ -56,6 +56,7 @@ class Order(Modifiedinfo):
         return str(self.id)
     
     def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
         total = 0
         for det in self.order_detials.all():
             if not det.is_deleted:

@@ -56,7 +56,7 @@ def index(request):
 def index(request):
     
     return HttpResponse('<h1>Page was found</h1>')
-
+ 
 def shiftWorkUnpaidOrderChecker(request, shift_work_id):
     shift_work = get_object_or_404(Shift_work, pk=shift_work_id)
     can_i_end = True

@@ -38,7 +38,7 @@ def printBill(bill, printer_number):
     elif bill.bill_type == "3":
         add_h = 580
 
-    height = len(bill.order.order_detials.all()) * 70 + add_h
+    height = len(bill.order.order_detials.filter(is_deleted=False)) * 70 + add_h
     image = Image.new("RGB", (width, height), "white")
     draw = ImageDraw.Draw(image)
     # font = ImageFont.load_default()
@@ -81,7 +81,7 @@ def printBill(bill, printer_number):
     
     row_number = 1
     y = y + 30
-    for detail in bill.order.order_detials.all():
+    for detail in bill.order.order_detials.filter(is_deleted=False):
         det_text = str(row_number) + ". " + str(detail.product.name)
         draw.text((30, y), det_text, fill="black", font=unicode_font_26)
 
@@ -257,7 +257,7 @@ def putData(order, register, printer_number):
                 if order.customer.register:
                     register = order.customer.register
 
-        for detail in order.order_detials.all():
+        for detail in order.order_detials.filter(is_deleted=False):
             per_amount = detail.subtotal / detail.quantity
             per_price = float(per_amount) / float((conf_value.noat_tax + 100) / 100)
             vat = float(detail.subtotal) - float(per_price)
@@ -533,7 +533,7 @@ def printOrder(request):
         width = 600
         add_h = 450
 
-        height = len(order.order_detials.all()) * 70 + add_h
+        height = len(order.order_detials.filter(is_deleted=False)) * 70 + add_h
         image = Image.new("RGB", (width, height), "white")
         draw = ImageDraw.Draw(image)
         # font = ImageFont.load_default()
@@ -565,7 +565,7 @@ def printOrder(request):
         
         row_number = 1
         y = y + 30
-        for detail in order.order_detials.all():
+        for detail in order.order_detials.filter(is_deleted=False):
             det_text = str(row_number) + ". " + str(detail.product.name)
             draw.text((30, y), det_text, fill="black", font=unicode_font_26)
 

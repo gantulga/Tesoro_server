@@ -194,7 +194,7 @@ def commodityInformation(request, commodity_id):
 def kitchenFoods(request):
     detail = request.GET.get('detail', None)
     if detail:
-        order_detail = Order_detial.objects.get(pk=detail)
+        order_detail = Order_detial.objects.get(pk=detail, is_deleted=False)
         if order_detail:
             order_detail.finished = True
             order_detail.finished_at = datetime.datetime.now()
@@ -208,8 +208,8 @@ def kitchenFoods(request):
     today_min = datetime.datetime.combine(datetime.date.today(), datetime.time.min)
     today_max = datetime.datetime.combine(datetime.date.today(), datetime.time.max)
 
-    not_finished_orders = Order_detial.objects.filter(product__categories__in=food_cat_ids, finished=False, created_at__range=(today_min, today_max)).order_by("created_at")
-    finished_orders = Order_detial.objects.filter(product__categories__in=food_cat_ids, finished=True, created_at__range=(today_min, today_max)).order_by("-id")
+    not_finished_orders = Order_detial.objects.filter(product__categories__in=food_cat_ids, finished=False, created_at__range=(today_min, today_max), is_deleted=False).order_by("created_at")
+    finished_orders = Order_detial.objects.filter(product__categories__in=food_cat_ids, finished=True, created_at__range=(today_min, today_max), is_deleted=False).order_by("-id")
     return render(request, 'kitchen.html', {'not_finished_orders':not_finished_orders, 'finished_orders':finished_orders})
 
 
@@ -432,7 +432,7 @@ def dailyReport(request):
                     wallet_balances.append({'wallet':wallet, 'balance':int(wallet_balance)})
 
                 sold_items = []
-                all_order_details = Order_detial.objects.filter(shift_work=shift_work.id).order_by('product')
+                all_order_details = Order_detial.objects.filter(shift_work=shift_work.id, is_deleted=False).order_by('product')
                 for detail in all_order_details:
                     index = next((i for i, item in enumerate(sold_items) if item['id'] == int(detail.product.id)), -1)
                     category = None
