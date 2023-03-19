@@ -283,6 +283,9 @@ class Payment(Modifiedinfo):
         super().save(*args, **kwargs)
         for order in self.orders.all():
             order.save()
+
+    def thousand(self):
+        return f'{self.amount:,}'
         
 # POS машины нэгтгэл
 

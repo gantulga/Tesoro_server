@@ -49,7 +49,8 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'corsheaders',
     'django_filters',
-    'clear_cache'
+    'clear_cache',
+    'humanize'
 ]
 
 MIDDLEWARE = [
@@ -248,3 +249,5 @@ CACHES = {
         'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
     }
 }
+
+# USE_THOUSAND_SEPARATOR = True

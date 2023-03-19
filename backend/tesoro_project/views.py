@@ -450,7 +450,7 @@ def dailyReport(request):
             if shift_worker != None:
                 shift_work = get_object_or_404(Shift_work, pk=shift_worker)
 
-                all_wallet = Wallet.objects.all()
+                all_wallet = Wallet.objects.filter(is_enabled=True)
                 total_payment_balanace = 0
                 wallet_balances = []
                 umnu_tavisan_uriin_guilgee = []
@@ -537,10 +537,14 @@ def dailyReport(request):
                         customer_under[index]['under_amount'] = int(customer_under[index]['under_amount']) + int(under_payment)
                         customer_under[index]['paid'] = int(customer_under[index]['paid']) + int(payment_t)
                 
-                all_payments = Payment.objects.filter(shift_work=shift_work, is_deleted=False).values('wallet').annotate(dcount=Count('id'))
+                all_payments = Payment.objects.filter(shift_work=shift_work, is_deleted=False)
                 all_deleted_payments = Payment.objects.filter(shift_work=shift_work, is_deleted=True)
+
                 print(all_payments)
                 return render(request, 'dailyReport.html', {
+                    'all_wallets':all_wallet,
+                    'all_payments':all_payments,
+                    'all_deleted_payments':all_deleted_payments,
                     'all_shift_workers':all_shift_workers, 
                     'wallet_balances':wallet_balances, 
                     'shift_work':shift_work, 

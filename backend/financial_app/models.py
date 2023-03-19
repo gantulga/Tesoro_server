@@ -102,6 +102,7 @@ class Wallet(Createdinfo):
     division = models.ForeignKey('structure_app.Division', related_name='wallets', null=True, blank=True, on_delete=models.DO_NOTHING)
     is_pos = models.BooleanField(default=0)
     parent = models.ForeignKey('self', null=True, blank=True, on_delete=models.PROTECT, related_name="pos_machines")
+    is_enabled = models.BooleanField(default=1)
 
     def __str__(self):
         return self.name

@@ -131,26 +131,35 @@
   <div class="walletInfo">
     <div class="info-header">6. Гүйлгээний дэлгэрэнгүй</div>
       <div class="row">
-        <div class="col-md-4">
-          <div class="walletInfo">
-            <div class="wallet head">
-              <div class="index">№</div>
-              <div class="name">Огноо</div>
-              <div class="name">Order</div>
-              <div class="name">Дүн</div>
+        {% for wallet in all_wallets %}
+          <div class="col-md-4">
+            <div style="margin-bottom: 30px; border: 1px solid #cecece; padding: 15px;">
+              <h6>{{wallet.name}}</h6>
+              <table style="width:100%; text-align: right">
+                <thead style="color: #696969">
+                  <tr>
+                    <th>№</th>
+                    <th>Огноо</th>
+                    <th>Order</th>
+                    <th>Дүн</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for payment in all_payments %}
+                    {% if payment.wallet == wallet %}
+                    <tr>
+                      <td>{{ forloop.counter }}</td>
+                      <td>{{payment.created_at|date:'H:i:s'}}</td>
+                      <td>{{payment.orders.first}}</td>
+                      <td>{{payment.thousand}} ₮</td>
+                    </tr>
+                    {% endif %}
+                  {% endfor %}
+                </tbody>
+              </table>
             </div>
-            {% for customer in customer_under %}
-              <div class="wallet">
-                <div class="index">{{ forloop.counter }}</div>
-                <div class="name">{{customer.customer}}</div>
-                <div class="amount under">{{customer.under_amount}} ₮</div>
-                <div class="amount paid">{{customer.paid}} ₮</div>
-                <div class="amount">{{customer.discount}} ₮</div>
-                <div class="amount">{{customer.total_amount}} ₮</div>
-              </div>
-            {% endfor %}
           </div>
-        </div>
+        {% endfor %}
       </div>
     </div>
   </div>
