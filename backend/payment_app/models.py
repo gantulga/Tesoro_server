@@ -82,7 +82,7 @@ class Order(Modifiedinfo):
         elif payment_total < new_discounted_amount and payment_total > 0:
             self.status = "Төлбөр дутуу төлсөн."
 
-        super().save(*args, **kwargs)
+        super().save()
 
 class Order_detial(Modifiedinfo):
     order = models.ForeignKey('Order', on_delete=models.DO_NOTHING, related_name="order_detials")
