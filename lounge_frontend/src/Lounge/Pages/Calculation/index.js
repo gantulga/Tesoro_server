@@ -1246,6 +1246,7 @@ export default class Calculations extends Component {
       order: order,
       detials: detials,
     };
+    console.log(Obj)
     const url = "http://" + this.props.ip_address + "/printer/";
     await fetch(url, {
       method: "POST",
