@@ -721,6 +721,7 @@ def printer(request):
             for b in job:
                 mysocket.sendall(b)
             mysocket.close()
+        print("printed")
         return HttpResponse("done")
 
 @never_cache

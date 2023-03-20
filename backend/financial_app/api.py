@@ -7,7 +7,7 @@ from rest_framework.permissions import IsAuthenticated
 
 # Settings Viewset
 class FinanceWalletsViewSet(viewsets.ModelViewSet):
-    queryset = Wallet.objects.all()
+    queryset = Wallet.objects.filter(is_enabled=True)
     #permission_classes = [permissions.AllowAny]
     serializer_class = FinanceWalletsSerializer
     authentication_classes = (TokenAuthentication,)
