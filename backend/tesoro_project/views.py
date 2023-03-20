@@ -457,7 +457,7 @@ def dailyReport(request):
                 umnu_tavisan_uriin_guilgee_dun = 0
                 for wallet in all_wallet:
                     wallet_balance = 0
-                    payments = Payment.objects.filter(wallet=wallet.id, shift_work=shift_work.id)
+                    payments = Payment.objects.filter(wallet=wallet.id, shift_work=shift_work.id, is_deleted=False)
                     for payment in payments:
                         wallet_balance = wallet_balance + payment.amount
 
