@@ -623,7 +623,6 @@ def printer(request):
         res = json.loads(body.decode('utf-8'))
         
         date = "Хэзээ: " + str(datetime.datetime.now())
-        print(res)
         division = Division.objects.get(pk=res['order']['division'])
         client = Client.objects.get(pk=res['order']['client'])
         if division.id == 3:

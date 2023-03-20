@@ -1340,11 +1340,6 @@ export default class Calculations extends Component {
         });
       
       if(status){
-        await this.setState({
-          order_id: response['id'],
-          orderingList: [],
-          orderDetailsList: [],
-        });
         await this.set_order_information(response['id']);
         await this.getOrderDetialsData();
         store.addNotification({
@@ -1366,6 +1361,11 @@ export default class Calculations extends Component {
           division: this.state.division_id,
         };
         this.printer(printObj, this.state.orderingList)
+        await this.setState({
+          order_id: response['id'],
+          orderingList: [],
+          orderDetailsList: [],
+        });
       }
     } else {
       if (!this.state.division_id || !this.state.table_id) {
@@ -1491,11 +1491,6 @@ export default class Calculations extends Component {
         }
       })
 
-      if(!haveError) {
-        await this.setState({
-          orderingList: [],
-        });
-      }
       await this.set_order_information(this.state.order_id)
       await this.getOrderDetialsData();
     
@@ -1504,6 +1499,12 @@ export default class Calculations extends Component {
         division: this.state.division_id,
       };
       this.printer(printerObj, this.state.orderingList)
+
+      if(!haveError) {
+        await this.setState({
+          orderingList: [],
+        });
+      }
     }
   }
 
