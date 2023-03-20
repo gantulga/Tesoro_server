@@ -621,7 +621,7 @@ def printer(request):
     if request.method == "POST":
         body = request.body
         res = json.loads(body.decode('utf-8'))
-        
+        print(res)
         date = "Хэзээ: " + str(datetime.datetime.now())
         division = Division.objects.get(pk=res['order']['division'])
         client = Client.objects.get(pk=res['order']['client'])
