@@ -33,15 +33,19 @@ export default class Dashboard extends Component {
                                 </div>
                                 <div className="details">
                                     {order.order_detials.map((detail, index) => {
-                                        return (
-                                        <div className="detail" key={index}>
-                                            <div className="product">{detail.product.name}</div>
-                                            <div className="quantity">{detail.quantity}</div>
-                                            <div className="subtotal">
-                                            {detail.subtotal.slice(0, -3)}₮
-                                            </div>
-                                        </div>
-                                        );
+                                        if(detail.is_deleted){
+                                            return null
+                                        }else{
+                                            return (
+                                                <div className="detail" key={index}>
+                                                    <div className="product">{detail.product.name}</div>
+                                                    <div className="quantity">{detail.quantity}</div>
+                                                    <div className="subtotal">
+                                                    {detail.subtotal.slice(0, -3)}₮
+                                                    </div>
+                                                </div>
+                                            );
+                                        }
                                     })}
                                 </div>
                                 <div className="amount">
