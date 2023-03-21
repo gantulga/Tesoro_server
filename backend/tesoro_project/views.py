@@ -643,8 +643,6 @@ def printer(request):
         where = "Хаашаа: " + str(division) + " - " + client.description + "\n"
         configure = Configuration_value.objects.get(pk=1)
         bill_number = configure.kitchen_bill_number
-        configure.kitchen_bill_number = configure.kitchen_bill_number + 1
-        configure.save()
         
         mysocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         mysocket.connect(("192.168.1.10", 9100))
@@ -687,6 +685,9 @@ def printer(request):
                 number = number + 1
         
         if bill_included_food:
+            configure.kitchen_bill_number = configure.kitchen_bill_number + 1
+            configure.save()
+
             image.save("/home/tesoro/Tesoro_server/backend/media/kitchen-bill/test.jpg")
             im = Image.open("/home/tesoro/Tesoro_server/backend/media/kitchen-bill/test.jpg")
             # if image is not 1-bit, convert it

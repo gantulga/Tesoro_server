@@ -1341,6 +1341,9 @@ export default class Calculations extends Component {
         });
       
       if(status){
+        await this.setState({
+          order_id: response['id'],
+        });
         await this.set_order_information(response['id']);
         await this.getOrderDetialsData();
         store.addNotification({
