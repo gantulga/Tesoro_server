@@ -6,7 +6,11 @@
 <div class="buttons">
   {% for worker in all_shift_workers %}
     <a href="/soldItems?shiftWorker={{worker.id}}">
-      <button type="button">{{worker.worker.first_name}} - {{worker.created_at}}</button>
+      <button type="button"
+      class="days {% if shift_worker.id|slugify == worker.id|slugify %}active{% endif %}"
+      >
+        {{worker.created_at|date:"Y.m.d"}} - {{worker.worker.first_name}}
+      </button>
     </a>
   {% endfor %}
 </div>

@@ -247,7 +247,8 @@ background: transparent;
     cursor: pointer;
 }
 
-.buttons button:hover{
+.buttons button:hover,
+.buttons .days:hover{
     background: #ffb492;
 }
 
@@ -265,6 +266,22 @@ background: transparent;
 
 .buttons button.choosed:hover{
     background: #36a851;
+}
+
+.buttons .days {
+    border: none;
+    outline: none;
+    background: #cbcbcb;
+    color: #000;
+    font-weight: 600;
+    margin-left: 10px;
+    padding: 10px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.buttons .days.active {
+    background: #ff8851;
 }
 
 .addProduct {

@@ -164,15 +164,13 @@ class Configuration_value(models.Model):
 
 
 class Shift_work(Createdinfo):
-    division = models.ForeignKey(
-        'Division', null=False, blank=False, on_delete=models.PROTECT, related_name="Shift_works")
-    worker = models.ForeignKey(User, related_name='shift_works',
-                               null=True, blank=True, on_delete=models.DO_NOTHING)
+    division = models.ForeignKey('Division', null=False, blank=False, on_delete=models.PROTECT, related_name="Shift_works")
+    worker = models.ForeignKey(User, related_name='shift_works', null=True, blank=True, on_delete=models.DO_NOTHING)
     worker_confirm = models.BooleanField(default=0)
-    controller = models.ForeignKey(User, related_name='controller_shift_works',
-                                   null=True, blank=True, on_delete=models.DO_NOTHING)
+    controller = models.ForeignKey(User, related_name='controller_shift_works', null=True, blank=True, on_delete=models.DO_NOTHING)
     controller_confirm = models.BooleanField(default=0)
     finished = models.BooleanField(default=0)
+    finished_at = models.DateTimeField(auto_now=False, null=True, blank=True)
 
     def __str__(self):
         return self.worker.username

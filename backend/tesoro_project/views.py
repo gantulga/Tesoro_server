@@ -404,38 +404,37 @@ def dailyReportSoldItems(request):
             shift_worker = request.GET.get('shiftWorker', None)
             if shift_worker != None:
                 shift_work = get_object_or_404(Shift_work, pk=shift_worker)
-
-                all_parent_cats = Product_category.objects.filter(parent__isnull=True)
-                sold_items = []
-                all_order_details = Order_detial.objects.filter(shift_work=shift_work.id, is_deleted=False).order_by('product')
-                for detail in all_order_details:
-                    index = next((i for i, item in enumerate(sold_items) if item['id'] == int(detail.product.id)), -1)
-                    category = None
-                    for cat in detail.product.categories.all():
-                        if cat.parent == None:
-                            category = cat
-
-                    if index < 0:
-                        sold_items.append({'id':detail.product.id, 'product': detail.product.name, 'quantity':detail.quantity, 'amount':detail.subtotal, 'category':category})
-                    else:
-                        sold_items[index]['quantity'] = int(sold_items[index]['quantity']) + int(detail.quantity)
-                        sold_items[index]['amount'] = int(sold_items[index]['amount']) + int(detail.subtotal)
-
-                all_shift_workers = Shift_work.objects.all().order_by('-id')
-                all_orders = Order.objects.filter(shift_work=shift_work.id)
-                total_order_amount = 0
-                for order in all_orders:
-                    total_order_amount = total_order_amount + order.amount
-
-                return render(request, 'dailyReportSoldItems.html', {
-                    'all_shift_workers':all_shift_workers, 
-                    'shift_work':shift_work, 
-                    'sold_items': sold_items,
-                    'total_order_amount':total_order_amount, 
-                    'all_parent_cats':all_parent_cats})
             else:
-                all_shift_workers = Shift_work.objects.all().order_by('-id')
-                return render(request, 'dailyReportSoldItems.html', {'all_shift_workers':all_shift_workers})
+                shift_work = Shift_work.objects.filter(division=5).order_by('-id').first()
+
+            all_parent_cats = Product_category.objects.filter(parent__isnull=True)
+            sold_items = []
+            all_order_details = Order_detial.objects.filter(shift_work=shift_work.id, is_deleted=False).order_by('product')
+            for detail in all_order_details:
+                index = next((i for i, item in enumerate(sold_items) if item['id'] == int(detail.product.id)), -1)
+                category = None
+                for cat in detail.product.categories.all():
+                    if cat.parent == None:
+                        category = cat
+
+                if index < 0:
+                    sold_items.append({'id':detail.product.id, 'product': detail.product.name, 'quantity':detail.quantity, 'amount':detail.subtotal, 'category':category})
+                else:
+                    sold_items[index]['quantity'] = int(sold_items[index]['quantity']) + int(detail.quantity)
+                    sold_items[index]['amount'] = int(sold_items[index]['amount']) + int(detail.subtotal)
+
+            all_shift_workers = Shift_work.objects.all().order_by('-id')
+            all_orders = Order.objects.filter(shift_work=shift_work.id)
+            total_order_amount = 0
+            for order in all_orders:
+                total_order_amount = total_order_amount + order.amount
+
+            return render(request, 'dailyReportSoldItems.html', {
+                'all_shift_workers':all_shift_workers, 
+                'shift_work':shift_work,
+                'sold_items': sold_items,
+                'total_order_amount':total_order_amount, 
+                'all_parent_cats':all_parent_cats})
     else:
         return redirect('/accounts/login/')
 
@@ -449,120 +448,119 @@ def dailyReport(request):
             shift_worker = request.GET.get('shiftWorker', None)
             if shift_worker != None:
                 shift_work = get_object_or_404(Shift_work, pk=shift_worker)
-
-                all_wallet = Wallet.objects.filter(is_enabled=True)
-                total_payment_balanace = 0
-                wallet_balances = []
-                umnu_tavisan_uriin_guilgee = []
-                umnu_tavisan_uriin_guilgee_dun = 0
-                for wallet in all_wallet:
-                    wallet_balance = 0
-                    payments = Payment.objects.filter(wallet=wallet.id, shift_work=shift_work.id, is_deleted=False)
-                    for payment in payments:
-                        wallet_balance = wallet_balance + payment.amount
-
-                        umnuh_eeljiin_order = False
-                        for ord in payment.orders.all():
-                            if ord.shift_work != shift_work:
-                                umnuh_eeljiin_order = True
-                        if umnuh_eeljiin_order:
-                            umnu_tavisan_uriin_guilgee.append(payment)
-                            umnu_tavisan_uriin_guilgee_dun = umnu_tavisan_uriin_guilgee_dun + payment.amount
-                        else:
-                            #yag tuhain udriin order bolhoor paymentiig totalruu append hj bn
-                            total_payment_balanace = total_payment_balanace + payment.amount
-
-
-                    wallet_balances.append({'wallet':wallet, 'balance':int(wallet_balance)})
-
-                all_shift_workers = Shift_work.objects.all().order_by('-id')
-                all_orders = Order.objects.filter(shift_work=shift_work.id)
-                total_order_amount = 0
-                total_discount = 0
-                total_discounted_amount = 0
-                total_under_amount_guest = 0
-                total_under_amount_worker = 0
-                for order in all_orders:
-                    total_order_amount = total_order_amount + order.amount
-                    total_discount = total_discount + order.discount
-                    total_discounted_amount = total_discounted_amount + order.discounted_amount
-                    if order.status != "Төлбөр гүйцэт төлсөн.":
-                        payment_dun = 0
-                        for payment in order.payments.all():
-                            payment_dun = payment_dun + payment.amount
-
-                        if order.worker:
-                            total_under_amount_worker = total_under_amount_worker + (order.discounted_amount - payment_dun)
-                        else:
-                            total_under_amount_guest = total_under_amount_guest + (order.discounted_amount - payment_dun)
-
-                worker_under = []
-                all_worker_orders = Order.objects.filter(shift_work=shift_work.id, worker__isnull=False).order_by('worker')
-                for order in all_worker_orders:
-                    index = next((i for i, item in enumerate(worker_under) if item['id'] == int(order.worker.id)), -1)
-                    payment_t = 0
-                    for payment in order.payments.all():
-                        payment_t = payment_t + payment.amount
-
-                    under_payment = order.discounted_amount - payment_t
-                    if index < 0:
-                        worker_under.append({'id':order.worker.id, 'worker': order.worker.first_name, 'total_amount':order.amount, 'discount':order.discount, 'under_amount':under_payment, 'paid':payment_t})
-                    else:
-                        worker_under[index]['total_amount'] = int(worker_under[index]['total_amount']) + int(order.amount)
-                        worker_under[index]['discount'] = int(worker_under[index]['discount']) + int(order.discount)
-                        worker_under[index]['under_amount'] = int(worker_under[index]['under_amount']) + int(under_payment)
-                        worker_under[index]['paid'] = int(worker_under[index]['paid']) + int(payment_t)
-
-                all_parent_cats = Product_category.objects.filter(parent__isnull=True)
-
-
-                customer_under = []
-                all_customer_orders = Order.objects.filter(shift_work=shift_work.id, customer__isnull=False).order_by('customer')
-                for order in all_customer_orders:
-                    index = next((i for i, item in enumerate(customer_under) if item['id'] == int(order.customer.id)), -1)
-                    payment_t = 0
-                    for payment in order.payments.all():
-                        payment_t = payment_t + payment.amount
-
-                    under_payment = order.discounted_amount - payment_t
-                    if order.customer.firstname:
-                        cus = order.customer.firstname + "(" + str(order.customer.id) + ")"
-                    else:
-                        cus = str(order.customer.mobile) + "(" + str(order.customer.id) + ")"
-                    if index < 0:
-                        customer_under.append({'id':order.customer.id, 'customer': cus, 'total_amount':order.amount, 'discount':order.discount, 'under_amount':under_payment, 'paid':payment_t})
-                    else:
-                        customer_under[index]['total_amount'] = int(customer_under[index]['total_amount']) + int(order.amount)
-                        customer_under[index]['discount'] = int(customer_under[index]['discount']) + int(order.discount)
-                        customer_under[index]['under_amount'] = int(customer_under[index]['under_amount']) + int(under_payment)
-                        customer_under[index]['paid'] = int(customer_under[index]['paid']) + int(payment_t)
-                
-                all_payments = Payment.objects.filter(shift_work=shift_work, is_deleted=False)
-                all_deleted_payments = Payment.objects.filter(shift_work=shift_work, is_deleted=True)
-
-                print(all_payments)
-                return render(request, 'dailyReport.html', {
-                    'all_wallets':all_wallet,
-                    'all_payments':all_payments,
-                    'all_deleted_payments':all_deleted_payments,
-                    'all_shift_workers':all_shift_workers, 
-                    'wallet_balances':wallet_balances, 
-                    'shift_work':shift_work, 
-                    'total_payment_balanace':int(total_payment_balanace),
-                    'total_order_amount':total_order_amount, 
-                    'total_discount': total_discount,
-                    'total_discounted_amount': total_discounted_amount, 
-                    'total_under_amount_worker':total_under_amount_worker,
-                    'total_under_amount_guest': total_under_amount_guest,
-                    'worker_under':worker_under,
-                    'customer_under':customer_under,
-                    'all_parent_cats':all_parent_cats,
-                    'umnu_tavisan_uriin_guilgee':umnu_tavisan_uriin_guilgee,
-                    'umnu_tavisan_uriin_guilgee_dun':umnu_tavisan_uriin_guilgee_dun,
-                    'payment_total_plus_umnuh_payment_all_total': total_payment_balanace + umnu_tavisan_uriin_guilgee_dun })
             else:
-                all_shift_workers = Shift_work.objects.all().order_by('-id')
-                return render(request, 'dailyReport.html', {'all_shift_workers':all_shift_workers})
+                shift_work = Shift_work.objects.filter(division=5).order_by('-id').first()
+
+            all_wallet = Wallet.objects.filter(is_enabled=True)
+            total_payment_balanace = 0
+            wallet_balances = []
+            umnu_tavisan_uriin_guilgee = []
+            umnu_tavisan_uriin_guilgee_dun = 0
+            for wallet in all_wallet:
+                wallet_balance = 0
+                payments = Payment.objects.filter(wallet=wallet.id, shift_work=shift_work.id, is_deleted=False)
+                for payment in payments:
+                    wallet_balance = wallet_balance + payment.amount
+
+                    umnuh_eeljiin_order = False
+                    for ord in payment.orders.all():
+                        if ord.shift_work != shift_work:
+                            umnuh_eeljiin_order = True
+                    if umnuh_eeljiin_order:
+                        umnu_tavisan_uriin_guilgee.append(payment)
+                        umnu_tavisan_uriin_guilgee_dun = umnu_tavisan_uriin_guilgee_dun + payment.amount
+                    else:
+                        #yag tuhain udriin order bolhoor paymentiig totalruu append hj bn
+                        total_payment_balanace = total_payment_balanace + payment.amount
+
+
+                wallet_balances.append({'wallet':wallet, 'balance':int(wallet_balance)})
+
+            all_shift_workers = Shift_work.objects.all().order_by('-id')
+            all_orders = Order.objects.filter(shift_work=shift_work.id)
+            total_order_amount = 0
+            total_discount = 0
+            total_discounted_amount = 0
+            total_under_amount_guest = 0
+            total_under_amount_worker = 0
+            for order in all_orders:
+                total_order_amount = total_order_amount + order.amount
+                total_discount = total_discount + order.discount
+                total_discounted_amount = total_discounted_amount + order.discounted_amount
+                if order.status != "Төлбөр гүйцэт төлсөн.":
+                    payment_dun = 0
+                    for payment in order.payments.all():
+                        payment_dun = payment_dun + payment.amount
+
+                    if order.worker:
+                        total_under_amount_worker = total_under_amount_worker + (order.discounted_amount - payment_dun)
+                    else:
+                        total_under_amount_guest = total_under_amount_guest + (order.discounted_amount - payment_dun)
+
+            worker_under = []
+            all_worker_orders = Order.objects.filter(shift_work=shift_work.id, worker__isnull=False).order_by('worker')
+            for order in all_worker_orders:
+                index = next((i for i, item in enumerate(worker_under) if item['id'] == int(order.worker.id)), -1)
+                payment_t = 0
+                for payment in order.payments.all():
+                    payment_t = payment_t + payment.amount
+
+                under_payment = order.discounted_amount - payment_t
+                if index < 0:
+                    worker_under.append({'id':order.worker.id, 'worker': order.worker.first_name, 'total_amount':order.amount, 'discount':order.discount, 'under_amount':under_payment, 'paid':payment_t})
+                else:
+                    worker_under[index]['total_amount'] = int(worker_under[index]['total_amount']) + int(order.amount)
+                    worker_under[index]['discount'] = int(worker_under[index]['discount']) + int(order.discount)
+                    worker_under[index]['under_amount'] = int(worker_under[index]['under_amount']) + int(under_payment)
+                    worker_under[index]['paid'] = int(worker_under[index]['paid']) + int(payment_t)
+
+            all_parent_cats = Product_category.objects.filter(parent__isnull=True)
+
+
+            customer_under = []
+            all_customer_orders = Order.objects.filter(shift_work=shift_work.id, customer__isnull=False).order_by('customer')
+            for order in all_customer_orders:
+                index = next((i for i, item in enumerate(customer_under) if item['id'] == int(order.customer.id)), -1)
+                payment_t = 0
+                for payment in order.payments.all():
+                    payment_t = payment_t + payment.amount
+
+                under_payment = order.discounted_amount - payment_t
+                if order.customer.firstname:
+                    cus = order.customer.firstname + "(" + str(order.customer.id) + ")"
+                else:
+                    cus = str(order.customer.mobile) + "(" + str(order.customer.id) + ")"
+                if index < 0:
+                    customer_under.append({'id':order.customer.id, 'customer': cus, 'total_amount':order.amount, 'discount':order.discount, 'under_amount':under_payment, 'paid':payment_t})
+                else:
+                    customer_under[index]['total_amount'] = int(customer_under[index]['total_amount']) + int(order.amount)
+                    customer_under[index]['discount'] = int(customer_under[index]['discount']) + int(order.discount)
+                    customer_under[index]['under_amount'] = int(customer_under[index]['under_amount']) + int(under_payment)
+                    customer_under[index]['paid'] = int(customer_under[index]['paid']) + int(payment_t)
+            
+            all_payments = Payment.objects.filter(shift_work=shift_work, is_deleted=False)
+            all_deleted_payments = Payment.objects.filter(shift_work=shift_work, is_deleted=True)
+
+            print(all_payments)
+            return render(request, 'dailyReport.html', {
+                'all_wallets':all_wallet,
+                'all_payments':all_payments,
+                'all_deleted_payments':all_deleted_payments,
+                'all_shift_workers':all_shift_workers, 
+                'wallet_balances':wallet_balances, 
+                'shift_work':shift_work, 
+                'total_payment_balanace':int(total_payment_balanace),
+                'total_order_amount':total_order_amount, 
+                'total_discount': total_discount,
+                'total_discounted_amount': total_discounted_amount, 
+                'total_under_amount_worker':total_under_amount_worker,
+                'total_under_amount_guest': total_under_amount_guest,
+                'worker_under':worker_under,
+                'customer_under':customer_under,
+                'all_parent_cats':all_parent_cats,
+                'umnu_tavisan_uriin_guilgee':umnu_tavisan_uriin_guilgee,
+                'umnu_tavisan_uriin_guilgee_dun':umnu_tavisan_uriin_guilgee_dun,
+                'payment_total_plus_umnuh_payment_all_total': total_payment_balanace + umnu_tavisan_uriin_guilgee_dun })
     else:
         return redirect('/accounts/login/')
 
@@ -589,28 +587,26 @@ def loungeItemBalances(request):
     if group in request.user.groups.all():
         cache.clear()
         shiftWorker = request.GET.get('shiftworker', None)
-        shift_workers = Shift_work.objects.filter(division=5).order_by('-created_at')
         if shiftWorker != None:
-            shift_worker = get_object_or_404(Shift_work, pk=shiftWorker)
-            prev_shift_worker = Shift_work.objects.filter(division=5, pk__lt=shift_worker.id).order_by('-id').first()
-
-            last = Shift_work.objects.filter(division=5).order_by('-id').first()
-            if shift_worker.finished and last != shift_worker:
-                balances = Item_balance_log.objects.filter(client=19, shift_work=shift_worker.id)
-                print("Item_balance_log")
-            else:
-                balances = Item_balance.objects.filter(client=19)
-                print("Item_balance")
-
-            if prev_shift_worker.finished:
-                prev_balances = Item_balance_log.objects.filter(client=19, shift_work=prev_shift_worker.id)
-            else:
-                prev_balances = Item_balance.objects.filter(client=19)
-
-            return render(request, 'loungeBalance.html', {'shift_workers':shift_workers, 'prev_balances':prev_balances, 'balances':balances, 'shift_worker':shift_worker})
+            current_shift_work = get_object_or_404(Shift_work, pk=shiftWorker)
         else:
-            shift_worker = None
-            return render(request, 'loungeBalance.html', {'shift_worker':shift_worker, 'shift_workers':shift_workers})
+            current_shift_work = Shift_work.objects.filter(division=5).order_by('-id').first()
+
+        prev_shift_worker = Shift_work.objects.filter(division=5, pk__lt=current_shift_work.id).order_by('-id').first()
+
+        if prev_shift_worker.finished:
+            prev_item_balances = Item_balance_log.objects.filter(client=19, shift_work=prev_shift_worker.id)
+        else:
+            prev_item_balances = Item_balance.objects.filter(client=19)
+
+        if current_shift_work.finished:
+            curr_item_balances = Item_balance_log.objects.filter(client=19, shift_work=current_shift_work.id)
+        else:
+            curr_item_balances = Item_balance.objects.filter(client=19)
+
+        
+
+        return render(request, 'loungeBalance.html', {})
 
         
     else:

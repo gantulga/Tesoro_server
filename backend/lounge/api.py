@@ -143,7 +143,7 @@ class LoungeLastShiftWorksViewSet(viewsets.ModelViewSet):
 class LoungeLastShiftWorkUpdateViewSet(viewsets.ModelViewSet):
     queryset = Shift_work.objects.all()
     # permission_classes = [permissions.AllowAny]
-    serializer_class = LoungeShiftWorkUpdateSerializer
+    serializer_class = LoungeShiftWorksSerializer
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 

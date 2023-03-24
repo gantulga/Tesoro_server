@@ -6,14 +6,19 @@
 <div class="buttons">
   {% for worker in all_shift_workers %}
     <a href="/dailyReport?shiftWorker={{worker.id}}">
-      <button type="button">{{worker.worker.first_name}} - {{worker.created_at}}</button>
+      <button type="button"
+      class="days {% if shift_work.id|slugify == worker.id|slugify %}active{% endif %}"
+      >
+        {{worker.created_at|date:"Y.m.d"}} - {{worker.worker.first_name}}
+      </button>
     </a>
   {% endfor %}
 </div>
 
 {% if shift_work %}
 <div class="pageHeader">
-  Ээлжийн тайлан
+  Ээлжийн тайлан 
+  
 </div>
 <div class="pageBody">
   <div class="walletInfo">
