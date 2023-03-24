@@ -104,9 +104,8 @@ class LoungeOrderPaymentsViewSet(generics.ListAPIView):
 
 class OrderRecieverViewSet(viewsets.ModelViewSet):
     lounge_division = Division.objects.get(pk=5)
-    # last_shift_work = Shift_work.objects.filter(division=lounge_division.id).order_by('-id')[0]
-    # queryset = Order.objects.filter(shift_work=last_shift_work.id)
-    queryset = Order.objects.all()
+    last_shift_work = Shift_work.objects.filter(division=lounge_division.id).order_by('-id')[0]
+    queryset = Order.objects.filter(shift_work=last_shift_work.id)
     # permission_classes = [permissions.AllowAny]
     serializer_class = OrderRecieverSerializer
     authentication_classes = (TokenAuthentication,)
@@ -144,7 +143,7 @@ class LoungeLastShiftWorksViewSet(viewsets.ModelViewSet):
 class LoungeLastShiftWorkUpdateViewSet(viewsets.ModelViewSet):
     queryset = Shift_work.objects.all()
     # permission_classes = [permissions.AllowAny]
-    serializer_class = LoungeShiftWorksSerializer
+    serializer_class = LoungeShiftWorkUpdateSerializer
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
@@ -178,9 +177,9 @@ class unSafe_WorkersViewSet(viewsets.ModelViewSet):
 
 class LoungeUnderPaymentsViewSet(viewsets.ModelViewSet):
     lounge_division = Division.objects.get(pk=5)
-    # last_shift_work = Shift_work.objects.filter(division=lounge_division.id).order_by('-id')[0]
-    # queryset = Order.objects.filter(shift_work=last_shift_work.id, status__in=["Төлбөр төлөгдөөгүй.", "Төлбөр дутуу төлсөн."], worker__isnull=True, customer__isnull=True)
-    queryset = Order.objects.all()
+    last_shift_work = Shift_work.objects.filter(
+    division=lounge_division.id).order_by('-id')[0]
+    queryset = Order.objects.filter(shift_work=last_shift_work.id, status__in=["Төлбөр төлөгдөөгүй.", "Төлбөр дутуу төлсөн."], worker__isnull=True, customer__isnull=True)
     permission_classes = [permissions.AllowAny]
     serializer_class = unSafe_loungaUnderPaymentsSerializer
     authentication_classes = (TokenAuthentication,)
@@ -190,9 +189,9 @@ class LoungeUnderPaymentsViewSet(viewsets.ModelViewSet):
 
 class LoungeMoneyTransfersViewSet(viewsets.ModelViewSet):
     lounge_division = Division.objects.get(pk=5)
-    # last_shift_work = Shift_work.objects.filter(division=lounge_division.id).order_by('-id')[0]
-    # queryset = Money_transfer.objects.filter(shift_work=last_shift_work.id)
-    queryset = Money_transfer.objects.all()
+    last_shift_work = Shift_work.objects.filter(
+        division=lounge_division.id).order_by('-id')[0]
+    queryset = Money_transfer.objects.filter(shift_work=last_shift_work.id)
     # permission_classes = [permissions.AllowAny]
     serializer_class = LoungeMoneyTransfersSerializer
     authentication_classes = (TokenAuthentication,)
