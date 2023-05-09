@@ -5,12 +5,52 @@
 <div class="">
   return render(request, 'home.html', {"bill_list_corp":bill_list_corp, "bill_list_huvi":bill_list_huvi, "bill_list_unknown":bill_list_unknown})
 
+Байгууллага
 <table>
+  <tr>
+    <th style="padding: 0 10px;">No</th>
+    <th style="padding: 0 10px;">Огноо</th>
+    <th style="padding: 0 10px;">Дүн</th>
+    <th style="padding: 0 10px;">Байх ёстой НӨАТ</th>
+    <th style="padding: 0 10px;">Буруу шивэгдсэн НӨАТ</th>
+    <th style="padding: 0 10px;">Зөрүү</th>
+    <th style="padding: 0 10px;">Байгууллага нэр</th>
+    <th style="padding: 0 10px;">Байгууллага регистер</th>
+  </tr>
   {% for bill in bill_list_corp %}
   <tr>
+    <td style="padding: 0 10px;">{{ forloop.counter }}</td>
+    <td style="padding: 0 10px;">{{bill.date}}</td>
     <td style="padding: 0 10px;">{{bill.amount}}</td>
     <td style="padding: 0 10px;">{{bill.clear_vat}}</td>
     <td style="padding: 0 10px;">{{bill.vat}}</td>
+    <td style="padding: 0 10px;">{{bill.zuruu }}</td>
+    <td style="padding: 0 10px;">{{bill.customer_name}}</td>
+    <td style="padding: 0 10px;">{{bill.register_no}}</td>
+  </tr>
+  {% endfor %}
+</table>
+
+Хувь хүн
+<table>
+  <tr>
+    <th style="padding: 0 10px;">No</th>
+    <th style="padding: 0 10px;">Огноо</th>
+    <th style="padding: 0 10px;">Дүн</th>
+    <th style="padding: 0 10px;">Байх ёстой НӨАТ</th>
+    <th style="padding: 0 10px;">Буруу шивэгдсэн НӨАТ</th>
+    <th style="padding: 0 10px;">Зөрүү</th>
+    <th style="padding: 0 10px;">Баримтын дугаар</th>
+  </tr>
+  {% for bill in bill_list_huvi %}
+  <tr>
+    <td style="padding: 0 10px;">{{ forloop.counter }}</td>
+    <td style="padding: 0 10px;">{{bill.date}}</td>
+    <td style="padding: 0 10px;">{{bill.amount}}</td>
+    <td style="padding: 0 10px;">{{bill.clear_vat}}</td>
+    <td style="padding: 0 10px;">{{bill.vat}}</td>
+    <td style="padding: 0 10px;">{{bill.zuruu }}</td>
+    <td style="padding: 0 10px;">{{bill.lottery}}</td>
   </tr>
   {% endfor %}
 </table>

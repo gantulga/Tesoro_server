@@ -56,8 +56,8 @@ def home(request):
                 else:
                     bill_list_unknown.append(bill)
 
-
-        return render(request, 'home.html', {"bill_list_corp":bill_list_corp, "bill_list_huvi":bill_list_huvi, "bill_list_unknown":bill_list_unknown})
+        print(len(bill_list_unknown))
+        return render(request, 'home.html', {"bill_list_corp":bill_list_corp, "bill_list_huvi":bill_list_huvi})
     else:
         return redirect('/accounts/login/')
 

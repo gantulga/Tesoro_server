@@ -272,6 +272,14 @@ class Bill(Modifiedinfo):
         total_vat = float(self.amount) - tatvariin_daraah_orlogo
         total_vat = "%.2f" % total_vat
         return total_vat
+    
+    @property
+    def zuruu(self):
+        tatvariin_daraah_orlogo = float(self.amount) / float(1.1)
+        total_vat = float(self.amount) - tatvariin_daraah_orlogo
+        zuruu = float(self.vat) - total_vat
+        zuruu = "%.2f" % zuruu
+        return zuruu
 # Төлбөрийн төлөлт
 
 
