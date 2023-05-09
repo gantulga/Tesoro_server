@@ -8,9 +8,9 @@
 <table>
   {% for bill in bill_list_corp %}
   <tr>
-    <td>{{bill.amount}}</td>
-    <td>{{bill.total_vat}}</td>
-    <td>{{bill.vat}}</td>
+    <td style="padding: 0 10px;">{{bill.amount}}</td>
+    <td style="padding: 0 10px;">{{bill.clear_vat}}</td>
+    <td style="padding: 0 10px;">{{bill.vat}}</td>
   </tr>
   {% endfor %}
 </table>
