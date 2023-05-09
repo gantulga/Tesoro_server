@@ -39,6 +39,15 @@ import textwrap
 def home(request):
     group = Group.objects.get(pk=2)
     if group in request.user.groups.all():
+
+        bills = Bill.objects.all()
+        for bill in bills:
+            tatvariin_daraah_orlogo = float(bill.amount) / float(1.1)
+            total_vat = bill.amount - tatvariin_daraah_orlogo
+            total_vat = "%.2f" % total_vat
+            if bill.vat != total_vat:
+                print(bill)
+
         return render(request, 'home.html', {})
     else:
         return redirect('/accounts/login/')
