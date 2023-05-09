@@ -1954,7 +1954,7 @@ CREATE TABLE `structure_app_error_list` (
   PRIMARY KEY (`id`),
   KEY `structure_app_error_list_created_by_id_642ccdde_fk_auth_user_id` (`created_by_id`),
   CONSTRAINT `structure_app_error_list_created_by_id_642ccdde_fk_auth_user_id` FOREIGN KEY (`created_by_id`) REFERENCES `auth_user` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1509 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1509 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1980,7 +1980,7 @@ CREATE TABLE `structure_app_printer` (
   `ip` varchar(255) NOT NULL,
   `port` int NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --

@@ -146,7 +146,7 @@ class LoungeLastShiftWorkUpdateViewSet(viewsets.ModelViewSet):
     serializer_class = LoungeShiftWorkUpdateSerializer
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
-
+    
 
 class LoungePaymentsViewSet(viewsets.ModelViewSet):
     lounge_division = Division.objects.get(pk=5)

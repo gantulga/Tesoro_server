@@ -308,6 +308,11 @@ def putData(order, register, printer_number):
         # 2 НӨАТ-аас чөлөөлөгдөх бараа, ажил, үйлчилгээ борлуулсан баримт
         # 3 НӨАТ 0% тооцох бараа, ажил, үйлчилгээ борлуулсан баримт
 
+
+        print("amount:", "%.2f" % total_amount)
+        print("vat: ", "%.2f" % total_vat)
+        print("cashAmount: ", "%.2f" % total_amount)
+
         json_order = {
             "data": {
                 "amount": "%.2f" % total_amount,
