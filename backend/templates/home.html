@@ -18,7 +18,7 @@
   {% for bill in bill_list_corp %}
   <tr>
     <td style="padding: 0 10px;">{{ forloop.counter }}</td>
-    <td style="padding: 0 10px;">{{bill.date}}</td>
+    <td style="padding: 0 10px;">{{bill.date[:10]}}</td>
     <td style="padding: 0 10px;">{{bill.amount}}</td>
     <td style="padding: 0 10px;">{{bill.clear_vat}}</td>
     <td style="padding: 0 10px;">{{bill.vat}}</td>
