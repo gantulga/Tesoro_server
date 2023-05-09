@@ -40,19 +40,24 @@ def home(request):
     group = Group.objects.get(pk=2)
     if group in request.user.groups.all():
         
-        bill_list = []
+        bill_list_huvi = []
+        bill_list_corp = []
+        bill_list_unknown = []
         bills = Bill.objects.all()
         for bill in bills:
             tatvariin_daraah_orlogo = float(bill.amount) / float(1.1)
             total_vat = float(bill.amount) - tatvariin_daraah_orlogo
             total_vat = "%.2f" % total_vat
             if float(bill.vat) != float(total_vat):
-                bill_list.append(bill)
+                if bill.bill_type == "3":
+                    bill_list_corp.append(bill)
+                elif bill.bill_type == "1":
+                    bill_list_huvi.append(bill)
+                else:
+                    bill_list_unknown.append(bill)
 
-        print(bill_list)
-        print("count bills: ", len(bill_list))
 
-        return render(request, 'home.html', {})
+        return render(request, 'home.html', {"bill_list_corp":bill_list_corp, "bill_list_huvi":bill_list_huvi, "bill_list_unknown":bill_list_unknown})
     else:
         return redirect('/accounts/login/')
 

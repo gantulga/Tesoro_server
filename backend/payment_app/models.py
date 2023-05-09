@@ -265,6 +265,13 @@ class Bill(Modifiedinfo):
 
     def __str__(self):
         return str(self.id)
+    
+    @property
+    def clear_vat(self):
+        tatvariin_daraah_orlogo = float(self.amount) / float(1.1)
+        total_vat = float(self.amount) - tatvariin_daraah_orlogo
+        total_vat = "%.2f" % total_vat
+        return total_vat
 # Төлбөрийн төлөлт
 
 

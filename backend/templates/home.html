@@ -3,6 +3,16 @@
 {% block content %}
 {% load static %}
 <div class="">
-  a
+  return render(request, 'home.html', {"bill_list_corp":bill_list_corp, "bill_list_huvi":bill_list_huvi, "bill_list_unknown":bill_list_unknown})
+
+<table>
+  {% for bill in bill_list_corp %}
+  <tr>
+    <td>{{bill.amount}}</td>
+    <td>{{bill.total_vat}}</td>
+    <td>{{bill.vat}}</td>
+  </tr>
+  {% endfor %}
+</table>
 </div>
 {% endblock %}
