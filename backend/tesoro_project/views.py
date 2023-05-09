@@ -39,18 +39,18 @@ import textwrap
 def home(request):
     group = Group.objects.get(pk=2)
     if group in request.user.groups.all():
-
+        
+        bill_list = []
         bills = Bill.objects.all()
         for bill in bills:
             tatvariin_daraah_orlogo = float(bill.amount) / float(1.1)
             total_vat = float(bill.amount) - tatvariin_daraah_orlogo
             total_vat = "%.2f" % total_vat
-            bill_list = []
             if float(bill.vat) != float(total_vat):
-                bill_list.append(bill.id)
+                bill_list.append(bill)
 
-            print(bill_list)
-            print("count bills: ", len(bill_list))
+        print(bill_list)
+        print("count bills: ", len(bill_list))
 
         return render(request, 'home.html', {})
     else:
