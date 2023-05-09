@@ -330,7 +330,7 @@ def putData(order, register, printer_number):
                 "stocks": json_order_lines
             }
         }
-        print(customer_name)
+        print(json_order)
         bill = Bill.objects.create(
             amount = "%.2f" % total_amount,
             vat = "%.2f" % total_vat,
