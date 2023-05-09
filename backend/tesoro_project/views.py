@@ -41,15 +41,15 @@ def home(request):
     if group in request.user.groups.all():
         
         bill_list_huvi = []
-        huvi_total = None
-        huvi_total_clear_vat = None
-        huvi_total_vat = None
-        huvi_total_zuruu = None
+        huvi_total = 0
+        huvi_total_clear_vat = 0
+        huvi_total_vat = 0
+        huvi_total_zuruu = 0
         bill_list_corp = []
-        corp_total = None
-        corp_total_clear_vat = None
-        corp_total_vat = None
-        corp_total_zuruu = None
+        corp_total = 0
+        corp_total_clear_vat = 0
+        corp_total_vat = 0
+        corp_total_zuruu = 0
 
         bills = Bill.objects.all()
         for bill in bills:
