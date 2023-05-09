@@ -43,7 +43,7 @@ def home(request):
         bills = Bill.objects.all()
         for bill in bills:
             tatvariin_daraah_orlogo = float(bill.amount) / float(1.1)
-            total_vat = bill.amount - tatvariin_daraah_orlogo
+            total_vat = float(bill.amount) - tatvariin_daraah_orlogo
             total_vat = "%.2f" % total_vat
             print(total_vat, total_vat)
             if float(bill.vat) != float(total_vat):
