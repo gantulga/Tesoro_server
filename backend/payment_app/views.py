@@ -274,7 +274,7 @@ def putData(order, register, printer_number):
             })
             total_amount = total_amount + (detail.subtotal)
             tatvariin_daraah_orlogo = float(total_amount) / float((conf_value.noat_tax + 100) / 100)
-            total_vat = total_amount - tatvariin_daraah_orlogo
+            total_vat = float(total_amount) - tatvariin_daraah_orlogo
 
         if conf_value.district_code < 10:
             district_code = "0" + str(conf_value.district_code)
