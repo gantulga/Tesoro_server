@@ -73,13 +73,13 @@ def home(request):
         return render(request, 'home.html', {"bill_list_corp":bill_list_corp, 
                                              "bill_list_huvi":bill_list_huvi,
                                              "corp_total":corp_total,
-                                             "corp_total_clear_vat":corp_total_clear_vat,
-                                             "corp_total_vat":corp_total_vat,
-                                             "corp_total_zuruu":corp_total_zuruu,
+                                             "corp_total_clear_vat":"%.2f" % corp_total_clear_vat,
+                                             "corp_total_vat":"%.2f" % corp_total_vat,
+                                             "corp_total_zuruu":"%.2f" % corp_total_zuruu,
                                              "huvi_total":huvi_total,
-                                             "huvi_total_clear_vat":huvi_total_clear_vat,
-                                             "huvi_total_vat":huvi_total_vat,
-                                             "huvi_total_zuruu":huvi_total_zuruu,
+                                             "huvi_total_clear_vat":"%.2f" % huvi_total_clear_vat,
+                                             "huvi_total_vat":"%.2f" % huvi_total_vat,
+                                             "huvi_total_zuruu":"%.2f" % huvi_total_zuruu,
                                              })
     else:
         return redirect('/accounts/login/')
