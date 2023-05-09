@@ -45,7 +45,8 @@ def home(request):
             tatvariin_daraah_orlogo = float(bill.amount) / float(1.1)
             total_vat = bill.amount - tatvariin_daraah_orlogo
             total_vat = "%.2f" % total_vat
-            if bill.vat != total_vat:
+            print(total_vat, total_vat)
+            if float(bill.vat) != float(total_vat):
                 print(bill)
 
         return render(request, 'home.html', {})
