@@ -260,7 +260,7 @@ def putData(order, register, printer_number):
         for detail in order.order_detials.filter(is_deleted=False):
             per_amount = detail.subtotal / detail.quantity
             per_price = float(per_amount) / float((conf_value.noat_tax + 100) / 100)
-            vat = float(per_amount) - float(per_price)
+            vat = (float(per_amount) - float(per_price))*detail.quantity
             json_order_lines.append({
                 "code": str(detail.product.id),
                 "name": detail.product.name,
