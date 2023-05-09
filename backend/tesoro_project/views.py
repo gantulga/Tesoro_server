@@ -47,7 +47,7 @@ def home(request):
             total_vat = "%.2f" % total_vat
             bill_list = []
             if float(bill.vat) != float(total_vat):
-                bill_list.append(bill)
+                bill_list.append(bill.id)
 
             print(bill_list)
             print("count bills: ", len(bill_list))
