@@ -27,6 +27,16 @@
     <td style="padding: 0 10px;">{{bill.customer_no}}</td>
   </tr>
   {% endfor %}
+  <tr>
+    <th style="padding: 0 10px;"></th>
+    <th style="padding: 0 10px;"></th>
+    <th style="padding: 0 10px;">{{corp_total}}</th>
+    <th style="padding: 0 10px;">{{corp_total_clear_vat}}</th>
+    <th style="padding: 0 10px;">{{corp_total_vat}}</th>
+    <th style="padding: 0 10px;">{{corp_total_zuruu}}</th>
+    <th style="padding: 0 10px;"></th>
+    <th style="padding: 0 10px;"></th>
+  </tr>
 </table>
 
 Хувь хүн
@@ -51,6 +61,15 @@
     <td style="padding: 0 10px;">{{bill.lottery}}</td>
   </tr>
   {% endfor %}
+  <tr>
+    <th style="padding: 0 10px;"></th>
+    <th style="padding: 0 10px;"></th>
+    <th style="padding: 0 10px;">{{huvi_total}}</th>
+    <th style="padding: 0 10px;">{{huvi_total_clear_vat}}</th>
+    <th style="padding: 0 10px;">{{huvi_total_vat}}</th>
+    <th style="padding: 0 10px;">{{huvi_total_zuruu}}</th>
+    <th style="padding: 0 10px;"></th>
+  </tr>
 </table>
 </div>
 {% endblock %}

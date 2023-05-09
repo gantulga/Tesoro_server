@@ -41,8 +41,16 @@ def home(request):
     if group in request.user.groups.all():
         
         bill_list_huvi = []
+        huvi_total = None
+        huvi_total_clear_vat = None
+        huvi_total_vat = None
+        huvi_total_zuruu = None
         bill_list_corp = []
-        bill_list_unknown = []
+        corp_total = None
+        corp_total_clear_vat = None
+        corp_total_vat = None
+        corp_total_zuruu = None
+
         bills = Bill.objects.all()
         for bill in bills:
             tatvariin_daraah_orlogo = float(bill.amount) / float(1.1)
@@ -51,13 +59,28 @@ def home(request):
             if float(bill.vat) != float(total_vat):
                 if bill.bill_type == "3":
                     bill_list_corp.append(bill)
+                    corp_total = float(corp_total) + float(bill.amount)
+                    corp_total_clear_vat = float(corp_total_clear_vat) + float(bill.clear_vat)
+                    corp_total_vat = float(corp_total_vat) + float(bill.vat)
+                    corp_total_zuruu = float(corp_total_zuruu) + float(bill.zuruu)
                 elif bill.bill_type == "1":
                     bill_list_huvi.append(bill)
-                else:
-                    bill_list_unknown.append(bill)
+                    huvi_total = float(huvi_total) + float(bill.amount)
+                    huvi_total_clear_vat = float(huvi_total_clear_vat) + float(bill.clear_vat)
+                    huvi_total_vat = float(huvi_total_vat) + float(bill.vat)
+                    huvi_total_zuruu = float(huvi_total_zuruu) + float(bill.zuruu)
 
-        print(len(bill_list_unknown))
-        return render(request, 'home.html', {"bill_list_corp":bill_list_corp, "bill_list_huvi":bill_list_huvi})
+        return render(request, 'home.html', {"bill_list_corp":bill_list_corp, 
+                                             "bill_list_huvi":bill_list_huvi,
+                                             "corp_total":corp_total,
+                                             "corp_total_clear_vat":corp_total_clear_vat,
+                                             "corp_total_vat":corp_total_vat,
+                                             "corp_total_zuruu":corp_total_zuruu,
+                                             "huvi_total":huvi_total,
+                                             "huvi_total_clear_vat":huvi_total_clear_vat,
+                                             "huvi_total_vat":huvi_total_vat,
+                                             "huvi_total_zuruu":huvi_total_zuruu,
+                                             })
     else:
         return redirect('/accounts/login/')
 
