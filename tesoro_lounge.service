@@ -1,0 +1,11 @@
+[Unit]
+Description=Tesoro Lounge React Service
+
+[Install]
+WantedBy=multi-user.target
+
+[Service] 
+Type=simple 
+ExecStart=/usr/local/bin/serve -s -p 8001 -n /home/tesoro/Tesoro_server/lounge_frontend/build
+Restart=always
+

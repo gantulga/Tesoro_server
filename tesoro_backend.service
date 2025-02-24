@@ -1,0 +1,10 @@
+[Unit]
+Description=Django Service
+
+[Install]
+WantedBy=multi-user.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 /home/tesoro/Tesoro_server/backend/manage.py runserver 192.168.1.8:8000
+Restart=always
