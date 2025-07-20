@@ -894,6 +894,7 @@ def sales_report(request):
             time_display_text = f"{start_date.date()} - {now.date()}"
         elif time_range == 'month':
             queryset = queryset.filter(created_at__month=now.month, created_at__year=now.year)
+            print(len(queryset))
             time_display = f"Энэ сар ({now.strftime('%Y-%m')})"
             time_display_text = f"{now.strftime('%Y-%m')}"
         elif time_range == 'year':
