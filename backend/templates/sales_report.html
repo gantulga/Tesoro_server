@@ -7,28 +7,12 @@
 
 <!-- Bootstrap Icons -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-
-<style>
-    .sortable:hover {
-        background-color: #f8f9fa;
-        cursor: pointer;
-    }
-    .sortable i {
-        margin-left: 5px;
-    }
-    .table-responsive {
-        overflow-x: auto;
-    }
-    .card {
-        margin-bottom: 20px;
-    }
-</style>
 {% endblock %}
 
 {% block content %}
 <div class="container-fluid">
     <h2 class="mt-4">Борлуулалтын тайлан {{time_display_text}}</h2>
-    
+    {{ 1000000|intcomma }}
     <!-- Шүүлтүүр хэсэг -->
     <div class="card mb-4">
         <div class="card-header bg-primary text-white">
@@ -95,10 +79,6 @@
                         <i class="fas fa-search me-1"></i> Тайлан үзэх
                     </button>
                 </div>
-                
-                <!-- Эрэмбэлэх параметрүүд -->
-                <input type="hidden" name="sort_by" value="{{ sort_by }}">
-                <input type="hidden" name="sort_order" value="{{ sort_order }}">
             </form>
         </div>
     </div>
@@ -138,24 +118,13 @@
                             <th>№</th>
                             {% if group_by == 'product' %}
                             <th>Бүтээгдэхүүн</th>
+                            <th>Ангилал</th>
                             {% else %}
                             <th>Ангилал</th>
                             {% endif %}
-                            <th class="sortable" data-sort="total_quantity">Тоо ширхэг 
-                                {% if sort_by == 'total_quantity' %}
-                                    {% if sort_order == 'asc' %}<i class="bi bi-arrow-up"></i>{% else %}<i class="bi bi-arrow-down"></i>{% endif %}
-                                {% endif %}
-                            </th>
-                            <th class="sortable" data-sort="total_amount">Нийт дүн 
-                                {% if sort_by == 'total_amount' %}
-                                    {% if sort_order == 'asc' %}<i class="bi bi-arrow-up"></i>{% else %}<i class="bi bi-arrow-down"></i>{% endif %}
-                                {% endif %}
-                            </th>
-                            <th class="sortable" data-sort="avg_amount">Дундаж дүн 
-                                {% if sort_by == 'avg_amount' %}
-                                    {% if sort_order == 'asc' %}<i class="bi bi-arrow-up"></i>{% else %}<i class="bi bi-arrow-down"></i>{% endif %}
-                                {% endif %}
-                            </th>
+                            <th>Тоо ширхэг</th>
+                            <th>Нийт дүн</th>
+                            <th>Дундаж дүн</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -164,6 +133,7 @@
                             <td>{{ forloop.counter }}</td>
                             {% if group_by == 'product' %}
                             <td>{{ item.product_name }}</td>
+                            <td>{{ item.all_categories }}</td>
                             {% else %}
                             <td>{{ item.category_name }}</td>
                             {% endif %}
@@ -173,7 +143,7 @@
                         </tr>
                         {% empty %}
                         <tr>
-                            <td colspan="6" class="text-center">Өгөгдөл олдсонгүй</td>
+                            <td colspan="{% if group_by == 'product' %}6{% else %}5{% endif %}" class="text-center">Өгөгдөл олдсонгүй</td>
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -254,27 +224,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
         }
-    });
-
-    // Хүснэгтийг эрэмбэлэх
-    document.querySelectorAll('.sortable').forEach(header => {
-        header.addEventListener('click', function() {
-            const sortField = this.dataset.sort;
-            let sortOrder = 'desc';
-            
-            // Хэрэв ижил багана дарсан бол эрэмбэлэх дарааллыг солих
-            if ('{{ sort_by }}' === sortField) {
-                sortOrder = '{{ sort_order }}' === 'asc' ? 'desc' : 'asc';
-            }
-            
-            // Формын параметрүүдийг өөрчлөх
-            const form = document.getElementById('reportForm');
-            form.querySelector('input[name="sort_by"]').value = sortField;
-            form.querySelector('input[name="sort_order"]').value = sortOrder;
-            
-            // Формыг дахин илгээх
-            form.submit();
-        });
     });
 
     {% if main_data %}
