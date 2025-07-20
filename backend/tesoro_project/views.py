@@ -865,7 +865,6 @@ def commodityToProductIngredient(request):
 
 from django.utils import timezone
 from datetime import timedelta
-from django.db.models.functions import ExtractHour, ExtractDay, ExtractMonth, ExtractWeekDay
 
 def sales_report(request):
     # Цагийн шүүлтүүр
@@ -873,8 +872,6 @@ def sales_report(request):
     start_date = request.GET.get('start_date')
     end_date = request.GET.get('end_date')
     group_by = request.GET.get('group_by', 'product')
-    sort_by = request.GET.get('sort_by', 'total_amount')
-    sort_order = request.GET.get('sort_order', 'desc')
 
     # Анхны QuerySet
     queryset = Order_detial.objects.filter(is_deleted=False)
@@ -910,13 +907,15 @@ def sales_report(request):
     # Группилэх арга
     if group_by == 'product':
         main_data = queryset.values(
-            'product__name'
+            'product__name', 
+            # 'product__categories__name'
         ).annotate(
             total_quantity=Sum('quantity'),
             total_amount=Sum('subtotal'),
             avg_amount=Avg('subtotal'),
-            product_name=F('product__name')
-        )
+            product_name=F('product__name'),
+            # category_name=F('product__categories__name')
+        ).order_by('-total_amount')
     else:  # category
         main_data = queryset.values(
             'product__categories__name'
@@ -925,12 +924,7 @@ def sales_report(request):
             total_amount=Sum('subtotal'),
             avg_amount=Avg('subtotal'),
             category_name=F('product__categories__name')
-        )
-
-    # Эрэмбэлэх
-    if sort_by in ['total_quantity', 'total_amount', 'avg_amount']:
-        order_prefix = '-' if sort_order == 'desc' else ''
-        main_data = main_data.order_by(f'{order_prefix}{sort_by}')
+        ).order_by('-total_amount')
 
     # Нийт дүн тооцоолох
     total_quantity = queryset.aggregate(total=Sum('quantity'))['total'] or 0
@@ -951,50 +945,45 @@ def sales_report(request):
         'start_date': start_date,
         'end_date': end_date,
         'time_display': time_display,
-        'time_display_text': time_display_text,
+        'time_display_text':time_display_text,
         'total_quantity': total_quantity,
         'total_amount': total_amount,
         'chart_data_json': json.dumps(chart_data),
-        'sort_by': sort_by,
-        'sort_order': sort_order,
     }
     return render(request, 'sales_report.html', context)
 
 def prepare_hour_data(queryset):
     hours = list(range(24))
-    data = queryset.annotate(
-        hour=ExtractHour('created_at')
+    result = {hour: 0 for hour in hours}
+    data = queryset.extra(
+        select={'hour': 'HOUR(created_at)'}
     ).values('hour').annotate(
         avg_amount=Avg('subtotal')
-    ).order_by('hour')
-    
-    result = {hour: 0 for hour in hours}
+    )
     for item in data:
         result[item['hour']] = float(item['avg_amount'] or 0)
     return [result[hour] for hour in hours]
 
 def prepare_weekday_data(queryset):
     weekdays = list(range(1, 8))  # 1-Ням, 7-Бямба
-    data = queryset.annotate(
-        weekday=ExtractWeekDay('created_at')
+    result = {day: 0 for day in weekdays}
+    data = queryset.extra(
+        select={'weekday': 'DAYOFWEEK(created_at)'}
     ).values('weekday').annotate(
         avg_amount=Avg('subtotal')
-    ).order_by('weekday')
-    
-    result = {day: 0 for day in weekdays}
+    )
     for item in data:
         result[item['weekday']] = float(item['avg_amount'] or 0)
     return [result[day] for day in weekdays]
 
 def prepare_month_data(queryset):
     days = list(range(1, 32))
-    data = queryset.annotate(
-        day=ExtractDay('created_at')
+    result = {day: 0 for day in days}
+    data = queryset.extra(
+        select={'day': 'DAY(created_at)'}
     ).values('day').annotate(
         avg_amount=Avg('subtotal')
-    ).order_by('day')
-    
-    result = {day: 0 for day in days}
+    )
     for item in data:
         if item['day'] in result:
             result[item['day']] = float(item['avg_amount'] or 0)
@@ -1002,13 +991,12 @@ def prepare_month_data(queryset):
 
 def prepare_year_data(queryset):
     months = list(range(1, 13))
-    data = queryset.annotate(
-        month=ExtractMonth('created_at')
+    result = {month: 0 for month in months}
+    data = queryset.extra(
+        select={'month': 'MONTH(created_at)'}
     ).values('month').annotate(
         avg_amount=Avg('subtotal')
-    ).order_by('month')
-    
-    result = {month: 0 for month in months}
+    )
     for item in data:
         result[item['month']] = float(item['avg_amount'] or 0)
     return [result[month] for month in months]
