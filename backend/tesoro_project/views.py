@@ -958,10 +958,10 @@ def prepare_hour_data(queryset):
     data = queryset.extra(
         select={'hour': 'HOUR(created_at)'}
     ).values('hour').annotate(
-        avg_amount=Avg('subtotal')
+        total_amount=Sum('subtotal')  # Avg -> Sum болгож өөрчлөх
     )
     for item in data:
-        result[item['hour']] = float(item['avg_amount'] or 0)
+        result[item['hour']] = float(item['total_amount'] or 0)  # avg_amount -> total_amount
     return [result[hour] for hour in hours]
 
 def prepare_weekday_data(queryset):
@@ -970,10 +970,10 @@ def prepare_weekday_data(queryset):
     data = queryset.extra(
         select={'weekday': 'DAYOFWEEK(created_at)'}
     ).values('weekday').annotate(
-        avg_amount=Avg('subtotal')
+        total_amount=Sum('subtotal')  # Avg -> Sum
     )
     for item in data:
-        result[item['weekday']] = float(item['avg_amount'] or 0)
+        result[item['weekday']] = float(item['total_amount'] or 0)
     return [result[day] for day in weekdays]
 
 def prepare_month_data(queryset):
@@ -982,11 +982,11 @@ def prepare_month_data(queryset):
     data = queryset.extra(
         select={'day': 'DAY(created_at)'}
     ).values('day').annotate(
-        avg_amount=Avg('subtotal')
+        total_amount=Sum('subtotal')  # Avg -> Sum
     )
     for item in data:
         if item['day'] in result:
-            result[item['day']] = float(item['avg_amount'] or 0)
+            result[item['day']] = float(item['total_amount'] or 0)
     return [result[day] for day in days]
 
 def prepare_year_data(queryset):
@@ -995,8 +995,8 @@ def prepare_year_data(queryset):
     data = queryset.extra(
         select={'month': 'MONTH(created_at)'}
     ).values('month').annotate(
-        avg_amount=Avg('subtotal')
+        total_amount=Sum('subtotal')  # Avg -> Sum
     )
     for item in data:
-        result[item['month']] = float(item['avg_amount'] or 0)
+        result[item['month']] = float(item['total_amount'] or 0)
     return [result[month] for month in months]

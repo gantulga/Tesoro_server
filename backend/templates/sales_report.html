@@ -156,7 +156,7 @@
     <div class="card mb-4">
         <div class="card-header">
             <i class="fas fa-chart-bar me-1"></i>
-            Дундаж борлуулалтын статистик
+            Нийт борлуулалтын статистик
         </div>
         <div class="card-body">
             <div class="row mb-4">
@@ -271,39 +271,39 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Цагаар дундаж
+    // Цагаар нийт
     createChart(
         document.getElementById('hourChart').getContext('2d'),
         Array.from({length: 24}, (_, i) => i + ':00'),
         chartData.by_hour,
-        'Дундаж борлуулалт',
+        'Нийт борлуулалт',  // 'Дундаж борлуулалт' -> 'Нийт борлуулалт'
         'rgba(54, 162, 235, 0.2)'
     );
 
-    // Өдрөөр дундаж
+    // Өдрөөр нийт
     createChart(
         document.getElementById('weekdayChart').getContext('2d'),
         weekdayNames,
         chartData.by_weekday,
-        'Дундаж борлуулалт',
+        'Нийт борлуулалт',  // 'Дундаж борлуулалт' -> 'Нийт борлуулалт'
         'rgba(75, 192, 192, 0.2)'
     );
 
-    // Сараар дундаж
+    // Сараар нийт
     createChart(
         document.getElementById('monthChart').getContext('2d'),
         Array.from({length: 31}, (_, i) => i + 1),
         chartData.by_month,
-        'Дундаж борлуулалт',
+        'Нийт борлуулалт',  // 'Дундаж борлуулалт' -> 'Нийт борлуулалт'
         'rgba(255, 99, 132, 0.2)'
     );
 
-    // Жилээр дундаж
+    // Жилээр нийт
     createChart(
         document.getElementById('yearChart').getContext('2d'),
         monthNames,
         chartData.by_year,
-        'Дундаж борлуулалт',
+        'Нийт борлуулалт',  // 'Дундаж борлуулалт' -> 'Нийт борлуулалт'
         'rgba(153, 102, 255, 0.2)'
     );
     {% endif %}
