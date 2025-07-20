@@ -35,6 +35,10 @@ from PIL import Image, ImageDraw, ImageFont, ImageOps
 import struct
 import qrcode
 import textwrap
+from datetime import timedelta
+
+import openpyxl
+from openpyxl.styles import Font, Alignment, numbers
 
 def home(request):
     group = Group.objects.get(pk=2)
@@ -478,6 +482,56 @@ def dailyReportSoldItems(request):
                 'all_parent_cats':all_parent_cats})
     else:
         return redirect('/accounts/login/')
+    
+@never_cache
+def dailyReportSoldItemsRange(request):
+    group = Group.objects.get(pk=2)
+    if group in request.user.groups.all():
+        if request.method == 'POST':
+            return redirect('/soldItems')
+        else:
+            start_datetime_str = request.GET.get('start_datetime')
+            end_datetime_str = request.GET.get('end_datetime')
+            print(start_datetime_str, end_datetime_str)
+            if start_datetime_str and end_datetime_str:
+                # Огноо + цагийг datetime объект болгон хувиргах
+                start_datetime = datetime.datetime.strptime(start_datetime_str, '%Y-%m-%dT%H:%M')
+                end_datetime = datetime.datetime.strptime(end_datetime_str, '%Y-%m-%dT%H:%M')
+
+                all_parent_cats = Product_category.objects.filter(parent__isnull=True)
+
+                sold_items = []
+                all_order_details = Order_detial.objects.filter(is_deleted=False, created_at__range=(start_datetime, end_datetime)).order_by('product')
+                for detail in all_order_details:
+                    index = next((i for i, item in enumerate(sold_items) if item['id'] == int(detail.product.id)), -1)
+                    category = None
+                    for cat in detail.product.categories.all():
+                        if cat.parent == None:
+                            category = cat
+
+                    if index < 0:
+                        sold_items.append({'id':detail.product.id, 'product': detail.product.name, 'quantity':detail.quantity, 'amount':detail.subtotal, 'category':category})
+                    else:
+                        sold_items[index]['quantity'] = int(sold_items[index]['quantity']) + int(detail.quantity)
+                        sold_items[index]['amount'] = int(sold_items[index]['amount']) + int(detail.subtotal)
+
+                # sold_items = sorted(sold_items, key=lambda x: x['quantity'], reverse=True)
+
+                all_orders = Order.objects.filter(created_at__range=(start_datetime, end_datetime))
+                total_order_amount = 0
+                for order in all_orders:
+                    total_order_amount = total_order_amount + order.amount
+               
+                return render(request, 'dailyReportSoldItemsRange.html', {
+                    'sold_items': sold_items,
+                    'total_order_amount':total_order_amount, 
+                    'all_parent_cats':all_parent_cats,
+                    'start_datetime': start_datetime_str,
+                    'end_datetime': end_datetime_str})
+            else:
+                return render(request, 'dailyReportSoldItemsRange.html', {})
+    else:
+        return redirect('/accounts/login/')
 
 @never_cache
 def dailyReport(request):
@@ -808,3 +862,208 @@ def commodityToProductIngredient(request):
     products = Product.objects.all()
     not_ingredient_products = Product.objects.filter(ingredients__isnull=True).exclude(division=3)
     return render(request, 'commodityToProductIngredient.html', {'products':products, 'not_ingredient_products':not_ingredient_products})
+
+from django.utils import timezone
+from datetime import timedelta
+
+def sales_report_old(request):
+    # Хэрэглэгчийн сонгосон шүүлтүүрүүд
+    time_filter = request.GET.get('time_filter', 'all')
+    group_by = request.GET.get('group_by', 'product')
+    start_date = request.GET.get('start_date')
+    end_date = request.GET.get('end_date')
+    
+    # Анхны QuerySet - finished=True шалтгаарыг хассан
+    queryset = Order_detial.objects.filter(is_deleted=False)
+    
+    # Цагийн шүүлтүүр (finished_at-ыг created_at болгон солив)
+    now = timezone.now()
+    if time_filter == 'today':
+        queryset = queryset.filter(created_at__date=now.date())
+        time_display = "Өнөөдөр"
+    elif time_filter == 'week':
+        start_week = now - timedelta(days=now.weekday())
+        queryset = queryset.filter(created_at__gte=start_week)
+        time_display = f"Энэ долоо хоног ({start_week.date()} - {now.date()})"
+    elif time_filter == 'month':
+        queryset = queryset.filter(created_at__month=now.month, created_at__year=now.year)
+        time_display = f"Энэ сар ({now.strftime('%Y-%m')})"
+    elif time_filter == 'year':
+        queryset = queryset.filter(created_at__year=now.year)
+        time_display = f"Энэ жил ({now.year})"
+    elif time_filter == 'custom':
+        if start_date and end_date:
+            queryset = queryset.filter(created_at__range=[start_date, end_date])
+            time_display = f"{start_date} - {end_date}"
+        else:
+            time_display = "Хугацаа сонгоогүй"
+    else:  # Бүх цаг үеийн өгөгдөл
+        time_display = "Бүх цаг үе"
+    
+    # Группилэх арга (харилцагчаар бүлэглэхийг хассан)
+    if group_by == 'product':
+        data = queryset.values(
+            'product__name', 
+            'product__categories__name'
+        ).annotate(
+            total_quantity=Sum('quantity'),
+            total_amount=Sum('subtotal'),
+            product_name=F('product__name'),
+            category_name=F('product__categories__name')
+        ).order_by('-total_amount')
+    elif group_by == 'category':
+        data = queryset.values(
+            'product__categories__name'
+        ).annotate(
+            total_quantity=Sum('quantity'),
+            total_amount=Sum('subtotal'),
+            category_name=F('product__categories__name')
+        ).order_by('-total_amount')
+    elif group_by == 'hour':
+        data = queryset.extra(
+            {'hour': "EXTRACT(HOUR FROM created_at)"}  # created_at болгон солив
+        ).values(
+            'hour'
+        ).annotate(
+            total_quantity=Sum('quantity'),
+            total_amount=Sum('subtotal')
+        ).order_by('hour')
+    
+    # Нийт дүн тооцоолох
+    total_quantity = sum(item['total_quantity'] for item in data) if data else 0
+    total_amount = sum(item['total_amount'] for item in data) if data else 0
+    
+    context = {
+        'report_data': data,
+        'time_filter': time_filter,
+        'group_by': group_by,
+        'start_date': start_date,
+        'end_date': end_date,
+        'total_quantity': total_quantity,
+        'total_amount': total_amount,
+        'time_display': time_display,
+    }
+    
+    return render(request, 'sales_report.html', context)
+
+def sales_report(request):
+    # Цагийн шүүлтүүр
+    time_range = request.GET.get('time_range', 'all')
+    start_date = request.GET.get('start_date')
+    end_date = request.GET.get('end_date')
+    group_by = request.GET.get('group_by', 'product')
+
+    # Анхны QuerySet
+    queryset = Order_detial.objects.filter(is_deleted=False)
+
+    # Цагийн шүүлтүүр
+    if time_range == 'custom' and start_date and end_date:
+        queryset = queryset.filter(created_at__range=[start_date, end_date])
+        time_display = f"{start_date} - {end_date}"
+    elif time_range != 'all':
+        now = timezone.now()
+        if time_range == 'today':
+            queryset = queryset.filter(created_at__date=now.date())
+            time_display = "Өнөөдөр"
+        elif time_range == 'week':
+            start_date = now - timedelta(days=now.weekday())
+            queryset = queryset.filter(created_at__gte=start_date)
+            time_display = f"Энэ долоо хоног ({start_date.date()} - {now.date()})"
+        elif time_range == 'month':
+            queryset = queryset.filter(created_at__month=now.month, created_at__year=now.year)
+            time_display = f"Энэ сар ({now.strftime('%Y-%m')})"
+        elif time_range == 'year':
+            queryset = queryset.filter(created_at__year=now.year)
+            time_display = f"Энэ жил ({now.year})"
+    else:
+        time_display = "Бүх цаг үе"
+
+    # Группилэх арга
+    if group_by == 'product':
+        main_data = queryset.values(
+            'product__name', 
+            'product__categories__name'
+        ).annotate(
+            total_quantity=Sum('quantity'),
+            total_amount=Sum('subtotal'),
+            avg_amount=Avg('subtotal'),
+            product_name=F('product__name'),
+            category_name=F('product__categories__name')
+        ).order_by('-total_amount')
+    else:  # category
+        main_data = queryset.values(
+            'product__categories__name'
+        ).annotate(
+            total_quantity=Sum('quantity'),
+            total_amount=Sum('subtotal'),
+            avg_amount=Avg('subtotal'),
+            category_name=F('product__categories__name')
+        ).order_by('-total_amount')
+
+    # График өгөгдөл бэлтгэх
+    chart_data = {
+        'by_hour': prepare_hour_data(queryset),
+        'by_weekday': prepare_weekday_data(queryset),
+        'by_month': prepare_month_data(queryset),
+        'by_year': prepare_year_data(queryset),
+    }
+
+    context = {
+        'main_data': main_data,
+        'time_range': time_range,
+        'group_by': group_by,
+        'start_date': start_date,
+        'end_date': end_date,
+        'time_display': time_display,
+        'chart_data_json': json.dumps(chart_data),
+    }
+    return render(request, 'sales_report.html', context)
+
+def prepare_hour_data(queryset):
+    hours = list(range(24))
+    result = {hour: 0 for hour in hours}
+    data = queryset.extra(
+        select={'hour': 'HOUR(created_at)'}
+    ).values('hour').annotate(
+        avg_amount=Avg('subtotal')
+    )
+    for item in data:
+        result[item['hour']] = float(item['avg_amount'] or 0)
+    return [result[hour] for hour in hours]
+
+def prepare_weekday_data(queryset):
+    weekdays = list(range(1, 8))  # 1-Ням, 7-Бямба
+    result = {day: 0 for day in weekdays}
+    data = queryset.extra(
+        select={'weekday': 'DAYOFWEEK(created_at)'}
+    ).values('weekday').annotate(
+        avg_amount=Avg('subtotal')
+    )
+    for item in data:
+        result[item['weekday']] = float(item['avg_amount'] or 0)
+    return [result[day] for day in weekdays]
+
+def prepare_month_data(queryset):
+    days = list(range(1, 32))
+    result = {day: 0 for day in days}
+    data = queryset.extra(
+        select={'day': 'DAY(created_at)'}
+    ).values('day').annotate(
+        avg_amount=Avg('subtotal')
+    )
+    for item in data:
+        if item['day'] in result:
+            result[item['day']] = float(item['avg_amount'] or 0)
+    return [result[day] for day in days]
+
+def prepare_year_data(queryset):
+    months = list(range(1, 13))
+    result = {month: 0 for month in months}
+    data = queryset.extra(
+        select={'month': 'MONTH(created_at)'}
+    ).values('month').annotate(
+        avg_amount=Avg('subtotal')
+    )
+    for item in data:
+        result[item['month']] = float(item['avg_amount'] or 0)
+    return [result[month] for month in months]

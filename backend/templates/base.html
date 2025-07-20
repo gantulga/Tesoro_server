@@ -11,6 +11,8 @@
   <link rel="stylesheet" type="text/css" href="{% static '/css/bootstrap.min.css' %}">
   <link rel="stylesheet" type="text/css" href="{% static '/css/font-awesome.min.css' %}">
   <link rel="stylesheet" type="text/css" href="{% static '/css/style.css' %}">
+  {% block header %}
+  {% endblock %}
 </head>
 <body>
   <div class="header">
@@ -49,7 +51,17 @@
           </a>
           <a href="/soldItems">
             <div class="link">
-              <i class="fa fa-info" aria-hidden="true"></i> Зарагдсан барааны тайлан
+              <i class="fa fa-info" aria-hidden="true"></i> Ээлжийн тайлан
+            </div>
+          </a>
+          <a href="/soldItemsRange">
+            <div class="link">
+              <i class="fa fa-info" aria-hidden="true"></i> Орлогын тайлан
+            </div>
+          </a>
+          <a href="/sales-report">
+            <div class="link">
+              <i class="fa fa-info" aria-hidden="true"></i> Орлогын график
             </div>
           </a>
         </div>

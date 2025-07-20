@@ -1,0 +1,264 @@
+{% extends 'base.html' %}
+{% load static humanize %}
+
+{% block header %}
+<!-- Bootstrap 5 CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+
+<!-- Bootstrap Icons -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <h2 class="mt-4">Борлуулалтын тайлан</h2>
+    
+    <!-- Шүүлтүүр хэсэг -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="fas fa-filter me-1"></i>
+            Шүүлтүүр
+        </div>
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label">Цагийн хүрээ</label>
+                    <select name="time_filter" class="form-select" id="timeFilter">
+                        <option value="all" {% if time_filter == 'all' %}selected{% endif %}>Бүх цаг үе</option>
+                        <option value="today" {% if time_filter == 'today' %}selected{% endif %}>Өнөөдөр</option>
+                        <option value="week" {% if time_filter == 'week' %}selected{% endif %}>Энэ долоо хоног</option>
+                        <option value="month" {% if time_filter == 'month' %}selected{% endif %}>Энэ сар</option>
+                        <option value="year" {% if time_filter == 'year' %}selected{% endif %}>Энэ жил</option>
+                        <option value="custom" {% if time_filter == 'custom' %}selected{% endif %}>Хугацаа сонгох</option>
+                    </select>
+                </div>
+                
+                <div class="col-md-4" id="startDateGroup" {% if time_filter != 'custom' %}style="display:none;"{% endif %}>
+                    <label class="form-label">Эхлэх огноо</label>
+                    <input type="date" name="start_date" class="form-control" value="{{ start_date }}">
+                </div>
+                
+                <div class="col-md-4" id="endDateGroup" {% if time_filter != 'custom' %}style="display:none;"{% endif %}>
+                    <label class="form-label">Дуусах огноо</label>
+                    <input type="date" name="end_date" class="form-control" value="{{ end_date }}">
+                </div>
+                
+                <div class="col-md-4">
+                    <label class="form-label">Бүлэглэх</label>
+                    <select name="group_by" class="form-select">
+                        <option value="product" {% if group_by == 'product' %}selected{% endif %}>Бараагаар</option>
+                        <option value="category" {% if group_by == 'category' %}selected{% endif %}>Ангилалаар</option>
+                        <option value="hour" {% if group_by == 'hour' %}selected{% endif %}>Цагаар</option>
+                    </select>
+                </div>
+                
+                <div class="col-md-12 mt-3">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-search me-1"></i> Харах
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Нийт үзүүлэлт -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Нийт борлуулалт</h5>
+                    <p class="card-text h4">{{ total_amount|floatformat:"0"|intcomma }} ₮</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Нийт тоо ширхэг</h5>
+                    <p class="card-text h4">{{ total_quantity|intcomma }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Дэлгэрэнгүй тайлан -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="fas fa-table me-1"></i>
+            Дэлгэрэнгүй тайлан - {{ time_display }}
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>№</th>
+                            {% if group_by == 'product' %}
+                            <th>Бараа</th>
+                            <th>Ангилал</th>
+                            {% elif group_by == 'category' %}
+                            <th>Ангилал</th>
+                            {% elif group_by == 'hour' %}
+                            <th>Цаг</th>
+                            {% endif %}
+                            <th>Тоо ширхэг</th>
+                            <th>Нийт дүн (₮)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in report_data %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            {% if group_by == 'product' %}
+                            <td>{{ item.product_name }}</td>
+                            <td>{{ item.category_name }}</td>
+                            {% elif group_by == 'category' %}
+                            <td>{{ item.category_name }}</td>
+                            {% elif group_by == 'hour' %}
+                            <td>{{ item.hour }}:00-{{ item.hour|add:1 }}:00</td>
+                            {% endif %}
+                            <td class="text-end">{{ item.total_quantity|intcomma }}</td>
+                            <td class="text-end">{{ item.total_amount|floatformat:"0"|intcomma }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="{% if group_by == 'product' %}5{% else %}4{% endif %}" class="text-center">Өгөгдөл олдсонгүй</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <!-- График харагдац -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="fas fa-chart-bar me-1"></i>
+            График дүрслэл
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <canvas id="amountChart" height="300"></canvas>
+                </div>
+                <div class="col-md-6">
+                    <canvas id="quantityChart" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// Цагийн сонголт өөрчлөгдөхөд
+document.getElementById('timeFilter').addEventListener('change', function() {
+    const isCustom = this.value === 'custom';
+    document.getElementById('startDateGroup').style.display = isCustom ? 'block' : 'none';
+    document.getElementById('endDateGroup').style.display = isCustom ? 'block' : 'none';
+});
+
+// График өгөгдөл бэлтгэх
+const labels = [
+    {% for item in report_data %}
+        {% if group_by == 'product' %}"{{ item.product_name|truncatechars:20 }}"{% elif group_by == 'category' %}"{{ item.category_name }}"{% elif group_by == 'hour' %}"{{ item.hour }}:00"{% endif %}{% if not forloop.last %}, {% endif %}
+    {% endfor %}
+];
+
+const amountData = [
+    {% for item in report_data %}{{ item.total_amount }}{% if not forloop.last %}, {% endif %}{% endfor %}
+];
+
+const quantityData = [
+    {% for item in report_data %}{{ item.total_quantity }}{% if not forloop.last %}, {% endif %}{% endfor %}
+];
+
+// Орлогын график
+new Chart(
+    document.getElementById('amountChart'),
+    {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Борлуулалтын дүн (₮)',
+                data: amountData,
+                backgroundColor: 'rgba(54, 162, 235, 0.7)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return context.raw.toLocaleString() + ' ₮';
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return value.toLocaleString() + ' ₮';
+                        }
+                    }
+                }
+            }
+        }
+    }
+);
+
+// Тоо ширхэгийн график
+new Chart(
+    document.getElementById('quantityChart'),
+    {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Борлуулалтын тоо ширхэг',
+                data: quantityData,
+                backgroundColor: 'rgba(75, 192, 192, 0.7)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return context.raw.toLocaleString() + ' ширхэг';
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return value.toLocaleString();
+                        }
+                    }
+                }
+            }
+        }
+    }
+);
+</script>
+{% endblock %}
