@@ -882,7 +882,7 @@ def sales_report(request):
         time_display = f"{start_date} - {end_date}"
         time_display_text = f"{start_date} - {end_date}"
     elif time_range != 'all':
-        now = timezone.now()
+        now = datetime.datetime.now()
         if time_range == 'today':
             queryset = queryset.filter(created_at__date=now.date())
             time_display = "Өнөөдөр"
@@ -893,10 +893,17 @@ def sales_report(request):
             time_display = f"Энэ долоо хоног ({start_date.date()} - {now.date()})"
             time_display_text = f"{start_date.date()} - {now.date()}"
         elif time_range == 'month':
-            queryset = queryset.filter(created_at__month=now.month, created_at__year=now.year)
+            if now.month > 9:
+                mo = str(now.month)
+            else:
+                mo = "0" + str(now.month)
+            start_date = str(now.year) + "-" + mo + "-01"
+            end_date = now.date()
+            print(start_date, end_date)
+            queryset = queryset.filter(created_at__range=[start_date, end_date])
             print(len(queryset))
             time_display = f"Энэ сар ({now.strftime('%Y-%m')})"
-            time_display_text = f"{now.strftime('%Y-%m')}"
+            time_display_text = f"{start_date} - {now.date()}"
         elif time_range == 'year':
             queryset = queryset.filter(created_at__year=now.year)
             time_display = f"Энэ жил ({now.year})"
