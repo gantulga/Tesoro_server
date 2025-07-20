@@ -866,7 +866,12 @@ def commodityToProductIngredient(request):
 from django.utils import timezone
 from datetime import timedelta
 
+from django.db import connection
+
 def sales_report(request):
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT NOW()")
+        print(cursor.fetchone())
     # Цагийн шүүлтүүр
     time_range = request.GET.get('time_range', 'all')
     start_date = request.GET.get('start_date')
@@ -1008,3 +1013,5 @@ def prepare_year_data(queryset):
     for item in data:
         result[item['month']] = float(item['total_amount'] or 0)
     return [result[month] for month in months]
+
+
