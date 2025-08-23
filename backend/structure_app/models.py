@@ -50,7 +50,7 @@ class Client(Createdinfo):
     # is_free = models.BooleanField(default=1)
     # is_clean = models.BooleanField(default=1)
     # minibarFull = models.BooleanField(default=1)
-    name = models.CharField(null=True, blank=True, max_length=10)
+    # name = models.CharField(null=True, blank=True, max_length=10)
 
     class Meta:
         unique_together = ('division', 'number')
