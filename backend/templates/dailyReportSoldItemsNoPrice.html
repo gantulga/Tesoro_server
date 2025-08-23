@@ -37,10 +37,10 @@
           <div class="wallet">
             <div class="index">{{ forloop.counter }}</div>
             <div class="name">{{balance_log.product.name}}</div>
-            {% if balance_log.product.quantity > 0 %}
-            <div class="balance">{{balance_log.product.quantity}} ш</div>
+            {% if balance_log.quantity > 0 %}
+            <div class="balance">{{balance_log.quantity}} ш</div>
             {% else %}
-            <div class="balance">{{balance_log.product.size}} гр</div>
+            <div class="balance">{{balance_log.size}} гр</div>
             {% endif %}
           </div>
         {% endif %}
