@@ -33,6 +33,7 @@
     <div class="info-header">2. Борлуулсан бүтээгдэхүүний тоо, дүн</div>
         <div class="cat-name">{{cat.name}}</div>
         {% for balance_log in prev_shift_work.item_balance_logs.all %}
+        {% if balance_log.product %}
           <div class="wallet">
             <div class="index">{{ forloop.counter }}</div>
             <div class="name">{{balance_log.product.name}}</div>
@@ -42,6 +43,7 @@
             <div class="balance">{{balance_log.product.size}} гр</div>
             {% endif %}
           </div>
+        {% endif %}
         {% endfor %}
   </div>
 </div>
