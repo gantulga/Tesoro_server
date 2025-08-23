@@ -7,7 +7,7 @@
     "@testing-library/react": "^10.0.1",
     "@testing-library/user-event": "^10.0.0",
     "axios": "^1.3.4",
-    "bootstrap": "^4.4.1",
+    "bootstrap": "^5.3.3",
     "moment": "^2.26.0",
     "react": "^16.13.1",
     "react-bootstrap": "^1.0.0",
@@ -19,12 +19,12 @@
     "react-number-format": "^4.4.1",
     "react-paginating": "^1.4.0",
     "react-router-dom": "^5.1.2",
-    "react-scripts": "^5.0.1",
+    "react-scripts": "^3.0.1",
     "react-select": "^3.1.0"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "start": "react-scripts --openssl-legacy-provider start",
+    "build": "react-scripts --openssl-legacy-provider build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

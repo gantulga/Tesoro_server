@@ -108,7 +108,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'tesoro',
         'USER': 'root',
-        'PASSWORD': 'Fa90101830#',
+        'PASSWORD': '',
         'HOST': 'localhost',
         'PORT': '3306',
     }

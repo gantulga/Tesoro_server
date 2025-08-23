@@ -14,12 +14,12 @@ export default class ConfirmModal extends Component {
     var roomObj;
     if (this.props.type === "room_free") {
       roomObj = {
-        room_free: true,
+        is_free: true,
       };
     }
     if (this.props.type === "room_clean") {
       roomObj = {
-        room_clean: true,
+        is_clean: true,
       };
     }
     if (this.props.type === "minibarFull") {
@@ -73,6 +73,7 @@ export default class ConfirmModal extends Component {
       "/api/hotel/rooms/" +
       this.props.room.id +
       "/";
+    console.log(urlPut, roomObj)
     var roomPutResponse = fetchPut(roomObj, this.props.token, urlPut);
     var responseValue;
     await roomPutResponse.then(

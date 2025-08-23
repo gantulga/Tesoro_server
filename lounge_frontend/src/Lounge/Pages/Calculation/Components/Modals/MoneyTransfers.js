@@ -248,13 +248,13 @@ export default class MoneyTransfers extends Component {
               <button className="btn btn-success btn-sm" onClick={()=> this.type_changer("orlogo")}>Орлого</button>
               <button className="btn btn-secondary btn-sm" onClick={()=> this.type_changer("all")}>Бүгд</button>
               <button className="btn btn-info btn-sm" onClick={()=> this.type_changer("zarlaga")}>Зарлага</button>
-              <button
+              {/* <button
                 className="btn btn-info btn-sm addTransfer"
                 onClick={this.show_addTransfer}
               >
                 <i className="fa fa-plus" aria-hidden="true"></i>Зарлагын
                 гүйлгээ нэмэх
-              </button>
+              </button> */}
             </div>
           </div>
           <div className="row moneyTransferModalBody">

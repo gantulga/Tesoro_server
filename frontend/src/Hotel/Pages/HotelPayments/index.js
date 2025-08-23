@@ -136,6 +136,7 @@ export default class index extends Component {
                   <th>Өрөө</th>
                   <th>Статус</th>
                   <th>Үйлчлүүлэгч</th>
+                  <th>Ажилтан</th>
                   <th>Огноо</th>
                   <th width="30px"></th>
                 </tr>
@@ -143,9 +144,9 @@ export default class index extends Component {
               <tbody>
                 {this.state.ordersData.map((order, index) => {
                   var css;
-                  if (order.status === "Төлбөр гүйцэт төлсөн.") {
-                    css = "fullPaid";
-                  }
+                  // if (order.status === "Төлбөр гүйцэт төлсөн.") {
+                  //   css = "fullPaid";
+                  // }
                   if (order.status === "Төлбөр төлөгдөөгүй.") {
                     css = "fullUnpaid";
                   }
@@ -169,12 +170,19 @@ export default class index extends Component {
                           : null}
                       </td>
                       <td>
+                        {order.worker != null ? 
+                        <>
+                          {order.worker.firstname ? order.worker.firstname : order.worker.username}
+                        </>
+                          : null}
+                      </td>
+                      <td>
                         <Moment format="YYYY/MM/DD HH:mm">
                           {order.created_at}
                         </Moment>
                       </td>
                       <td width="79px">
-                        {(order.status === "Төлбөр гүйцэт төлсөн.") |
+                        {/* {(order.status === "Төлбөр гүйцэт төлсөн.") |
                         (order.status === "Төлбөр илүү төлсөн.") ? (
                           <button
                             className="btn btn-sm btn-success"
@@ -182,7 +190,7 @@ export default class index extends Component {
                           >
                             <i className="fas fa-flag-checkered" />
                           </button>
-                        ) : null}
+                        ) : null} */}
                         <button
                           className="btn btn-sm bg-teal"
                           onClick={() => this.pageShow(order)}

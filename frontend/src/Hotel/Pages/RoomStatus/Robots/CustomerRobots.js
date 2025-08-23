@@ -14,7 +14,7 @@ export async function createUser(data, token, ip_address) {
     }
     return null;
   });
-
+  console.log(data)
   if (data.customerId) {
     let url =
       "http://" + ip_address + "/api/customers/" + data.customerId + "/";
@@ -60,6 +60,7 @@ export async function createUser(data, token, ip_address) {
       body: JSON.stringify(jsonObj),
     })
       .then((results) => {
+        console.log(results)
         if ((results.status === 200) | (results.status === 201)) {
           status = "Success";
         } else {
@@ -68,6 +69,7 @@ export async function createUser(data, token, ip_address) {
         return results;
       })
       .then((response) => {
+        console.log(response.json())
         return response.json();
       })
       .then((response) => {

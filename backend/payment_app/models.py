@@ -59,11 +59,16 @@ class Order(Modifiedinfo):
         super().save(*args, **kwargs)
         total = 0
         for det in self.order_detials.all():
+            print(det)
             if not det.is_deleted:
                 total = total + det.subtotal
 
+        if not self.discount:
+            self.discount = 0
+        
         self.amount = total
-        new_discounted_amount = total - self.discount
+        print(total, self.discount)
+        new_discounted_amount = int(total) - int(self.discount)
         self.discounted_amount = new_discounted_amount
         if total > 0:
             self.discounted_percent = self.discount / total * 100

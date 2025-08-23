@@ -23,7 +23,7 @@ class HotelClientLogsViewSet(viewsets.ModelViewSet):
 
 class HotelRoomsViewSet(viewsets.ModelViewSet):
     queryset = Client.objects.filter(
-        division=3, number__range=(200, 308)).all()
+        division=3, number__range=(201, 308)).all()
     # permission_classes = [permissions.AllowAny]
     serializer_class = HotelRoomsSerializer
     authentication_classes = (TokenAuthentication,)
@@ -127,7 +127,10 @@ class HotelOrdersViewSet3(generics.ListAPIView):
         the user as determined by the username portion of the URL.
         """
         client = self.kwargs['client']
-        return Order.objects.filter(client=client).exclude(status="Хаагдсан гүйлгээ.")
+        orders = Order.objects.filter(client=client).exclude(status="Төлбөр гүйцэт төлсөн.").exclude(worker__isnull=False).exclude(customer__isnull=False)
+
+        print(orders)
+        return orders
 
 
 class HotelOrdersViewSet4(viewsets.ModelViewSet):

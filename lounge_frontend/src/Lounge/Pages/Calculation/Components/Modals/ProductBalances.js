@@ -35,7 +35,7 @@ export default class ProductBalances extends Component {
         size="lg"
       >
         <Modal.Header closeButton>
-          <Modal.Title>Барааны жагсаалт</Modal.Title>
+          <Modal.Title>Барааны үлдэгдэл</Modal.Title>
         </Modal.Header>
         <Modal.Body className="productBalancesContainer">
           <h4>Бүтээгдэхүүн</h4>
@@ -65,6 +65,7 @@ export default class ProductBalances extends Component {
                         {balance.quantity !== null && balance.size === null ? "ш" : null}
                         {balance.size !== null && balance.quantity === null ? "гр" : null}
                       </div>
+
                       {this.props.prevProductBalances.length > 0 ? (
                         <div className="prev_balance">
                           {this.props.prevProductBalances.map((prevBalance, index)=>{
@@ -84,6 +85,7 @@ export default class ProductBalances extends Component {
                           })}
                         </div>
                       ) : null}
+                      
                       <div className="quantity">
                         {balance.quantity !== null ? balance.quantity : null}
                         {balance.size !== null ? balance.size : null}

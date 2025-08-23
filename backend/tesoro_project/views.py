@@ -626,30 +626,43 @@ def posNegtgel(request):
 def loungeItemBalances(request):
     group = Group.objects.get(pk=2)
     if group in request.user.groups.all():
-        cache.clear()
-        shiftWorker = request.GET.get('shiftworker', None)
-        if shiftWorker != None:
-            current_shift_work = get_object_or_404(Shift_work, pk=shiftWorker)
+        if request.method == 'POST':
+            return redirect('/loungeItemBalances')
         else:
-            current_shift_work = Shift_work.objects.filter(division=5).order_by('-id').first()
+            shift_worker = request.GET.get('shiftWorker', None)
+            if shift_worker != None:
+                shift_work = get_object_or_404(Shift_work, pk=shift_worker)
+            else:
+                shift_work = Shift_work.objects.filter(division=5).order_by('-id').first()
 
-        prev_shift_worker = Shift_work.objects.filter(division=5, pk__lt=current_shift_work.id).order_by('-id').first()
+            all_parent_cats = Product_category.objects.filter(parent__isnull=True)
+            sold_items = []
+            all_order_details = Order_detial.objects.filter(shift_work=shift_work.id, is_deleted=False).order_by('product')
+            for detail in all_order_details:
+                index = next((i for i, item in enumerate(sold_items) if item['id'] == int(detail.product.id)), -1)
+                category = None
+                for cat in detail.product.categories.all():
+                    if cat.parent == None:
+                        category = cat
 
-        if prev_shift_worker.finished:
-            prev_item_balances = Item_balance_log.objects.filter(client=19, shift_work=prev_shift_worker.id)
-        else:
-            prev_item_balances = Item_balance.objects.filter(client=19)
+                if index < 0:
+                    sold_items.append({'id':detail.product.id, 'product': detail.product.name, 'quantity':detail.quantity, 'amount':detail.subtotal, 'category':category})
+                else:
+                    sold_items[index]['quantity'] = int(sold_items[index]['quantity']) + int(detail.quantity)
+                    sold_items[index]['amount'] = int(sold_items[index]['amount']) + int(detail.subtotal)
 
-        if current_shift_work.finished:
-            curr_item_balances = Item_balance_log.objects.filter(client=19, shift_work=current_shift_work.id)
-        else:
-            curr_item_balances = Item_balance.objects.filter(client=19)
+            all_shift_workers = Shift_work.objects.all().order_by('-id')
+            all_orders = Order.objects.filter(shift_work=shift_work.id)
+            total_order_amount = 0
+            for order in all_orders:
+                total_order_amount = total_order_amount + order.amount
 
-        
-
-        return render(request, 'loungeBalance.html', {})
-
-        
+            return render(request, 'dailyReportSoldItemsNoPrice.html', {
+                'all_shift_workers':all_shift_workers, 
+                'shift_work':shift_work,
+                'sold_items': sold_items,
+                'total_order_amount':total_order_amount, 
+                'all_parent_cats':all_parent_cats})
     else:
         return redirect('/accounts/login/')
 

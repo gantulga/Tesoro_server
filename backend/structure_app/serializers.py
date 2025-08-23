@@ -21,10 +21,27 @@ class CustomersSerializer(serializers.ModelSerializer):
         required=False, allow_null=True, allow_blank=True)
     address = serializers.CharField(
         required=False, allow_null=True, allow_blank=True)
-
+ 
     class Meta:
         model = Customer
         fields = '__all__'
+
+    def create(self, validated_data):
+        register = validated_data.pop('register')
+        print(register)
+        customer = Customer.objects.filter(register=register)
+        print(customer, len(customer))
+        if len(customer) > 0:
+            for (key, value) in validated_data.items():
+                print(key, value)
+                setattr(customer.first(), key, value)
+                customer.save()
+            return customer
+        else:
+            customer = Customer.objects.create(**validated_data)
+            return customer
+
+
 
 
 class UsersSerializer(serializers.ModelSerializer):

@@ -56,19 +56,19 @@ class HotelRoomsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Client
-        fields = ['id', 'number', 'description',
-                  'client_products', 'client_items', 'free', 'clean', 'minibarFull', 'client_items', 'item_balances']
+        fields = ['id', 'number', 'description', 'client_products', 'client_items', 'is_free', 'is_clean', 'minibarFull', 'client_items', 'item_balances']
 
     def update(self, instance, validated_data):
         # instance.username = validated_data.get('username', instance.username)
         # instance.email = validated_data.get('email', instance.email)
+        
         for (key, value) in validated_data.items():
-            setattr(instance, key, value)
-        instance.save()
-        if validated_data.get('room_free') != None:
+            instance.save()
+
+        if validated_data.get('is_free') != None and validated_data.get('is_free') == True:
             Hotel_client_log.objects.create(
                 choices_type=1, client=instance, value="out")
-        if validated_data.get('room_clean') != None:
+        if validated_data.get('is_clean') != None:
             Hotel_client_log.objects.create(
                 choices_type=3, client=instance, value="c")
         if validated_data.get('minibarFull') != None:
@@ -332,6 +332,7 @@ class HotelOrdersSerializer(serializers.ModelSerializer):
                                 created_by=instance.created_by, amount=payment['amount'], currency=currency, customer=instance.customer, division=instance.division, money_transfer_type=money_transfer_type, payment=payment1, to_wallet=payment['wallet'], description="Зочид буудлаас орж ирсэн орлогын гүйлгээ.")
                         payment1.payments.add(instance)
 
+        
         if validated_data.get('status'):
             instance.status = validated_data.get("status", instance.status)
             instance.save()

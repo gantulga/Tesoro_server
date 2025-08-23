@@ -450,6 +450,7 @@ export default class index extends Component {
       "/api/hotel/shiftWorks/" +
       this.state.lastShift.id +
       "/";
+    console.log(url)
     var info = {
       controller: this.state.shiftController,
       finished: true,

@@ -2360,15 +2360,15 @@ export default class Calculations extends Component {
                 <i className="fa fa-exchange" aria-hidden="true"></i>{" "}
                 Гүйлгээний жагсаалт
               </button>
-              <button
+              {/* <button
                 className="" onClick={() => this.modalShow("productBalances")}>
                 <i className="fa fa-balance-scale" aria-hidden="true"></i>{" "}
                 Барааны үлдэгдэл
-              </button>
-              <button className="" onClick={() => this.modalShow("unpaidOrders")}>
+              </button> */}
+              {/* <button className="" onClick={() => this.modalShow("unpaidOrders")}>
                 <i className="fa fa-balance-scale" aria-hidden="true"></i>{" "}
                 Төлөгдөөгүй тооцоонууд
-              </button>
+              </button> */}
               {this.state.shiftWorker && this.state.shiftWorker.finished ? (
                 <button className="" onClick={this.shift_work_open}>
                   <i className="fa fa-unlock" aria-hidden="true"></i> Ээлж нээх

@@ -44,7 +44,7 @@ export default class RoomDiv extends Component {
           <div className="card-header text-muted border-bottom-0">
             <b>{this.props.data.number}</b>
 
-            {this.props.data.room_clean ? (
+            {this.props.data.is_clean ? (
               <div className="float-right ml-3">
                 <i className="fas fa-broom clean fa-xs"></i>
               </div>
@@ -59,6 +59,8 @@ export default class RoomDiv extends Component {
                 <i className="fas fa-broom dirty fa-xs"></i>
               </button>
             )}
+
+
             <button
               className="btn btn-primary-outline float-right noBorderButton ml-3"
               onClick={() =>
@@ -72,7 +74,9 @@ export default class RoomDiv extends Component {
                 }`}
               ></i>
             </button>
-            {this.props.data.room_free ? (
+
+
+            {this.props.data.is_free ? (
               <div className="float-right">
                 <i className="fas fa-door-open clean fa-xs"></i>
               </div>
@@ -86,9 +90,10 @@ export default class RoomDiv extends Component {
               </button>
             )}
           </div>
+
           <div
             className={`card-body pt-2 pb-2 room-card-body ${
-              this.props.data.room_free ? "free" : "notfree"
+              this.props.data.is_free ? "free" : "notfree"
             }`}
           >
             <div>
