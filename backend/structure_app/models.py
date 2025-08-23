@@ -48,8 +48,8 @@ class Client(Createdinfo):
     number = models.IntegerField(null=False, blank=False, default=0)
     description = models.TextField(null=True, blank=True, max_length=255)
     # is_free = models.BooleanField(default=1)
-    is_clean = models.BooleanField(default=1)
-    minibarFull = models.BooleanField(default=1)
+    # is_clean = models.BooleanField(default=1)
+    # minibarFull = models.BooleanField(default=1)
     name = models.CharField(null=True, blank=True, max_length=10)
 
     class Meta:
