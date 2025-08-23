@@ -50,7 +50,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'django_filters',
     'clear_cache',
-    'humanize'
+    'django.contrib.humanize',
 ]
 
 MIDDLEWARE = [
