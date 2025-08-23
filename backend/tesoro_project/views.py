@@ -689,6 +689,8 @@ def loungeItemBalances(request):
             else:
                 shift_work = Shift_work.objects.filter(division=5).order_by('-id').first()
             prev_shift_work = get_object_or_404(Shift_work, pk=int(shift_work.id)-1)
+
+
             all_parent_cats = Product_category.objects.filter(parent__isnull=True)
             sold_items = []
             all_order_details = Order_detial.objects.filter(shift_work=shift_work.id, is_deleted=False).order_by('product')
