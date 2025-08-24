@@ -689,14 +689,14 @@ def loungeItemBalances(request):
             else:
                 shift_work = Shift_work.objects.filter(division=5).order_by('-id').first()
 
-            now_item_balances_logs = Item_balance_log.objects.filter(shift_work=shift_work.id, division=5)
+            now_item_balances_logs = Item_balance_log.objects.filter(shift_work=shift_work.id, division=5, client=19)
             if len(now_item_balances_logs) > 0:
                 print(len(now_item_balances_logs))
             else:
                 now_item_balances_logs = Item_balance.objects.filter(division=5)
 
             prev_shift_work = get_object_or_404(Shift_work, pk=int(shift_work.id)-1)
-            prev_item_balance_logs = Item_balance_log.objects.filter(shift_work=prev_shift_work.id, division=5)
+            prev_item_balance_logs = Item_balance_log.objects.filter(shift_work=prev_shift_work.id, division=5, client=19)
             
             print(prev_shift_work.id, shift_work.id)
             obj_list = []

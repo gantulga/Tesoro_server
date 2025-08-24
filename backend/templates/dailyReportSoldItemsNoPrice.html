@@ -3,6 +3,7 @@
 {% block content %}
 {% load static %}
 {% load mathfilters %}
+{% load custom_filters %}
 
 <div class="buttons">
   {% for worker in all_shift_workers %}
@@ -17,31 +18,34 @@
 </div>
 
 <div class="pageHeader">
-  Ээлжийн тайлан
+  Ээлж хүлээлцэх бүртгэлийн тайлан
 </div>
 <div class="pageBody">
-  <table>
+  <table style="width: 100%;">
     <tr>
       <th>№</th>
       <th>Барааны нэр</th>
-      <th>Өмнөх ээлжийн хаалт</th>
-      <th>Худалдаалагдсан</th>
-      <th>Үлдэгдэл</th>
-      <th>Асуудал</th>
+      <th style="width: 50px; padding-left: 5px; padding-right: 5px;">Нээхэд</th>
+      <th style="width: 50px; padding-left: 5px; padding-right: 5px;">Зарсан</th>
+      <th style="width: 50px; padding-left: 5px; padding-right: 5px;">Нэмсэн</th>
+      <th style="width: 50px; padding-left: 5px; padding-right: 5px;">Одоо</th>
     </tr>
   {% for temp in obj_list %}
-    <tr>
+    <tr style="
+    {% if temp.prev|sub:temp.now|sub:temp.order_detial_counter|negate < 0 %}
+    background:#EFC3CA
+    {% endif %}
+    ">
       <td>{{ forloop.counter }}</td>
       <td>{{temp.name}}</td>
-      <td>{{temp.prev}}</td>
-      <td>{{ temp.order_detial_counter }}</td>
-      <td>{{temp.now}}</td>
-      <td>{% if temp.prev|sub:temp.now == temp.order_detial_counter %}
-         
-        {% else %}
-        Error
+      <td style="width: 50px; text-align: center;">{{temp.prev}}</td>
+      <td style="width: 50px; text-align: center">{{ temp.order_detial_counter }}</td>
+      <td style="width: 50px; text-align: center">
+        {% if temp.prev|sub:temp.now != temp.order_detial_counter %}
+          {{temp.prev|sub:temp.now|sub:temp.order_detial_counter|negate}}
         {% endif %}
       </td>
+      <td style="width: 50px; text-align: center">{{temp.now}}</td>
     </tr>
   {% endfor %}
   </table>
