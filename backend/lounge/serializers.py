@@ -239,7 +239,7 @@ class OrderRecieverSerializer(serializers.ModelSerializer):
                                 balance.updated_by = d['created_by']
                                 balance.save()
                 else:
-                    itemTransfer = Item_transfer.objects.create(product=d['product'].id, fr_client=client, fr_division=client.division, quantity=d['quantity'], created_by=d['created_by'], order_detial=detial, item_transfer_type=itemTransferType)
+                    itemTransfer = Item_transfer.objects.create(product=d['product'], fr_client=client, fr_division=client.division, quantity=d['quantity'], created_by=d['created_by'], order_detial=detial, item_transfer_type=itemTransferType)
                     if itemTransfer:
                         fr_client_item_balance = Item_balance.objects.filter(
                             product=d['product'].id, client=client).order_by('-id')[:1]
