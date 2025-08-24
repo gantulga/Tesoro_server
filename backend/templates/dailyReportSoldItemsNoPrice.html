@@ -2,6 +2,7 @@
 
 {% block content %}
 {% load static %}
+{% load mathfilters %}
 
 <div class="buttons">
   {% for worker in all_shift_workers %}
@@ -34,14 +35,27 @@
     {% for cat in all_parent_cats %}
       {% if cat.id > 4 %}
         <div class="cat-name">{{cat.name}}</div>
+        <div class="wallet">
+          <div class="index">№</div>
+          <div class="name">Бүтээгдэхүүний нэр</div>
+          <div class="balance" >Одоо</div>
+          <div class="balance" >Өөрчлөлт</div>
+          <div class="balance" >Өмнөх</div>
+        </div>
         {% for temp in sold_items %}
           {% if cat.id == temp.category.id %}
             <div class="wallet">
               <div class="index">{{ forloop.counter }}</div>
               <div class="name">{{temp.product}}</div>
-              <div class="amount"><span id="item{{cat.id}}">{{temp.amount}}</span> ₮</div>
-              <div class="balance" >{{temp.prev_balance.quantity}}</div>
               <div class="balance" >{{temp.quantity}}</div>
+              <div class="balance" >{{ temp.prev_balance.quantity|sub:temp.quantity }}</div>
+              <div class="balance" >
+                {% if temp.prev_balance %}
+                  {{temp.prev_balance.quantity}}
+                {% else %}
+                  0
+                {% endif %}
+              </div>
             </div>
           {% endif %}
         {% endfor %}

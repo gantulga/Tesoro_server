@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'django_filters',
     'clear_cache',
     'django.contrib.humanize',
+    'mathfilters',
 ]
 
 MIDDLEWARE = [
