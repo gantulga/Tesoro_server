@@ -192,6 +192,7 @@ class OrderRecieverSerializer(serializers.ModelSerializer):
         for d in order_detials:
             d.pop('order')
             detial = Order_detial.objects.create(order=order, **d)
+            print(d)
             if detial:
                 itemTransferType = Item_transfer_type.objects.get(pk=3)
                 itemTransferType4 = Item_transfer_type.objects.get(pk=4)
@@ -199,45 +200,44 @@ class OrderRecieverSerializer(serializers.ModelSerializer):
                 client = Client.objects.get(pk=19)
                 product = Product.objects.get(pk=d['product'].id)
                 if product.is_ingrediented:
-                    print("HOOLNII UYED ZASAH SHAARDLAGATAI")
-                    # for ingredents in product.ingredients.all():
-                    #     hemjee = d['quantity'] * ingredents.size
-                    #     if ingredents.size_type.id == 1:
-                    #         itemTransfer = Item_transfer.objects.create(commodity=ingredents.commodity, fr_client=client, fr_division=client.division, quantity=hemjee, created_by=d['created_by'], order_detial=detial, item_transfer_type=itemTransferType4, to_product=product, product_quantity=d['quantity'])
-                    #     if ingredents.size_type.id == 2:
-                    #         itemTransfer = Item_transfer.objects.create(commodity=ingredents.commodity, fr_client=client, fr_division=client.division, size=hemjee, created_by=d['created_by'], order_detial=detial, item_transfer_type=itemTransferType4, to_product=product, product_quantity=d['quantity'])
+                    for ingredents in product.ingredients.all():
+                        hemjee = d['quantity'] * ingredents.size
+                        if ingredents.size_type.id == 1:
+                            itemTransfer = Item_transfer.objects.create(commodity=ingredents.commodity, fr_client=client, fr_division=client.division, quantity=hemjee, created_by=d['created_by'], order_detial=detial, item_transfer_type=itemTransferType4, to_product=product, product_quantity=d['quantity'])
+                        if ingredents.size_type.id == 2:
+                            itemTransfer = Item_transfer.objects.create(commodity=ingredents.commodity, fr_client=client, fr_division=client.division, size=hemjee, created_by=d['created_by'], order_detial=detial, item_transfer_type=itemTransferType4, to_product=product, product_quantity=d['quantity'])
                         
                         
-                    #     if itemTransfer:
-                    #         fr_client_item_balance = Item_balance.objects.filter(
-                    #             commodity=ingredents.commodity, client=client).order_by('-id')[:1]
-                    #         if fr_client_item_balance:
-                    #             balance = Item_balance.objects.get(
-                    #                 pk=fr_client_item_balance[0].id)
+                        if itemTransfer:
+                            fr_client_item_balance = Item_balance.objects.filter(
+                                commodity=ingredents.commodity, client=client).order_by('-id')[:1]
+                            if fr_client_item_balance:
+                                balance = Item_balance.objects.get(
+                                    pk=fr_client_item_balance[0].id)
 
-                    #             if ingredents.size_type.id == 1:
-                    #                 quantity = balance.quantity - hemjee
-                    #                 balance.quantity = quantity
-                    #             if ingredents.size_type.id == 2:
-                    #                 size = balance.size - hemjee
-                    #                 balance.size = size
+                                if ingredents.size_type.id == 1:
+                                    quantity = balance.quantity - hemjee
+                                    balance.quantity = quantity
+                                if ingredents.size_type.id == 2:
+                                    size = balance.size - hemjee
+                                    balance.size = size
 
-                    #             balance.updated_by = d['created_by']
-                    #             balance.save()
-                    # for ingredents in product.ingredients_producted.all():
-                    #     hemjee = d['quantity'] * ingredents.size
-                    #     itemTransfer = Item_transfer.objects.create(product=ingredents.commodity, fr_client=client, fr_division=client.division, quantity=hemjee, created_by=d['created_by'], order_detial=detial, item_transfer_type=itemTransferType4, to_product=product, product_quantity=d['quantity'])
+                                balance.updated_by = d['created_by']
+                                balance.save()
+                    for ingredents in product.ingredients_producted.all():
+                        hemjee = d['quantity'] * ingredents.size
+                        itemTransfer = Item_transfer.objects.create(product=ingredents.commodity, fr_client=client, fr_division=client.division, quantity=hemjee, created_by=d['created_by'], order_detial=detial, item_transfer_type=itemTransferType4, to_product=product, product_quantity=d['quantity'])
                         
                         
-                    #     if itemTransfer:
-                    #         fr_client_item_balance = Item_balance.objects.filter(
-                    #             product=ingredents.commodity, client=client).order_by('-id')[:1]
-                    #         if len(fr_client_item_balance) > 0:
-                    #             balance = fr_client_item_balance.first()
-                    #             quantity = balance.quantity - hemjee
-                    #             balance.quantity = quantity
-                    #             balance.updated_by = d['created_by']
-                    #             balance.save()
+                        if itemTransfer:
+                            fr_client_item_balance = Item_balance.objects.filter(
+                                product=ingredents.commodity, client=client).order_by('-id')[:1]
+                            if len(fr_client_item_balance) > 0:
+                                balance = fr_client_item_balance.first()
+                                quantity = balance.quantity - hemjee
+                                balance.quantity = quantity
+                                balance.updated_by = d['created_by']
+                                balance.save()
                 else:
                     itemTransfer = Item_transfer.objects.create(product=d['product'], fr_client=client, fr_division=client.division, quantity=d['quantity'], created_by=d['created_by'], order_detial=detial, item_transfer_type=itemTransferType)
                     if itemTransfer:
