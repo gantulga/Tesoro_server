@@ -700,9 +700,9 @@ def loungeItemBalances(request):
                 for cat in detail.product.categories.all():
                     if cat.parent == None:
                         category = cat
-
+                umnuh_uldegdel = Item_balance_log.objects.filter(product=detail.product.id, shift_work=prev_shift_work.id)
                 if index < 0:
-                    sold_items.append({'id':detail.product.id, 'product': detail.product.name, 'quantity':detail.quantity, 'amount':detail.subtotal, 'category':category})
+                    sold_items.append({'id':detail.product.id, 'product': detail.product.name, 'quantity':detail.quantity, 'amount':detail.subtotal, 'category':category, 'prev_balance':umnuh_uldegdel})
                 else:
                     sold_items[index]['quantity'] = int(sold_items[index]['quantity']) + int(detail.quantity)
                     sold_items[index]['amount'] = int(sold_items[index]['amount']) + int(detail.subtotal)

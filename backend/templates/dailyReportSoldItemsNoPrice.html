@@ -31,21 +31,40 @@
 
   <div class="walletInfo">
     <div class="info-header">2. Борлуулсан бүтээгдэхүүний тоо, дүн</div>
+    {% for cat in all_parent_cats %}
+      {% if cat.id > 4 %}
         <div class="cat-name">{{cat.name}}</div>
-        {% for balance_log in prev_shift_work.item_balance_logs.all %}
-        {% if balance_log.product %}
-          <div class="wallet">
-            <div class="index">{{ forloop.counter }}</div>
-            <div class="name">{{balance_log.product.name}}</div>
-            {% if balance_log.quantity > 0 %}
-            <div class="balance">{{balance_log.quantity}} ш</div>
-            {% else %}
-            <div class="balance">0</div>
-            {% endif %}
-          </div>
-        {% endif %}
+        {% for temp in sold_items %}
+          {% if cat.id == temp.category.id %}
+            <div class="wallet">
+              <div class="index">{{ forloop.counter }}</div>
+              <div class="name">{{temp.product}}</div>
+              <div class="amount"><span id="item{{cat.id}}">{{temp.amount}}</span> ₮</div>
+              <div class="balance" >{{temp.prev_balance.quantity}}</div>
+              <div class="balance" >{{temp.quantity}}</div>
+            </div>
+          {% endif %}
         {% endfor %}
+        <div class="total"><span class="percent">Хувь: <span id="percent{{cat.id}}"></span></span> Нийт: <span id="total{{cat.id}}"></span> ₮</div>
+      {% endif %}
+    {% endfor %}
   </div>
 </div>
 {% endif %}
+<script>
+  var length = 50
+  var total_amount = "{{total_order_amount}}"
+  for (let i = 1; i < length; i++) {
+    var idx = "#item" + i
+    var amount_array = document.querySelectorAll(idx)
+    if(amount_array.length > 0){
+      var total = 0
+      amount_array.forEach(e => {
+        total = total + parseInt(e.innerHTML)
+      })
+      document.getElementById("total" + i).innerHTML = total;
+      document.getElementById("percent" + i).innerHTML = (total / total_amount * 100).toFixed(2) + "%";
+    }
+  }
+</script>
 {% endblock %}
