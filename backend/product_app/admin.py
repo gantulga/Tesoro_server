@@ -42,6 +42,8 @@ class ProductAdmin(admin.ModelAdmin):
         return categories
     get_categories.admin_order_field = 'categories'
 
+class Item_balanceAdmin(admin.ModelAdmin):
+    list_display = ('division', 'client', 'user', 'commodity', 'product', 'quantity', 'size')
 
 # Register your models here.
 admin.site.register(Product_category, ProductCategoryAdmin)
@@ -54,6 +56,8 @@ admin.site.register(Ingredient_product)
 admin.site.register(Item_transfer_type)
 admin.site.register(Store)
 admin.site.register(Item_transfer)
+admin.site.register(Item_balance, Item_balanceAdmin)
+admin.site.register(Item_balance_log, Item_balanceAdmin)
 admin.site.register(Basic_asset, Basis_assetAdmin)
 admin.site.register(Basic_asset_count, Basis_asset_countAdmin)
 admin.site.register(broken_item)
