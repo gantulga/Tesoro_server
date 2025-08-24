@@ -192,6 +192,7 @@ class OrderRecieverSerializer(serializers.ModelSerializer):
         for d in order_detials:
             d.pop('order')
             detial = Order_detial.objects.create(order=order, **d)
+            print(d)
             if detial:
                 itemTransferType = Item_transfer_type.objects.get(pk=3)
                 itemTransferType4 = Item_transfer_type.objects.get(pk=4)
