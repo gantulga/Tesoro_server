@@ -197,14 +197,14 @@ class OrderRecieverSerializer(serializers.ModelSerializer):
                 itemTransferType4 = Item_transfer_type.objects.get(pk=4)
                 # 19 5001 Лоунж бармен хэсэг
                 client = Client.objects.get(pk=19)
-                product = Product.objects.get(pk=validated_data['product'].id)
+                product = Product.objects.get(pk=d['product'])
                 if product.is_ingrediented:
                     for ingredents in product.ingredients.all():
-                        hemjee = validated_data['quantity'] * ingredents.size
+                        hemjee = d['quantity'] * ingredents.size
                         if ingredents.size_type.id == 1:
-                            itemTransfer = Item_transfer.objects.create(commodity=ingredents.commodity, fr_client=client, fr_division=client.division, quantity=hemjee, created_by=validated_data['created_by'], order_detial=detial, item_transfer_type=itemTransferType4, to_product=product, product_quantity=validated_data['quantity'])
+                            itemTransfer = Item_transfer.objects.create(commodity=ingredents.commodity, fr_client=client, fr_division=client.division, quantity=hemjee, created_by=d['created_by'], order_detial=detial, item_transfer_type=itemTransferType4, to_product=product, product_quantity=d['quantity'])
                         if ingredents.size_type.id == 2:
-                            itemTransfer = Item_transfer.objects.create(commodity=ingredents.commodity, fr_client=client, fr_division=client.division, size=hemjee, created_by=validated_data['created_by'], order_detial=detial, item_transfer_type=itemTransferType4, to_product=product, product_quantity=validated_data['quantity'])
+                            itemTransfer = Item_transfer.objects.create(commodity=ingredents.commodity, fr_client=client, fr_division=client.division, size=hemjee, created_by=d['created_by'], order_detial=detial, item_transfer_type=itemTransferType4, to_product=product, product_quantity=d['quantity'])
                         
                         
                         if itemTransfer:
@@ -221,11 +221,11 @@ class OrderRecieverSerializer(serializers.ModelSerializer):
                                     size = balance.size - hemjee
                                     balance.size = size
 
-                                balance.updated_by = validated_data['created_by']
+                                balance.updated_by = d['created_by']
                                 balance.save()
                     for ingredents in product.ingredients_producted.all():
-                        hemjee = validated_data['quantity'] * ingredents.size
-                        itemTransfer = Item_transfer.objects.create(product=ingredents.commodity, fr_client=client, fr_division=client.division, quantity=hemjee, created_by=validated_data['created_by'], order_detial=detial, item_transfer_type=itemTransferType4, to_product=product, product_quantity=validated_data['quantity'])
+                        hemjee = d['quantity'] * ingredents.size
+                        itemTransfer = Item_transfer.objects.create(product=ingredents.commodity, fr_client=client, fr_division=client.division, quantity=hemjee, created_by=d['created_by'], order_detial=detial, item_transfer_type=itemTransferType4, to_product=product, product_quantity=d['quantity'])
                         
                         
                         if itemTransfer:
@@ -235,18 +235,18 @@ class OrderRecieverSerializer(serializers.ModelSerializer):
                                 balance = fr_client_item_balance.first()
                                 quantity = balance.quantity - hemjee
                                 balance.quantity = quantity
-                                balance.updated_by = validated_data['created_by']
+                                balance.updated_by = d['created_by']
                                 balance.save()
                 else:
-                    itemTransfer = Item_transfer.objects.create(product=validated_data['product'], fr_client=client, fr_division=client.division, quantity=validated_data['quantity'], created_by=validated_data['created_by'], order_detial=detial, item_transfer_type=itemTransferType)
+                    itemTransfer = Item_transfer.objects.create(product=d['product'], fr_client=client, fr_division=client.division, quantity=d['quantity'], created_by=d['created_by'], order_detial=detial, item_transfer_type=itemTransferType)
                     if itemTransfer:
                         fr_client_item_balance = Item_balance.objects.filter(
-                            product=validated_data['product'], client=client).order_by('-id')[:1]
+                            product=d['product'], client=client).order_by('-id')[:1]
 
                         if fr_client_item_balance:
                             balance = Item_balance.objects.get(pk=fr_client_item_balance[0].id)
-                            quantity = balance.quantity - validated_data['quantity']
-                            balance.updated_by = validated_data['created_by']
+                            quantity = balance.quantity - d['quantity']
+                            balance.updated_by = d['created_by']
                             balance.quantity = quantity
                             balance.save()
                         else:
