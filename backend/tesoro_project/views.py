@@ -688,43 +688,30 @@ def loungeItemBalances(request):
                 shift_work = get_object_or_404(Shift_work, pk=shift_worker)
             else:
                 shift_work = Shift_work.objects.filter(division=5).order_by('-id').first()
+
+            now_item_balances_logs = Item_balance_log.objects.filter(shift_work=shift_work.id, division=5)
+            if len(now_item_balances_logs) > 0:
+                print(len(now_item_balances_logs))
+            else:
+                now_item_balances_logs = Item_balance.objects.filter(division=5)
+
             prev_shift_work = get_object_or_404(Shift_work, pk=int(shift_work.id)-1)
+            prev_item_balance_logs = Item_balance_log.objects.filter(shift_work=prev_shift_work.id, division=5)
+            
 
+            obj_list = []
+            for now_balance in now_item_balances_logs:
+                for prev_balance in prev_item_balance_logs:
+                    if now_balance.product and now_balance.product == prev_balance.product:
+                        order_detials = Order_detial.objects.filter(shift_work=shift_work.id, product=now_balance.product.id)
+                        counter = 0
+                        for detial in order_detials:
+                            counter += detial.quantity
+                            
+                        obj_list.append({'name':now_balance.product.name, 'now':now_balance.quantity, 'prev':prev_balance.quantity, 'order_detial_counter':counter})
 
-            all_parent_cats = Product_category.objects.filter(parent__isnull=True)
-            sold_items = []
-            all_order_details = Order_detial.objects.filter(shift_work=shift_work.id, is_deleted=False).order_by('product')
-            for detail in all_order_details:
-                index = next((i for i, item in enumerate(sold_items) if item['id'] == int(detail.product.id)), -1)
-                category = None
-                for cat in detail.product.categories.all():
-                    if cat.parent == None:
-                        category = cat
-                umnuh_uldegdel = Item_balance_log.objects.filter(product=detail.product.id, shift_work=prev_shift_work.id)
-                if umnuh_uldegdel:
-                    umnuh_uldegdel = umnuh_uldegdel.first()
-                else:
-                    umnuh_uldegdel = None
-
-                if index < 0:
-                    sold_items.append({'id':detail.product.id, 'product': detail.product.name, 'quantity':detail.quantity, 'amount':detail.subtotal, 'category':category, 'prev_balance':umnuh_uldegdel})
-                else:
-                    sold_items[index]['quantity'] = int(sold_items[index]['quantity']) + int(detail.quantity)
-                    sold_items[index]['amount'] = int(sold_items[index]['amount']) + int(detail.subtotal)
-
-            all_shift_workers = Shift_work.objects.all().order_by('-id')
-            all_orders = Order.objects.filter(shift_work=shift_work.id)
-            total_order_amount = 0
-            for order in all_orders:
-                total_order_amount = total_order_amount + order.amount
-
-            return render(request, 'dailyReportSoldItemsNoPrice.html', {
-                'all_shift_workers':all_shift_workers, 
-                'prev_shift_work':prev_shift_work,
-                'shift_work':shift_work,
-                'sold_items': sold_items,
-                'total_order_amount':total_order_amount, 
-                'all_parent_cats':all_parent_cats})
+            print(obj_list)
+            return render(request, 'dailyReportSoldItemsNoPrice.html', {'obj_list':obj_list})
     else:
         return redirect('/accounts/login/')
 

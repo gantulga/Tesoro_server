@@ -8,6 +8,7 @@ from io import BytesIO
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.contrib.contenttypes.fields import GenericRelation
 import sys
+from structure_app.models import Shift_work
 
 User = get_user_model()
 
