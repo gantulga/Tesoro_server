@@ -698,7 +698,7 @@ def loungeItemBalances(request):
             prev_shift_work = get_object_or_404(Shift_work, pk=int(shift_work.id)-1)
             prev_item_balance_logs = Item_balance_log.objects.filter(shift_work=prev_shift_work.id, division=5)
             
-
+            print(prev_shift_work.id, shift_work.id)
             obj_list = []
             for now_balance in now_item_balances_logs:
                 for prev_balance in prev_item_balance_logs:
@@ -707,10 +707,10 @@ def loungeItemBalances(request):
                         counter = 0
                         for detial in order_detials:
                             counter += detial.quantity
-                            
+
+                        # if now_balance.quantity != 0 or prev_balance.quantity != 0 or counter != 0:
                         obj_list.append({'name':now_balance.product.name, 'now':now_balance.quantity, 'prev':prev_balance.quantity, 'order_detial_counter':counter})
 
-            print(obj_list)
             return render(request, 'dailyReportSoldItemsNoPrice.html', {'obj_list':obj_list})
     else:
         return redirect('/accounts/login/')

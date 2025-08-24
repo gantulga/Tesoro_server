@@ -25,8 +25,6 @@
       <th>№</th>
       <th>Барааны нэр</th>
       <th>Өмнөх ээлжийн хаалт</th>
-      <th>Бараа нэмсэн</th>
-      <th>Бараа шилжүүлсэн</th>
       <th>Худалдаалагдсан</th>
       <th>Үлдэгдэл</th>
       <th>Асуудал</th>
@@ -36,8 +34,6 @@
       <td>{{ forloop.counter }}</td>
       <td>{{temp.name}}</td>
       <td>{{temp.prev}}</td>
-      <td>-</td>
-      <td>-</td>
       <td>{{ temp.order_detial_counter }}</td>
       <td>{{temp.now}}</td>
       <td>{% if temp.prev|sub:temp.now == temp.order_detial_counter %}
