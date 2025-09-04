@@ -20,7 +20,7 @@ from pytz import timezone
 import time
 from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.models import Group
-from structure_app.models import Client, Division, Shift_work, Configuration_value
+from structure_app.models import Client, Division, Shift_work, Configuration_value, Customer
 from product_app.models import Product, Commodity, Item_transfer, Item_transfer_type, Item_balance, Item_balance_log, Product_category
 from financial_app.models import Budget, Wallet, Money_transfer
 from payment_app.models import Order_detial, Order, Payment
@@ -39,6 +39,8 @@ from datetime import timedelta
 
 import openpyxl
 from openpyxl.styles import Font, Alignment, numbers
+
+User = get_user_model()
 
 def home(request):
     group = Group.objects.get(pk=2)
@@ -167,6 +169,89 @@ def loungeShiftReport(request, shiftworker):
         all_items = Item_balance_log.objects.filter(shift_work=shift_worker)
         shift_workers = Shift_work.objects.filter(finished=True)
         return render(request, 'itemBalance.html', {'all_items':all_items, 'shift_workers':shift_workers, 'shift_worker':shift_worker})
+    else:
+        return redirect('/accounts/login/')
+
+@never_cache
+def notPaidOrdersUser(request):
+    group = Group.objects.get(pk=2)
+    if group in request.user.groups.all():
+        workers = User.objects.all()
+        data=[]
+        for w in workers:
+            if w.id not in [1, 2, 3, 4, 23]:
+                worker = {"id":w.id, "name":w.last_name + " " + w.first_name + " " + w.username, "orders":[], "total":0, "paid_total":0, "unpaid_total":0}
+
+                total = 0
+                paid_total = 0
+                unpaid_total = 0
+
+                for o in w.orders.all():
+                    if o.status != "Төлбөр гүйцэт төлсөн.":
+                        paid_payments = 0
+                        for p in o.payments.all():
+                            paid_payments = paid_payments + p.amount
+
+                        o.paid_payments = paid_payments
+                        o.unpaid_amount = o.amount - paid_payments
+                        
+                        worker["orders"].append(o)
+                        total = total + o.amount
+                        paid_total = paid_total + paid_payments
+                        unpaid_total = unpaid_total + (o.amount - paid_payments)
+
+
+                worker["total"] = total
+                worker["paid_total"] = paid_total
+                worker["unpaid_total"] = unpaid_total
+                if unpaid_total > 0:
+                    data.append(worker)
+
+        customers = Customer.objects.all()
+
+        return render(request, 'notPaidOrdersUser.html', {'data':data, 'customers':customers})
+    else:
+        return redirect('/accounts/login/')
+    
+
+@never_cache
+def notPaidOrdersCustomer(request):
+    group = Group.objects.get(pk=2)
+    if group in request.user.groups.all():
+        workers = Customer.objects.all()
+        data=[]
+        for w in workers:
+            if w.id not in [1, 2, 3, 4, 23]:
+                worker = {"id":w.id, "name":str(w.lastname) + " " + str(w.firstname) + " " + str(w.register) + " - " + str(w.mobile), "orders":[], "total":0, "paid_total":0, "unpaid_total":0}
+
+                total = 0
+                paid_total = 0
+                unpaid_total = 0
+
+                for o in w.orders.all():
+                    if o.status != "Төлбөр гүйцэт төлсөн.":
+                        paid_payments = 0
+                        for p in o.payments.all():
+                            paid_payments = paid_payments + p.amount
+
+                        o.paid_payments = paid_payments
+                        o.unpaid_amount = o.amount - paid_payments
+                        
+                        worker["orders"].append(o)
+                        total = total + o.amount
+                        paid_total = paid_total + paid_payments
+                        unpaid_total = unpaid_total + (o.amount - paid_payments)
+
+
+                worker["total"] = total
+                worker["paid_total"] = paid_total
+                worker["unpaid_total"] = unpaid_total
+                if unpaid_total > 0:
+                    data.append(worker)
+
+        customers = Customer.objects.all()
+
+        return render(request, 'notPaidOrdersCustomer.html', {'data':data, 'customers':customers})
     else:
         return redirect('/accounts/login/')
 

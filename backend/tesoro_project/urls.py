@@ -139,6 +139,8 @@ urlpatterns = [
     path('kitchen', views.kitchenFoods, name='kitchenFoods'),
     path('productToProductIngredient', views.productToProductIngredient),
     path('commodityToProductIngredient', views.commodityToProductIngredient),
+    path('notPaidOrdersUser', views.notPaidOrdersUser),
+    path('notPaidOrdersCustomer', views.notPaidOrdersCustomer),
     re_path('^printer/$', views.printer),
 
     #EBARIMT

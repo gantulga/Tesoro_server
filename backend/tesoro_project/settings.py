@@ -89,6 +89,9 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'tesoro_project.context_processors.configration_values',
             ],
+            'libraries': {
+                'humanize': 'django.contrib.humanize.templatetags.humanize',
+            }
         },
     },
 ]

@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% load static %}
+{% load humanize %}
+<div class="pageHeader">
+  Төлбөрөө төлөөгүй үйлчлүүлэгч
+</div>
+<div class="pageBody">
+  <table style="text-align: right; width: 100%;">
+    <tr>
+      <th style="text-align: left">№</th>
+      <th style="text-align: left">Ажилтны нэр</th>
+      <th style="text-align: left">Огноо</th>
+      <th>Ордерийн дүн</th>
+      <th>Төлсөн дүн</th>
+      <th>Үлдсэн дүн</th>
+    </tr>
+    {% for w in data %}
+    <tr>
+      <th style="text-align: left">{{forloop.counter}}</th>
+      <th style="text-align: left">{{w.name}} /{{w.id}}/</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+    {% for o in w.orders %}
+    <tr>
+      <td></td>
+      <td></td>
+      <td style="text-align: left">{{o.created_at}}</td>
+      <td>{{o.amount|intcomma}} ₮</td>
+      <td>{{o.paid_payments|intcomma}} ₮</td>
+      <td>{{o.unpaid_amount|intcomma}} ₮</td>
+    </tr>
+    {% endfor %}
+    <tr>
+      <th></th>
+      <th></th>
+      <th>Нийт өр:</th>
+      <th>{{w.total|intcomma}} ₮</th>
+      <th>{{w.paid_total|intcomma}} ₮</th>
+      <th>{{w.unpaid_total|intcomma}} ₮</th>
+    </tr>
+    {% endfor %}
+  </table>
+</div>
+{% endblock %}
