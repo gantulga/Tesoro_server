@@ -331,6 +331,7 @@ def putData(order, register, printer_number):
                 "stocks": json_order_lines
             }
         }
+
         print(json_order)
         bill = Bill.objects.create(
             amount = "%.2f" % total_amount,
@@ -363,10 +364,12 @@ def putData(order, register, printer_number):
             'Content-Type': 'application/json'
             }
             response = requests.request("POST", url, headers=headers, data=payload)
+            print(response)
             conf_value.bill_id_suffix = conf_value.bill_id_suffix + 1
             conf_value.save()
 
             temp = json.loads(response.text)
+            print(temp)
             
             if "returnBillId" in temp:
                 returnBillId = temp['returnBillId']
