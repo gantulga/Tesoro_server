@@ -39,274 +39,206 @@ from datetime import timedelta
 
 import openpyxl
 from openpyxl.styles import Font, Alignment, numbers
+from structure_app.decorators import group_required
 
 User = get_user_model()
 
+@group_required('Удирдлага', 'Nyagtlan')
 def home(request):
-    group = Group.objects.get(pk=2)
-    if group in request.user.groups.all():
-        
-        bill_list_huvi = []
-        huvi_total = 0
-        huvi_total_clear_vat = 0
-        huvi_total_vat = 0
-        huvi_total_zuruu = 0
-        bill_list_corp = []
-        corp_total = 0
-        corp_total_clear_vat = 0
-        corp_total_vat = 0
-        corp_total_zuruu = 0
+    return render(request, 'home.html', {})
 
-        bills = Bill.objects.all()
-        for bill in bills:
-            tatvariin_daraah_orlogo = float(bill.amount) / float(1.1)
-            total_vat = float(bill.amount) - tatvariin_daraah_orlogo
-            total_vat = "%.2f" % total_vat
-            if float(bill.vat) != float(total_vat):
-                if bill.bill_type == "3":
-                    bill_list_corp.append(bill)
-                    corp_total = float(corp_total) + float(bill.amount)
-                    corp_total_clear_vat = float(corp_total_clear_vat) + float(bill.clear_vat)
-                    corp_total_vat = float(corp_total_vat) + float(bill.vat)
-                    corp_total_zuruu = float(corp_total_zuruu) + float(bill.zuruu)
-                elif bill.bill_type == "1":
-                    bill_list_huvi.append(bill)
-                    huvi_total = float(huvi_total) + float(bill.amount)
-                    huvi_total_clear_vat = float(huvi_total_clear_vat) + float(bill.clear_vat)
-                    huvi_total_vat = float(huvi_total_vat) + float(bill.vat)
-                    huvi_total_zuruu = float(huvi_total_zuruu) + float(bill.zuruu)
-
-        return render(request, 'home.html', {"bill_list_corp":bill_list_corp, 
-                                             "bill_list_huvi":bill_list_huvi,
-                                             "corp_total":corp_total,
-                                             "corp_total_clear_vat":"%.2f" % corp_total_clear_vat,
-                                             "corp_total_vat":"%.2f" % corp_total_vat,
-                                             "corp_total_zuruu":"%.2f" % corp_total_zuruu,
-                                             "huvi_total":huvi_total,
-                                             "huvi_total_clear_vat":"%.2f" % huvi_total_clear_vat,
-                                             "huvi_total_vat":"%.2f" % huvi_total_vat,
-                                             "huvi_total_zuruu":"%.2f" % huvi_total_zuruu,
-                                             })
-    else:
-        return redirect('/accounts/login/')
-
+@group_required('Удирдлага', 'Нягтлан')
 @never_cache
 def itemBalance(request):
-    group = Group.objects.get(pk=2)
-    if group in request.user.groups.all():
-        client = request.GET.get('client', None)
-        if client == None:
-            all_items = Item_balance.objects.all()
-        else:
-            all_items = Item_balance.objects.filter(client=client)
-        clients = Client.objects.all()
-        shift_workers = Shift_work.objects.filter(finished=True).order_by('-created_at')
-        return render(request, 'itemBalance.html', {'all_items':all_items, 'shift_workers':shift_workers, 'clients':clients})
+    client = request.GET.get('client', None)
+    if client == None:
+        all_items = Item_balance.objects.all()
     else:
-        return redirect('/accounts/login/')
+        all_items = Item_balance.objects.filter(client=client)
+    clients = Client.objects.all()
+    shift_workers = Shift_work.objects.filter(finished=True).order_by('-created_at')
+    return render(request, 'itemBalance.html', {'all_items':all_items, 'shift_workers':shift_workers, 'clients':clients})
 
-
+@group_required('Удирдлага', 'Нягтлан')
 @never_cache
 def itemBalanceShiftWorker(request, shiftworker):
-    group = Group.objects.get(pk=2)
-    if group in request.user.groups.all():
-        shift_worker = get_object_or_404(Shift_work, pk=shiftworker)
-        all_items = Item_balance_log.objects.filter(shift_work=shift_worker)
-        shift_workers = Shift_work.objects.filter(finished=True).order_by('-created_at')
-        return render(request, 'itemBalance.html', {'all_items':all_items, 'shift_workers':shift_workers, 'shift_worker':shift_worker})
-    else:
-        return redirect('/accounts/login/')
+    shift_worker = get_object_or_404(Shift_work, pk=shiftworker)
+    all_items = Item_balance_log.objects.filter(shift_work=shift_worker)
+    shift_workers = Shift_work.objects.filter(finished=True).order_by('-created_at')
+    return render(request, 'itemBalance.html', {'all_items':all_items, 'shift_workers':shift_workers, 'shift_worker':shift_worker})
 
+@group_required('Удирдлага', 'Нягтлан')
 @never_cache
 def addProduct(request):
-    group = Group.objects.get(pk=2)
-    if group in request.user.groups.all():
-        if request.method == 'POST':
-            budget = None
-            if request.POST['budget']:
-                budget = Budget.objects.get(pk=request.POST['budget'])
-            # fr_wallet = request.POST['fr_wallet']
-            to_client = Client.objects.get(pk=request.POST['client'])
-            to_division = to_client.division
-            item_transfer_type = Item_transfer_type.objects.get(pk=1)
-            index = 1
-            while index < 31:
-                if request.POST['product'+str(index)]:
-                    total_amount = int(request.POST['quantity'+str(index)]) * int(request.POST['price'+str(index)])
-                    product = Product.objects.get(pk=request.POST['product'+str(index)])
-                    item_transfer = Item_transfer.objects.create(item_transfer_type=item_transfer_type, product=product, to_division=to_division, to_client=to_client, is_confirmed=True, confirmed_by=request.user, created_by=request.user, quantity=int(request.POST['quantity'+str(index)]), unit_price=float(request.POST['price'+str(index)]), total_amount=total_amount)
-                    if item_transfer:
-                        itemBalance = Item_balance.objects.filter(product=product, client=item_transfer.to_client.id)
-                        if len(itemBalance) > 0:
-                            itemBalance[0].quantity = itemBalance[0].quantity + item_transfer.quantity
-                            itemBalance[0].save()
-                        else:
-                            item = Item_balance.objects.create(created_by=request.user, quantity=item_transfer.quantity, client=item_transfer.to_client, division=item_transfer.to_division, product=product)
-                        
+    if request.method == 'POST':
+        budget = None
+        if request.POST['budget']:
+            budget = Budget.objects.get(pk=request.POST['budget'])
+        # fr_wallet = request.POST['fr_wallet']
+        to_client = Client.objects.get(pk=request.POST['client'])
+        to_division = to_client.division
+        item_transfer_type = Item_transfer_type.objects.get(pk=1)
+        index = 1
+        while index < 31:
+            if request.POST['product'+str(index)]:
+                total_amount = int(request.POST['quantity'+str(index)]) * int(request.POST['price'+str(index)])
+                product = Product.objects.get(pk=request.POST['product'+str(index)])
+                item_transfer = Item_transfer.objects.create(item_transfer_type=item_transfer_type, product=product, to_division=to_division, to_client=to_client, is_confirmed=True, confirmed_by=request.user, created_by=request.user, quantity=int(request.POST['quantity'+str(index)]), unit_price=float(request.POST['price'+str(index)]), total_amount=total_amount)
+                if item_transfer:
+                    itemBalance = Item_balance.objects.filter(product=product, client=item_transfer.to_client.id)
+                    if len(itemBalance) > 0:
+                        itemBalance[0].quantity = itemBalance[0].quantity + item_transfer.quantity
+                        itemBalance[0].save()
+                    else:
+                        item = Item_balance.objects.create(created_by=request.user, quantity=item_transfer.quantity, client=item_transfer.to_client, division=item_transfer.to_division, product=product)
+                    
 
-                else:
-                    print("None")
-                index += 1
+            else:
+                print("None")
+            index += 1
 
 
-            return redirect('/addProduct')
-        else:
-            all_products = Product.objects.filter(is_ingrediented=False)
-            all_budgets = Budget.objects.filter(status='Төсөвлөсөн').order_by("-id")
-            all_wallets = Wallet.objects.filter(is_pos=False)
-            all_divisions = Division.objects.all()
-            all_clients = Client.objects.all()
-            return render(request, 'addProduct.html', {'all_products':all_products, 'range': range(30), 'all_budgets':all_budgets, 'all_wallets':all_wallets, 'all_divisions':all_divisions, 'all_clients':all_clients})
+        return redirect('/addProduct')
     else:
-        return redirect('/accounts/login/')
+        all_products = Product.objects.filter(is_ingrediented=False)
+        all_budgets = Budget.objects.filter(status='Төсөвлөсөн').order_by("-id")
+        all_wallets = Wallet.objects.filter(is_pos=False)
+        all_divisions = Division.objects.all()
+        all_clients = Client.objects.all()
+        return render(request, 'addProduct.html', {'all_products':all_products, 'range': range(30), 'all_budgets':all_budgets, 'all_wallets':all_wallets, 'all_divisions':all_divisions, 'all_clients':all_clients})
 
 
+@group_required('Удирдлага')
 @never_cache
 def loungeShiftReport(request, shiftworker):
-    group = Group.objects.get(pk=2)
-    if group in request.user.groups.all():
-        shift_worker = get_object_or_404(Shift_work, pk=shiftworker)
-        all_items = Item_balance_log.objects.filter(shift_work=shift_worker)
-        shift_workers = Shift_work.objects.filter(finished=True)
-        return render(request, 'itemBalance.html', {'all_items':all_items, 'shift_workers':shift_workers, 'shift_worker':shift_worker})
-    else:
-        return redirect('/accounts/login/')
+    shift_worker = get_object_or_404(Shift_work, pk=shiftworker)
+    all_items = Item_balance_log.objects.filter(shift_work=shift_worker)
+    shift_workers = Shift_work.objects.filter(finished=True)
+    return render(request, 'itemBalance.html', {'all_items':all_items, 'shift_workers':shift_workers, 'shift_worker':shift_worker})
 
+@group_required('Удирдлага')
 @never_cache
 def notPaidOrdersUser(request):
-    group = Group.objects.get(pk=2)
-    if group in request.user.groups.all():
-        workers = User.objects.all()
-        data=[]
-        for w in workers:
-            if w.id not in [1, 2, 3, 4, 23]:
-                worker = {"id":w.id, "name":w.last_name + " " + w.first_name + " " + w.username, "orders":[], "total":0, "paid_total":0, "unpaid_total":0}
+    workers = User.objects.all()
+    data=[]
+    for w in workers:
+        if w.id not in [1, 2, 3, 4, 23]:
+            worker = {"id":w.id, "name":w.last_name + " " + w.first_name + " " + w.username, "orders":[], "total":0, "paid_total":0, "unpaid_total":0}
 
-                total = 0
-                paid_total = 0
-                unpaid_total = 0
+            total = 0
+            paid_total = 0
+            unpaid_total = 0
 
-                for o in w.orders.all():
-                    if o.status != "Төлбөр гүйцэт төлсөн.":
-                        paid_payments = 0
-                        for p in o.payments.all():
-                            paid_payments = paid_payments + p.amount
+            for o in w.orders.all():
+                if o.status != "Төлбөр гүйцэт төлсөн.":
+                    paid_payments = 0
+                    for p in o.payments.all():
+                        paid_payments = paid_payments + p.amount
 
-                        o.paid_payments = paid_payments
-                        o.unpaid_amount = o.amount - paid_payments
-                        
-                        worker["orders"].append(o)
-                        total = total + o.amount
-                        paid_total = paid_total + paid_payments
-                        unpaid_total = unpaid_total + (o.amount - paid_payments)
+                    o.paid_payments = paid_payments
+                    o.unpaid_amount = o.amount - paid_payments
+                    
+                    worker["orders"].append(o)
+                    total = total + o.amount
+                    paid_total = paid_total + paid_payments
+                    unpaid_total = unpaid_total + (o.amount - paid_payments)
 
 
-                worker["total"] = total
-                worker["paid_total"] = paid_total
-                worker["unpaid_total"] = unpaid_total
-                if unpaid_total > 0:
-                    data.append(worker)
+            worker["total"] = total
+            worker["paid_total"] = paid_total
+            worker["unpaid_total"] = unpaid_total
+            if unpaid_total > 0:
+                data.append(worker)
 
-        customers = Customer.objects.all()
+    customers = Customer.objects.all()
 
-        return render(request, 'notPaidOrdersUser.html', {'data':data, 'customers':customers})
-    else:
-        return redirect('/accounts/login/')
+    return render(request, 'notPaidOrdersUser.html', {'data':data, 'customers':customers})
     
-
+@group_required('Удирдлага')
 @never_cache
 def notPaidOrdersCustomer(request):
-    group = Group.objects.get(pk=2)
-    if group in request.user.groups.all():
-        workers = Customer.objects.all()
-        data=[]
-        for w in workers:
-            if w.id not in [1, 2, 3, 4, 23]:
-                worker = {"id":w.id, "name":str(w.lastname) + " " + str(w.firstname) + " " + str(w.register) + " - " + str(w.mobile), "orders":[], "total":0, "paid_total":0, "unpaid_total":0}
+    workers = Customer.objects.all()
+    data=[]
+    for w in workers:
+        if w.id not in [1, 2, 3, 4, 23]:
+            worker = {"id":w.id, "name":str(w.lastname) + " " + str(w.firstname) + " " + str(w.register) + " - " + str(w.mobile), "orders":[], "total":0, "paid_total":0, "unpaid_total":0}
 
-                total = 0
-                paid_total = 0
-                unpaid_total = 0
+            total = 0
+            paid_total = 0
+            unpaid_total = 0
 
-                for o in w.orders.all():
-                    if o.status != "Төлбөр гүйцэт төлсөн.":
-                        paid_payments = 0
-                        for p in o.payments.all():
-                            paid_payments = paid_payments + p.amount
+            for o in w.orders.all():
+                if o.status != "Төлбөр гүйцэт төлсөн.":
+                    paid_payments = 0
+                    for p in o.payments.all():
+                        paid_payments = paid_payments + p.amount
 
-                        o.paid_payments = paid_payments
-                        o.unpaid_amount = o.amount - paid_payments
-                        
-                        worker["orders"].append(o)
-                        total = total + o.amount
-                        paid_total = paid_total + paid_payments
-                        unpaid_total = unpaid_total + (o.amount - paid_payments)
+                    o.paid_payments = paid_payments
+                    o.unpaid_amount = o.amount - paid_payments
+                    
+                    worker["orders"].append(o)
+                    total = total + o.amount
+                    paid_total = paid_total + paid_payments
+                    unpaid_total = unpaid_total + (o.amount - paid_payments)
 
 
-                worker["total"] = total
-                worker["paid_total"] = paid_total
-                worker["unpaid_total"] = unpaid_total
-                if unpaid_total > 0:
-                    data.append(worker)
+            worker["total"] = total
+            worker["paid_total"] = paid_total
+            worker["unpaid_total"] = unpaid_total
+            if unpaid_total > 0:
+                data.append(worker)
 
-        customers = Customer.objects.all()
+    customers = Customer.objects.all()
 
-        return render(request, 'notPaidOrdersCustomer.html', {'data':data, 'customers':customers})
-    else:
-        return redirect('/accounts/login/')
+    return render(request, 'notPaidOrdersCustomer.html', {'data':data, 'customers':customers})
 
-
+@group_required('Удирдлага', 'Нягтлан')
 @never_cache
 def addCommodity(request):
-    group = Group.objects.get(pk=2)
-    if group in request.user.groups.all():
-        if request.method == 'POST':
-            budget = None
-            if request.POST['budget']:
-                budget = Budget.objects.get(pk=request.POST['budget'])
-            # fr_wallet = request.POST['fr_wallet']
-            to_client = Client.objects.get(pk=request.POST['client'])
-            to_division = to_client.division
-            item_transfer_type = Item_transfer_type.objects.get(pk=1)
-            index = 1
-            while index < 31:
-                if request.POST['commodity'+str(index)]:
-                    commodity = Commodity.objects.get(pk=request.POST['commodity'+str(index)])
-                    print(request.POST)
-                    if request.POST['size_type'+str(index)] == "quantity":
-                        item_transfer = Item_transfer.objects.create(item_transfer_type=item_transfer_type, commodity=commodity, to_division=to_division, to_client=to_client, is_confirmed=True, confirmed_by=request.user, created_by=request.user, quantity=int(request.POST['quantity'+str(index)]), unit_price=float(request.POST['price'+str(index)]), total_amount=float(request.POST['total'+str(index)]))
-                    else:
-                        item_transfer = Item_transfer.objects.create(item_transfer_type=item_transfer_type, commodity=commodity, to_division=to_division, to_client=to_client, is_confirmed=True, confirmed_by=request.user, created_by=request.user, size=int(request.POST['quantity'+str(index)]), unit_price=float(request.POST['price'+str(index)]), total_amount=float(request.POST['total'+str(index)]))
-                    
-                    if item_transfer:
-                        itemBalance = Item_balance.objects.filter(commodity=commodity, client=item_transfer.to_client.id)
-                        if len(itemBalance) > 0:
-                            if request.POST['size_type'+str(index)] == "quantity":
-                                itemBalance[0].quantity = itemBalance[0].quantity + item_transfer.quantity
-                            else:
-                                itemBalance[0].size = itemBalance[0].size + item_transfer.size
-                            itemBalance[0].save()
-                        else:
-                            if request.POST['size_type'+str(index)] == "quantity":
-                                item = Item_balance.objects.create(created_by=request.user, quantity=item_transfer.quantity, client=item_transfer.to_client, division=item_transfer.to_division, commodity=commodity)
-                            else:
-                                item = Item_balance.objects.create(created_by=request.user, size=item_transfer.size, client=item_transfer.to_client, division=item_transfer.to_division, commodity=commodity)
+    if request.method == 'POST':
+        budget = None
+        if request.POST['budget']:
+            budget = Budget.objects.get(pk=request.POST['budget'])
+        # fr_wallet = request.POST['fr_wallet']
+        to_client = Client.objects.get(pk=request.POST['client'])
+        to_division = to_client.division
+        item_transfer_type = Item_transfer_type.objects.get(pk=1)
+        index = 1
+        while index < 31:
+            if request.POST['commodity'+str(index)]:
+                commodity = Commodity.objects.get(pk=request.POST['commodity'+str(index)])
+                print(request.POST)
+                if request.POST['size_type'+str(index)] == "quantity":
+                    item_transfer = Item_transfer.objects.create(item_transfer_type=item_transfer_type, commodity=commodity, to_division=to_division, to_client=to_client, is_confirmed=True, confirmed_by=request.user, created_by=request.user, quantity=int(request.POST['quantity'+str(index)]), unit_price=float(request.POST['price'+str(index)]), total_amount=float(request.POST['total'+str(index)]))
                 else:
-                    print("None")
-                index += 1
+                    item_transfer = Item_transfer.objects.create(item_transfer_type=item_transfer_type, commodity=commodity, to_division=to_division, to_client=to_client, is_confirmed=True, confirmed_by=request.user, created_by=request.user, size=int(request.POST['quantity'+str(index)]), unit_price=float(request.POST['price'+str(index)]), total_amount=float(request.POST['total'+str(index)]))
+                
+                if item_transfer:
+                    itemBalance = Item_balance.objects.filter(commodity=commodity, client=item_transfer.to_client.id)
+                    if len(itemBalance) > 0:
+                        if request.POST['size_type'+str(index)] == "quantity":
+                            itemBalance[0].quantity = itemBalance[0].quantity + item_transfer.quantity
+                        else:
+                            itemBalance[0].size = itemBalance[0].size + item_transfer.size
+                        itemBalance[0].save()
+                    else:
+                        if request.POST['size_type'+str(index)] == "quantity":
+                            item = Item_balance.objects.create(created_by=request.user, quantity=item_transfer.quantity, client=item_transfer.to_client, division=item_transfer.to_division, commodity=commodity)
+                        else:
+                            item = Item_balance.objects.create(created_by=request.user, size=item_transfer.size, client=item_transfer.to_client, division=item_transfer.to_division, commodity=commodity)
+            else:
+                print("None")
+            index += 1
 
 
-            return redirect('/addCommodity')
-        else:
-            all_commodities = Commodity.objects.all().order_by('name')
-            all_budgets = Budget.objects.filter(status='Төсөвлөсөн').order_by("-id")
-            all_wallets = Wallet.objects.filter(is_pos=False)
-            all_divisions = Division.objects.all()
-            all_clients = Client.objects.all()
-            return render(request, 'addCommodity.html', {'all_commodities':all_commodities, 'range': range(30), 'all_budgets':all_budgets, 'all_wallets':all_wallets, 'all_divisions':all_divisions, 'all_clients':all_clients})
+        return redirect('/addCommodity')
     else:
-        return redirect('/accounts/login/')
-
+        all_commodities = Commodity.objects.all().order_by('name')
+        all_budgets = Budget.objects.filter(status='Төсөвлөсөн').order_by("-id")
+        all_wallets = Wallet.objects.filter(is_pos=False)
+        all_divisions = Division.objects.all()
+        all_clients = Client.objects.all()
+        return render(request, 'addCommodity.html', {'all_commodities':all_commodities, 'range': range(30), 'all_budgets':all_budgets, 'all_wallets':all_wallets, 'all_divisions':all_divisions, 'all_clients':all_clients})
 
 
 @never_cache
@@ -319,7 +251,7 @@ def commodityInformation(request, commodity_id):
 
     return JsonResponse({'size_type': size_type, 'unit_size': commodity.unit_size})
 
-
+@group_required('Удирдлага')
 @never_cache
 def kitchenFoods(request):
     detail = request.GET.get('detail', None)
@@ -343,55 +275,51 @@ def kitchenFoods(request):
     return render(request, 'kitchen.html', {'not_finished_orders':not_finished_orders, 'finished_orders':finished_orders})
 
 
-
+@group_required('Удирдлага', 'Нягтлан')
 @never_cache
 def transferProduct(request):
-    group = Group.objects.get(pk=2)
-    if group in request.user.groups.all():
-        if request.method == 'POST':
-            # fr_wallet = request.POST['fr_wallet']
-            fr_client = Client.objects.get(pk=request.POST['fr_client'])
-            fr_division = fr_client.division
-            to_client = Client.objects.get(pk=request.POST['client'])
-            to_division = to_client.division
-            item_transfer_type = Item_transfer_type.objects.get(pk=2)
-            index = 1
-            while index < 31:
-                if request.POST['product'+str(index)]:
-                    product = Product.objects.get(pk=request.POST['product'+str(index)])
-                    item_transfer = Item_transfer.objects.create(item_transfer_type=item_transfer_type, product=product, to_division=to_division, to_client=to_client, fr_division=fr_division, fr_client=fr_client,  is_confirmed=True, confirmed_by=request.user, created_by=request.user, quantity=int(request.POST['quantity'+str(index)]))
-                    if item_transfer:
-                        hasagdahBalance = Item_balance.objects.filter(product=product.id, client=item_transfer.fr_client.id)
-                        if len(hasagdahBalance) > 0:
-                            too = int(hasagdahBalance[0].quantity) - int(item_transfer.quantity)
-                            hasagdahBalance[0].quantity = too
-                            hasagdahBalance[0].save()
+    if request.method == 'POST':
+        # fr_wallet = request.POST['fr_wallet']
+        fr_client = Client.objects.get(pk=request.POST['fr_client'])
+        fr_division = fr_client.division
+        to_client = Client.objects.get(pk=request.POST['client'])
+        to_division = to_client.division
+        item_transfer_type = Item_transfer_type.objects.get(pk=2)
+        index = 1
+        while index < 31:
+            if request.POST['product'+str(index)]:
+                product = Product.objects.get(pk=request.POST['product'+str(index)])
+                item_transfer = Item_transfer.objects.create(item_transfer_type=item_transfer_type, product=product, to_division=to_division, to_client=to_client, fr_division=fr_division, fr_client=fr_client,  is_confirmed=True, confirmed_by=request.user, created_by=request.user, quantity=int(request.POST['quantity'+str(index)]))
+                if item_transfer:
+                    hasagdahBalance = Item_balance.objects.filter(product=product.id, client=item_transfer.fr_client.id)
+                    if len(hasagdahBalance) > 0:
+                        too = int(hasagdahBalance[0].quantity) - int(item_transfer.quantity)
+                        hasagdahBalance[0].quantity = too
+                        hasagdahBalance[0].save()
 
-                        itemBalance = Item_balance.objects.filter(product=product, client=item_transfer.to_client.id)
-                        if len(itemBalance) > 0:
-                            itemBalance[0].quantity = itemBalance[0].quantity + item_transfer.quantity
-                            itemBalance[0].save()
-                        else:
-                            item = Item_balance.objects.create(created_by=request.user, quantity=item_transfer.quantity, client=item_transfer.to_client, division=item_transfer.to_division, product=product)
+                    itemBalance = Item_balance.objects.filter(product=product, client=item_transfer.to_client.id)
+                    if len(itemBalance) > 0:
+                        itemBalance[0].quantity = itemBalance[0].quantity + item_transfer.quantity
+                        itemBalance[0].save()
+                    else:
+                        item = Item_balance.objects.create(created_by=request.user, quantity=item_transfer.quantity, client=item_transfer.to_client, division=item_transfer.to_division, product=product)
 
-                else:
-                    print("None")
-                index += 1
-
-            return redirect('/itembalances?client=' + request.POST['client'])
-        else:
-            client = request.GET.get('client', None)
-            if client == None:
-                all_balances = []
             else:
-                all_balances = Item_balance.objects.filter(client=client, product__isnull=False)
-            all_divisions = Division.objects.all()
-            all_clients = Client.objects.all()
-            return render(request, 'transferProduct.html', {'all_balances':all_balances, 'range': range(30), 'all_divisions':all_divisions, 'all_clients':all_clients, 'client':client})
+                print("None")
+            index += 1
+
+        return redirect('/itembalances?client=' + request.POST['client'])
     else:
-        return redirect('/accounts/login/')
+        client = request.GET.get('client', None)
+        if client == None:
+            all_balances = []
+        else:
+            all_balances = Item_balance.objects.filter(client=client, product__isnull=False)
+        all_divisions = Division.objects.all()
+        all_clients = Client.objects.all()
+        return render(request, 'transferProduct.html', {'all_balances':all_balances, 'range': range(30), 'all_divisions':all_divisions, 'all_clients':all_clients, 'client':client})
 
-
+@group_required('Удирдлага', 'Нягтлан')
 @never_cache
 def productBalance(request, client_id, product_id):
     client = get_object_or_404(Client, pk=client_id)
@@ -410,83 +338,78 @@ def productBalance(request, client_id, product_id):
     return JsonResponse({'size_type': size_type, 'size': size})
 
 
-
+@group_required('Удирдлага', 'Нягтлан')
 @never_cache
 def transferCommodity(request):
-    group = Group.objects.get(pk=2)
-    if group in request.user.groups.all():
-        if request.method == 'POST':
-            # fr_wallet = request.POST['fr_wallet']
-            fr_client = Client.objects.get(pk=request.POST['fr_client'])
-            fr_division = fr_client.division
-            to_client = Client.objects.get(pk=request.POST['client'])
-            to_division = to_client.division
-            item_transfer_type = Item_transfer_type.objects.get(pk=2)
-            index = 1
-            while index < 31:
-                if request.POST['commodity'+str(index)]:
-                    commodity = Commodity.objects.get(pk=request.POST['commodity'+str(index)])
-                    if commodity.size_type.id == 1:
-                        item_transfer = Item_transfer.objects.create(item_transfer_type=item_transfer_type, commodity=commodity, to_division=to_division, to_client=to_client, fr_division=fr_division, fr_client=fr_client,  is_confirmed=True, confirmed_by=request.user, created_by=request.user, quantity=int(request.POST['quantity'+str(index)]))
-                    elif commodity.size_type.id == 2:
-                        item_transfer = Item_transfer.objects.create(item_transfer_type=item_transfer_type, commodity=commodity, to_division=to_division, to_client=to_client, fr_division=fr_division, fr_client=fr_client,  is_confirmed=True, confirmed_by=request.user, created_by=request.user, size=int(request.POST['quantity'+str(index)]))
-                    else:
-                        item_transfer = None
-
-                    if item_transfer:
-                        hasagdahBalance = Item_balance.objects.filter(commodity=commodity, client=item_transfer.fr_client.id)
-                        if len(hasagdahBalance) > 0:
-                            if commodity.size_type.id == 1 and hasagdahBalance[0].quantity != None:
-                                too = int(hasagdahBalance[0].quantity) - int(item_transfer.quantity)
-                                hasagdahBalance[0].quantity = too
-                                hasagdahBalance[0].save()
-                            elif commodity.size_type.id == 2 and hasagdahBalance[0].size != None:
-                                too = int(hasagdahBalance[0].size) - int(item_transfer.size)
-                                hasagdahBalance[0].size = too
-                                hasagdahBalance[0].save()
-                            else:
-                                print("ERROR CONTANCT TO ADMIN")
-
-                        itemBalance = Item_balance.objects.filter(commodity=commodity, client=item_transfer.to_client.id)
-                        if len(itemBalance) > 0:
-                            if commodity.size_type.id == 1 and itemBalance[0].quantity != None:
-                                too = int(itemBalance[0].quantity) + int(item_transfer.quantity)
-                                itemBalance[0].quantity = too
-                                itemBalance[0].save()
-                            elif commodity.size_type.id == 2 and itemBalance[0].size != None:
-                                too = int(itemBalance[0].size) + int(item_transfer.size)
-                                itemBalance[0].size = too
-                                itemBalance[0].save()
-                            else:
-                                print("ERROR CONTANCT TO ADMIN")
-                        else:
-                            print(item_transfer)
-                            if commodity.size_type.id == 1:
-                                item = Item_balance.objects.create(created_by=request.user, quantity=item_transfer.quantity, client=item_transfer.to_client, division=item_transfer.to_division, commodity=commodity)
-                            elif commodity.size_type.id == 2:
-                                item = Item_balance.objects.create(created_by=request.user, size=item_transfer.size, client=item_transfer.to_client, division=item_transfer.to_division, commodity=commodity)
-                            else:
-                                print("ERROR CONTANCT TO ADMIN")
-                            print("creating")
-                        
-
+    if request.method == 'POST':
+        # fr_wallet = request.POST['fr_wallet']
+        fr_client = Client.objects.get(pk=request.POST['fr_client'])
+        fr_division = fr_client.division
+        to_client = Client.objects.get(pk=request.POST['client'])
+        to_division = to_client.division
+        item_transfer_type = Item_transfer_type.objects.get(pk=2)
+        index = 1
+        while index < 31:
+            if request.POST['commodity'+str(index)]:
+                commodity = Commodity.objects.get(pk=request.POST['commodity'+str(index)])
+                if commodity.size_type.id == 1:
+                    item_transfer = Item_transfer.objects.create(item_transfer_type=item_transfer_type, commodity=commodity, to_division=to_division, to_client=to_client, fr_division=fr_division, fr_client=fr_client,  is_confirmed=True, confirmed_by=request.user, created_by=request.user, quantity=int(request.POST['quantity'+str(index)]))
+                elif commodity.size_type.id == 2:
+                    item_transfer = Item_transfer.objects.create(item_transfer_type=item_transfer_type, commodity=commodity, to_division=to_division, to_client=to_client, fr_division=fr_division, fr_client=fr_client,  is_confirmed=True, confirmed_by=request.user, created_by=request.user, size=int(request.POST['quantity'+str(index)]))
                 else:
-                    print("None")
-                index += 1
+                    item_transfer = None
 
-            return redirect('/itembalances?client=' + request.POST['client'])
-        else:
-            client = request.GET.get('client', None)
-            if client == None:
-                all_balances = []
+                if item_transfer:
+                    hasagdahBalance = Item_balance.objects.filter(commodity=commodity, client=item_transfer.fr_client.id)
+                    if len(hasagdahBalance) > 0:
+                        if commodity.size_type.id == 1 and hasagdahBalance[0].quantity != None:
+                            too = int(hasagdahBalance[0].quantity) - int(item_transfer.quantity)
+                            hasagdahBalance[0].quantity = too
+                            hasagdahBalance[0].save()
+                        elif commodity.size_type.id == 2 and hasagdahBalance[0].size != None:
+                            too = int(hasagdahBalance[0].size) - int(item_transfer.size)
+                            hasagdahBalance[0].size = too
+                            hasagdahBalance[0].save()
+                        else:
+                            print("ERROR CONTANCT TO ADMIN")
+
+                    itemBalance = Item_balance.objects.filter(commodity=commodity, client=item_transfer.to_client.id)
+                    if len(itemBalance) > 0:
+                        if commodity.size_type.id == 1 and itemBalance[0].quantity != None:
+                            too = int(itemBalance[0].quantity) + int(item_transfer.quantity)
+                            itemBalance[0].quantity = too
+                            itemBalance[0].save()
+                        elif commodity.size_type.id == 2 and itemBalance[0].size != None:
+                            too = int(itemBalance[0].size) + int(item_transfer.size)
+                            itemBalance[0].size = too
+                            itemBalance[0].save()
+                        else:
+                            print("ERROR CONTANCT TO ADMIN")
+                    else:
+                        print(item_transfer)
+                        if commodity.size_type.id == 1:
+                            item = Item_balance.objects.create(created_by=request.user, quantity=item_transfer.quantity, client=item_transfer.to_client, division=item_transfer.to_division, commodity=commodity)
+                        elif commodity.size_type.id == 2:
+                            item = Item_balance.objects.create(created_by=request.user, size=item_transfer.size, client=item_transfer.to_client, division=item_transfer.to_division, commodity=commodity)
+                        else:
+                            print("ERROR CONTANCT TO ADMIN")
+                        print("creating")
+                    
+
             else:
-                all_balances = Item_balance.objects.filter(client=client, commodity__isnull=False)
-            all_divisions = Division.objects.all()
-            all_clients = Client.objects.all()
-            return render(request, 'transferCommodity.html', {'all_balances':all_balances, 'range': range(30), 'all_divisions':all_divisions, 'all_clients':all_clients, 'client':client})
-    else:
-        return redirect('/accounts/login/')
+                print("None")
+            index += 1
 
+        return redirect('/itembalances?client=' + request.POST['client'])
+    else:
+        client = request.GET.get('client', None)
+        if client == None:
+            all_balances = []
+        else:
+            all_balances = Item_balance.objects.filter(client=client, commodity__isnull=False)
+        all_divisions = Division.objects.all()
+        all_clients = Client.objects.all()
+        return render(request, 'transferCommodity.html', {'all_balances':all_balances, 'range': range(30), 'all_divisions':all_divisions, 'all_clients':all_clients, 'client':client})
 
 @never_cache
 def commodityBalance(request, client_id, commodity_id):
@@ -505,41 +428,80 @@ def commodityBalance(request, client_id, commodity_id):
 
     return JsonResponse({'size_type': size_type, 'size': size})
 
-
+@group_required('Удирдлага')
 @never_cache
 def ingredientedBalance(request):
-    group = Group.objects.get(pk=2)
-    if group in request.user.groups.all():
-        if request.method == 'POST':
-            return redirect('/ingredientedbalance')
-        else:
-            client = request.GET.get('client', None)
-            if client == None:
-                all_balances = []
-            else:
-                all_balances = Item_balance.objects.filter(client=client, commodity__isnull=False)
-            all_divisions = Division.objects.all()
-            all_clients = Client.objects.all()
-            return render(request, 'transferCommodity.html', {'all_balances':all_balances, 'range': range(30), 'all_divisions':all_divisions, 'all_clients':all_clients, 'client':client})
+    if request.method == 'POST':
+        return redirect('/ingredientedbalance')
     else:
-        return redirect('/accounts/login/')
+        client = request.GET.get('client', None)
+        if client == None:
+            all_balances = []
+        else:
+            all_balances = Item_balance.objects.filter(client=client, commodity__isnull=False)
+        all_divisions = Division.objects.all()
+        all_clients = Client.objects.all()
+        return render(request, 'transferCommodity.html', {'all_balances':all_balances, 'range': range(30), 'all_divisions':all_divisions, 'all_clients':all_clients, 'client':client})
 
+@group_required('Удирдлага')
 @never_cache
 def dailyReportSoldItems(request):
-    group = Group.objects.get(pk=2)
-    if group in request.user.groups.all():
-        if request.method == 'POST':
-            return redirect('/soldItems')
+    if request.method == 'POST':
+        return redirect('/soldItems')
+    else:
+        shift_worker = request.GET.get('shiftWorker', None)
+        if shift_worker != None:
+            shift_work = get_object_or_404(Shift_work, pk=shift_worker)
         else:
-            shift_worker = request.GET.get('shiftWorker', None)
-            if shift_worker != None:
-                shift_work = get_object_or_404(Shift_work, pk=shift_worker)
+            shift_work = Shift_work.objects.filter(division=5).order_by('-id').first()
+
+        all_parent_cats = Product_category.objects.filter(parent__isnull=True)
+        sold_items = []
+        all_order_details = Order_detial.objects.filter(shift_work=shift_work.id, is_deleted=False).order_by('product')
+        for detail in all_order_details:
+            index = next((i for i, item in enumerate(sold_items) if item['id'] == int(detail.product.id)), -1)
+            category = None
+            for cat in detail.product.categories.all():
+                if cat.parent == None:
+                    category = cat
+
+            if index < 0:
+                sold_items.append({'id':detail.product.id, 'product': detail.product.name, 'quantity':detail.quantity, 'amount':detail.subtotal, 'category':category})
             else:
-                shift_work = Shift_work.objects.filter(division=5).order_by('-id').first()
+                sold_items[index]['quantity'] = int(sold_items[index]['quantity']) + int(detail.quantity)
+                sold_items[index]['amount'] = int(sold_items[index]['amount']) + int(detail.subtotal)
+
+        all_shift_workers = Shift_work.objects.all().order_by('-id')
+        all_orders = Order.objects.filter(shift_work=shift_work.id)
+        total_order_amount = 0
+        for order in all_orders:
+            total_order_amount = total_order_amount + order.amount
+
+        return render(request, 'dailyReportSoldItems.html', {
+            'all_shift_workers':all_shift_workers, 
+            'shift_work':shift_work,
+            'sold_items': sold_items,
+            'total_order_amount':total_order_amount, 
+            'all_parent_cats':all_parent_cats})
+
+@group_required('Удирдлага')
+@never_cache
+def dailyReportSoldItemsRange(request):
+    if request.method == 'POST':
+        return redirect('/soldItems')
+    else:
+        start_datetime_str = request.GET.get('start_datetime')
+        end_datetime_str = request.GET.get('end_datetime')
+        print(start_datetime_str, end_datetime_str)
+        if start_datetime_str and end_datetime_str:
+            # Огноо + цагийг datetime объект болгон хувиргах
+            start_datetime = datetime.datetime.strptime(start_datetime_str, '%Y-%m-%dT%H:%M')
+            end_datetime = datetime.datetime.strptime(end_datetime_str, '%Y-%m-%dT%H:%M')
 
             all_parent_cats = Product_category.objects.filter(parent__isnull=True)
+
             sold_items = []
-            all_order_details = Order_detial.objects.filter(shift_work=shift_work.id, is_deleted=False).order_by('product')
+            all_order_details = Order_detial.objects.filter(is_deleted=False, created_at__range=(start_datetime, end_datetime)).order_by('product')
             for detail in all_order_details:
                 index = next((i for i, item in enumerate(sold_items) if item['id'] == int(detail.product.id)), -1)
                 category = None
@@ -553,196 +515,144 @@ def dailyReportSoldItems(request):
                     sold_items[index]['quantity'] = int(sold_items[index]['quantity']) + int(detail.quantity)
                     sold_items[index]['amount'] = int(sold_items[index]['amount']) + int(detail.subtotal)
 
-            all_shift_workers = Shift_work.objects.all().order_by('-id')
-            all_orders = Order.objects.filter(shift_work=shift_work.id)
+            # sold_items = sorted(sold_items, key=lambda x: x['quantity'], reverse=True)
+
+            all_orders = Order.objects.filter(created_at__range=(start_datetime, end_datetime))
             total_order_amount = 0
             for order in all_orders:
                 total_order_amount = total_order_amount + order.amount
-
-            return render(request, 'dailyReportSoldItems.html', {
-                'all_shift_workers':all_shift_workers, 
-                'shift_work':shift_work,
+            
+            return render(request, 'dailyReportSoldItemsRange.html', {
                 'sold_items': sold_items,
                 'total_order_amount':total_order_amount, 
-                'all_parent_cats':all_parent_cats})
-    else:
-        return redirect('/accounts/login/')
-    
-@never_cache
-def dailyReportSoldItemsRange(request):
-    group = Group.objects.get(pk=2)
-    if group in request.user.groups.all():
-        if request.method == 'POST':
-            return redirect('/soldItems')
+                'all_parent_cats':all_parent_cats,
+                'start_datetime': start_datetime_str,
+                'end_datetime': end_datetime_str})
         else:
-            start_datetime_str = request.GET.get('start_datetime')
-            end_datetime_str = request.GET.get('end_datetime')
-            print(start_datetime_str, end_datetime_str)
-            if start_datetime_str and end_datetime_str:
-                # Огноо + цагийг datetime объект болгон хувиргах
-                start_datetime = datetime.datetime.strptime(start_datetime_str, '%Y-%m-%dT%H:%M')
-                end_datetime = datetime.datetime.strptime(end_datetime_str, '%Y-%m-%dT%H:%M')
+            return render(request, 'dailyReportSoldItemsRange.html', {})
 
-                all_parent_cats = Product_category.objects.filter(parent__isnull=True)
-
-                sold_items = []
-                all_order_details = Order_detial.objects.filter(is_deleted=False, created_at__range=(start_datetime, end_datetime)).order_by('product')
-                for detail in all_order_details:
-                    index = next((i for i, item in enumerate(sold_items) if item['id'] == int(detail.product.id)), -1)
-                    category = None
-                    for cat in detail.product.categories.all():
-                        if cat.parent == None:
-                            category = cat
-
-                    if index < 0:
-                        sold_items.append({'id':detail.product.id, 'product': detail.product.name, 'quantity':detail.quantity, 'amount':detail.subtotal, 'category':category})
-                    else:
-                        sold_items[index]['quantity'] = int(sold_items[index]['quantity']) + int(detail.quantity)
-                        sold_items[index]['amount'] = int(sold_items[index]['amount']) + int(detail.subtotal)
-
-                # sold_items = sorted(sold_items, key=lambda x: x['quantity'], reverse=True)
-
-                all_orders = Order.objects.filter(created_at__range=(start_datetime, end_datetime))
-                total_order_amount = 0
-                for order in all_orders:
-                    total_order_amount = total_order_amount + order.amount
-               
-                return render(request, 'dailyReportSoldItemsRange.html', {
-                    'sold_items': sold_items,
-                    'total_order_amount':total_order_amount, 
-                    'all_parent_cats':all_parent_cats,
-                    'start_datetime': start_datetime_str,
-                    'end_datetime': end_datetime_str})
-            else:
-                return render(request, 'dailyReportSoldItemsRange.html', {})
-    else:
-        return redirect('/accounts/login/')
-
+@group_required('Удирдлага')
 @never_cache
 def dailyReport(request):
-    group = Group.objects.get(pk=2)
-    if group in request.user.groups.all():
-        if request.method == 'POST':
-            return redirect('/dailyReport')
-        else:
-            shift_worker = request.GET.get('shiftWorker', None)
-            if shift_worker != None:
-                shift_work = get_object_or_404(Shift_work, pk=shift_worker)
-            else:
-                shift_work = Shift_work.objects.filter(division=5).order_by('-id').first()
-
-            all_wallet = Wallet.objects.filter(is_enabled=True)
-            total_payment_balanace = 0
-            wallet_balances = []
-            umnu_tavisan_uriin_guilgee = []
-            umnu_tavisan_uriin_guilgee_dun = 0
-            for wallet in all_wallet:
-                wallet_balance = 0
-                payments = Payment.objects.filter(wallet=wallet.id, shift_work=shift_work.id, is_deleted=False)
-                for payment in payments:
-                    wallet_balance = wallet_balance + payment.amount
-
-                    umnuh_eeljiin_order = False
-                    for ord in payment.orders.all():
-                        if ord.shift_work != shift_work:
-                            umnuh_eeljiin_order = True
-                    if umnuh_eeljiin_order:
-                        umnu_tavisan_uriin_guilgee.append(payment)
-                        umnu_tavisan_uriin_guilgee_dun = umnu_tavisan_uriin_guilgee_dun + payment.amount
-                    else:
-                        #yag tuhain udriin order bolhoor paymentiig totalruu append hj bn
-                        total_payment_balanace = total_payment_balanace + payment.amount
-
-
-                wallet_balances.append({'wallet':wallet, 'balance':int(wallet_balance)})
-
-            all_shift_workers = Shift_work.objects.all().order_by('-id')
-            all_orders = Order.objects.filter(shift_work=shift_work.id)
-            total_order_amount = 0
-            total_discount = 0
-            total_discounted_amount = 0
-            total_under_amount_guest = 0
-            total_under_amount_worker = 0
-            for order in all_orders:
-                total_order_amount = total_order_amount + order.amount
-                total_discount = total_discount + order.discount
-                total_discounted_amount = total_discounted_amount + order.discounted_amount
-                if order.status != "Төлбөр гүйцэт төлсөн.":
-                    payment_dun = 0
-                    for payment in order.payments.all():
-                        payment_dun = payment_dun + payment.amount
-
-                    if order.worker:
-                        total_under_amount_worker = total_under_amount_worker + (order.discounted_amount - payment_dun)
-                    else:
-                        total_under_amount_guest = total_under_amount_guest + (order.discounted_amount - payment_dun)
-
-            worker_under = []
-            all_worker_orders = Order.objects.filter(shift_work=shift_work.id, worker__isnull=False).order_by('worker')
-            for order in all_worker_orders:
-                index = next((i for i, item in enumerate(worker_under) if item['id'] == int(order.worker.id)), -1)
-                payment_t = 0
-                for payment in order.payments.all():
-                    payment_t = payment_t + payment.amount
-
-                under_payment = order.discounted_amount - payment_t
-                if index < 0:
-                    worker_under.append({'id':order.worker.id, 'worker': order.worker.first_name, 'total_amount':order.amount, 'discount':order.discount, 'under_amount':under_payment, 'paid':payment_t})
-                else:
-                    worker_under[index]['total_amount'] = int(worker_under[index]['total_amount']) + int(order.amount)
-                    worker_under[index]['discount'] = int(worker_under[index]['discount']) + int(order.discount)
-                    worker_under[index]['under_amount'] = int(worker_under[index]['under_amount']) + int(under_payment)
-                    worker_under[index]['paid'] = int(worker_under[index]['paid']) + int(payment_t)
-
-            all_parent_cats = Product_category.objects.filter(parent__isnull=True)
-
-
-            customer_under = []
-            all_customer_orders = Order.objects.filter(shift_work=shift_work.id, customer__isnull=False).order_by('customer')
-            for order in all_customer_orders:
-                index = next((i for i, item in enumerate(customer_under) if item['id'] == int(order.customer.id)), -1)
-                payment_t = 0
-                for payment in order.payments.all():
-                    payment_t = payment_t + payment.amount
-
-                under_payment = order.discounted_amount - payment_t
-                if order.customer.firstname:
-                    cus = order.customer.firstname + "(" + str(order.customer.id) + ")"
-                else:
-                    cus = str(order.customer.mobile) + "(" + str(order.customer.id) + ")"
-                if index < 0:
-                    customer_under.append({'id':order.customer.id, 'customer': cus, 'total_amount':order.amount, 'discount':order.discount, 'under_amount':under_payment, 'paid':payment_t})
-                else:
-                    customer_under[index]['total_amount'] = int(customer_under[index]['total_amount']) + int(order.amount)
-                    customer_under[index]['discount'] = int(customer_under[index]['discount']) + int(order.discount)
-                    customer_under[index]['under_amount'] = int(customer_under[index]['under_amount']) + int(under_payment)
-                    customer_under[index]['paid'] = int(customer_under[index]['paid']) + int(payment_t)
-            
-            all_payments = Payment.objects.filter(shift_work=shift_work, is_deleted=False)
-            all_deleted_payments = Payment.objects.filter(shift_work=shift_work, is_deleted=True)
-
-            print(all_payments)
-            return render(request, 'dailyReport.html', {
-                'all_wallets':all_wallet,
-                'all_payments':all_payments,
-                'all_deleted_payments':all_deleted_payments,
-                'all_shift_workers':all_shift_workers, 
-                'wallet_balances':wallet_balances, 
-                'shift_work':shift_work, 
-                'total_payment_balanace':int(total_payment_balanace),
-                'total_order_amount':total_order_amount, 
-                'total_discount': total_discount,
-                'total_discounted_amount': total_discounted_amount, 
-                'total_under_amount_worker':total_under_amount_worker,
-                'total_under_amount_guest': total_under_amount_guest,
-                'worker_under':worker_under,
-                'customer_under':customer_under,
-                'all_parent_cats':all_parent_cats,
-                'umnu_tavisan_uriin_guilgee':umnu_tavisan_uriin_guilgee,
-                'umnu_tavisan_uriin_guilgee_dun':umnu_tavisan_uriin_guilgee_dun,
-                'payment_total_plus_umnuh_payment_all_total': total_payment_balanace + umnu_tavisan_uriin_guilgee_dun })
+    if request.method == 'POST':
+        return redirect('/dailyReport')
     else:
-        return redirect('/accounts/login/')
+        shift_worker = request.GET.get('shiftWorker', None)
+        if shift_worker != None:
+            shift_work = get_object_or_404(Shift_work, pk=shift_worker)
+        else:
+            shift_work = Shift_work.objects.filter(division=5).order_by('-id').first()
+
+        all_wallet = Wallet.objects.filter(is_enabled=True)
+        total_payment_balanace = 0
+        wallet_balances = []
+        umnu_tavisan_uriin_guilgee = []
+        umnu_tavisan_uriin_guilgee_dun = 0
+        for wallet in all_wallet:
+            wallet_balance = 0
+            payments = Payment.objects.filter(wallet=wallet.id, shift_work=shift_work.id, is_deleted=False)
+            for payment in payments:
+                wallet_balance = wallet_balance + payment.amount
+
+                umnuh_eeljiin_order = False
+                for ord in payment.orders.all():
+                    if ord.shift_work != shift_work:
+                        umnuh_eeljiin_order = True
+                if umnuh_eeljiin_order:
+                    umnu_tavisan_uriin_guilgee.append(payment)
+                    umnu_tavisan_uriin_guilgee_dun = umnu_tavisan_uriin_guilgee_dun + payment.amount
+                else:
+                    #yag tuhain udriin order bolhoor paymentiig totalruu append hj bn
+                    total_payment_balanace = total_payment_balanace + payment.amount
+
+
+            wallet_balances.append({'wallet':wallet, 'balance':int(wallet_balance)})
+
+        all_shift_workers = Shift_work.objects.all().order_by('-id')
+        all_orders = Order.objects.filter(shift_work=shift_work.id)
+        total_order_amount = 0
+        total_discount = 0
+        total_discounted_amount = 0
+        total_under_amount_guest = 0
+        total_under_amount_worker = 0
+        for order in all_orders:
+            total_order_amount = total_order_amount + order.amount
+            total_discount = total_discount + order.discount
+            total_discounted_amount = total_discounted_amount + order.discounted_amount
+            if order.status != "Төлбөр гүйцэт төлсөн.":
+                payment_dun = 0
+                for payment in order.payments.all():
+                    payment_dun = payment_dun + payment.amount
+
+                if order.worker:
+                    total_under_amount_worker = total_under_amount_worker + (order.discounted_amount - payment_dun)
+                else:
+                    total_under_amount_guest = total_under_amount_guest + (order.discounted_amount - payment_dun)
+
+        worker_under = []
+        all_worker_orders = Order.objects.filter(shift_work=shift_work.id, worker__isnull=False).order_by('worker')
+        for order in all_worker_orders:
+            index = next((i for i, item in enumerate(worker_under) if item['id'] == int(order.worker.id)), -1)
+            payment_t = 0
+            for payment in order.payments.all():
+                payment_t = payment_t + payment.amount
+
+            under_payment = order.discounted_amount - payment_t
+            if index < 0:
+                worker_under.append({'id':order.worker.id, 'worker': order.worker.first_name, 'total_amount':order.amount, 'discount':order.discount, 'under_amount':under_payment, 'paid':payment_t})
+            else:
+                worker_under[index]['total_amount'] = int(worker_under[index]['total_amount']) + int(order.amount)
+                worker_under[index]['discount'] = int(worker_under[index]['discount']) + int(order.discount)
+                worker_under[index]['under_amount'] = int(worker_under[index]['under_amount']) + int(under_payment)
+                worker_under[index]['paid'] = int(worker_under[index]['paid']) + int(payment_t)
+
+        all_parent_cats = Product_category.objects.filter(parent__isnull=True)
+
+
+        customer_under = []
+        all_customer_orders = Order.objects.filter(shift_work=shift_work.id, customer__isnull=False).order_by('customer')
+        for order in all_customer_orders:
+            index = next((i for i, item in enumerate(customer_under) if item['id'] == int(order.customer.id)), -1)
+            payment_t = 0
+            for payment in order.payments.all():
+                payment_t = payment_t + payment.amount
+
+            under_payment = order.discounted_amount - payment_t
+            if order.customer.firstname:
+                cus = order.customer.firstname + "(" + str(order.customer.id) + ")"
+            else:
+                cus = str(order.customer.mobile) + "(" + str(order.customer.id) + ")"
+            if index < 0:
+                customer_under.append({'id':order.customer.id, 'customer': cus, 'total_amount':order.amount, 'discount':order.discount, 'under_amount':under_payment, 'paid':payment_t})
+            else:
+                customer_under[index]['total_amount'] = int(customer_under[index]['total_amount']) + int(order.amount)
+                customer_under[index]['discount'] = int(customer_under[index]['discount']) + int(order.discount)
+                customer_under[index]['under_amount'] = int(customer_under[index]['under_amount']) + int(under_payment)
+                customer_under[index]['paid'] = int(customer_under[index]['paid']) + int(payment_t)
+        
+        all_payments = Payment.objects.filter(shift_work=shift_work, is_deleted=False)
+        all_deleted_payments = Payment.objects.filter(shift_work=shift_work, is_deleted=True)
+
+        print(all_payments)
+        return render(request, 'dailyReport.html', {
+            'all_wallets':all_wallet,
+            'all_payments':all_payments,
+            'all_deleted_payments':all_deleted_payments,
+            'all_shift_workers':all_shift_workers, 
+            'wallet_balances':wallet_balances, 
+            'shift_work':shift_work, 
+            'total_payment_balanace':int(total_payment_balanace),
+            'total_order_amount':total_order_amount, 
+            'total_discount': total_discount,
+            'total_discounted_amount': total_discounted_amount, 
+            'total_under_amount_worker':total_under_amount_worker,
+            'total_under_amount_guest': total_under_amount_guest,
+            'worker_under':worker_under,
+            'customer_under':customer_under,
+            'all_parent_cats':all_parent_cats,
+            'umnu_tavisan_uriin_guilgee':umnu_tavisan_uriin_guilgee,
+            'umnu_tavisan_uriin_guilgee_dun':umnu_tavisan_uriin_guilgee_dun,
+            'payment_total_plus_umnuh_payment_all_total': total_payment_balanace + umnu_tavisan_uriin_guilgee_dun })
 
 
 @never_cache
@@ -760,45 +670,41 @@ def posNegtgel(request):
             #     order.save()
             return render(request, 'postNegtgel.html', {})
 
-
+@group_required('Удирдлага')
 @never_cache
 def loungeItemBalances(request):
-    group = Group.objects.get(pk=2)
-    if group in request.user.groups.all():
-        if request.method == 'POST':
-            return redirect('/loungeItemBalances')
-        else:
-            shift_worker = request.GET.get('shiftWorker', None)
-            if shift_worker != None:
-                shift_work = get_object_or_404(Shift_work, pk=shift_worker)
-            else:
-                shift_work = Shift_work.objects.filter(division=5).order_by('-id').first()
-
-            now_item_balances_logs = Item_balance_log.objects.filter(shift_work=shift_work.id, division=5, client=19)
-            if len(now_item_balances_logs) > 0:
-                print(len(now_item_balances_logs))
-            else:
-                now_item_balances_logs = Item_balance.objects.filter(division=5, client=19)
-
-            prev_shift_work = get_object_or_404(Shift_work, pk=int(shift_work.id)-1)
-            prev_item_balance_logs = Item_balance_log.objects.filter(shift_work=prev_shift_work.id, division=5, client=19)
-            
-            print(prev_shift_work.id, shift_work.id)
-            obj_list = []
-            for now_balance in now_item_balances_logs:
-                for prev_balance in prev_item_balance_logs:
-                    if now_balance.product and now_balance.product == prev_balance.product:
-                        order_detials = Order_detial.objects.filter(shift_work=shift_work.id, product=now_balance.product.id)
-                        counter = 0
-                        for detial in order_detials:
-                            counter += detial.quantity
-
-                        # if now_balance.quantity != 0 or prev_balance.quantity != 0 or counter != 0:
-                        obj_list.append({'name':now_balance.product.name, 'now':now_balance.quantity, 'prev':prev_balance.quantity, 'order_detial_counter':counter})
-
-            return render(request, 'dailyReportSoldItemsNoPrice.html', {'obj_list':obj_list})
+    if request.method == 'POST':
+        return redirect('/loungeItemBalances')
     else:
-        return redirect('/accounts/login/')
+        shift_worker = request.GET.get('shiftWorker', None)
+        if shift_worker != None:
+            shift_work = get_object_or_404(Shift_work, pk=shift_worker)
+        else:
+            shift_work = Shift_work.objects.filter(division=5).order_by('-id').first()
+
+        now_item_balances_logs = Item_balance_log.objects.filter(shift_work=shift_work.id, division=5, client=19)
+        if len(now_item_balances_logs) > 0:
+            print(len(now_item_balances_logs))
+        else:
+            now_item_balances_logs = Item_balance.objects.filter(division=5, client=19)
+
+        prev_shift_work = get_object_or_404(Shift_work, pk=int(shift_work.id)-1)
+        prev_item_balance_logs = Item_balance_log.objects.filter(shift_work=prev_shift_work.id, division=5, client=19)
+        
+        print(prev_shift_work.id, shift_work.id)
+        obj_list = []
+        for now_balance in now_item_balances_logs:
+            for prev_balance in prev_item_balance_logs:
+                if now_balance.product and now_balance.product == prev_balance.product:
+                    order_detials = Order_detial.objects.filter(shift_work=shift_work.id, product=now_balance.product.id)
+                    counter = 0
+                    for detial in order_detials:
+                        counter += detial.quantity
+
+                    # if now_balance.quantity != 0 or prev_balance.quantity != 0 or counter != 0:
+                    obj_list.append({'name':now_balance.product.name, 'now':now_balance.quantity, 'prev':prev_balance.quantity, 'order_detial_counter':counter})
+
+        return render(request, 'dailyReportSoldItemsNoPrice.html', {'obj_list':obj_list})
 
 @csrf_exempt
 def printer(request):
@@ -908,49 +814,42 @@ def printer(request):
         print("printed")
         return HttpResponse("done")
 
+@group_required('Удирдлага')
 @never_cache
 def changePriceProduct(request):
-    group = Group.objects.get(pk=2)
-    if group in request.user.groups.all():
-        if request.method == 'POST':
-            for key in request.POST:
-                if key != 'csrfmiddlewaretoken':
-                    value = request.POST[key]
-                    product = Product.objects.get(pk=key)
-                    product.cost = value
-                    product.save()
-            return redirect('/changePriceProduct')
-        else:
-            all_products = Product.objects.all().order_by('id')
-            return render(request, 'changePriceProduct.html', {'all_products':all_products})
+    if request.method == 'POST':
+        for key in request.POST:
+            if key != 'csrfmiddlewaretoken':
+                value = request.POST[key]
+                product = Product.objects.get(pk=key)
+                product.cost = value
+                product.save()
+        return redirect('/changePriceProduct')
     else:
-        return redirect('/accounts/login/')
+        all_products = Product.objects.all().order_by('id')
+        return render(request, 'changePriceProduct.html', {'all_products':all_products})
     
 def sendBillToTatvar(request):
-    group = Group.objects.get(pk=2)
-    if group in request.user.groups.all():
-        if request.method == 'POST':
-            response = requests.get("http://192.168.1.8:8000/api/bill/sendData")
-            bills = Bill.objects.filter(status='1')
-            if response.ok and response.text == "success":
-                for bill in bills:
-                    bill.status = '6'
-                    bill.save()
-            bills = Bill.objects.filter(status='1')
-            
-            return render(request, 'sendBillToTatvar.html', {'bills':bills, 'response':response.text})
-        else:
-            bills = Bill.objects.filter(status='1').order_by('id')
-            return render(request, 'sendBillToTatvar.html', {'bills':bills})
+    if request.method == 'POST':
+        response = requests.get("http://192.168.1.8:8000/api/bill/sendData")
+        bills = Bill.objects.filter(status='1')
+        if response.ok and response.text == "success":
+            for bill in bills:
+                bill.status = '6'
+                bill.save()
+        bills = Bill.objects.filter(status='1')
+        
+        return render(request, 'sendBillToTatvar.html', {'bills':bills, 'response':response.text})
     else:
-        return redirect('/accounts/login/')
+        bills = Bill.objects.filter(status='1').order_by('id')
+        return render(request, 'sendBillToTatvar.html', {'bills':bills})
     
-
+@group_required('Удирдлага', 'Нягтлан')
 def productToProductIngredient(request):
     products = Product.objects.all()
     return render(request, 'productToProductIngredient.html', {'products':products})
     
-
+@group_required('Удирдлага', 'Нягтлан')
 def commodityToProductIngredient(request):
     products = Product.objects.all()
     not_ingredient_products = Product.objects.filter(ingredients__isnull=True).exclude(division=3)
@@ -961,6 +860,7 @@ from datetime import timedelta
 
 from django.db import connection
 
+@group_required('Удирдлага', 'Нягтлан')
 def sales_report(request):
     with connection.cursor() as cursor:
         cursor.execute("SELECT NOW()")
