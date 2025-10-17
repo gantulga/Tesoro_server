@@ -43,7 +43,6 @@ from structure_app.decorators import group_required
 
 User = get_user_model()
 
-@group_required('Удирдлага', 'Nyagtlan')
 def home(request):
     return render(request, 'home.html', {})
 
