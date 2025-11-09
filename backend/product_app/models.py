@@ -75,22 +75,13 @@ class Commodity(Createdinfo):
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
 
-        # Бүх эцэг категориудыг нэмэх
-        categories_to_add = set()
-        
+        print(self, *args, **kwargs)
         for cat in self.categories.all():
-            current = cat
-            depth = 0
-            max_depth = 10  # Хязгаар тогтоох
-            
-            while current.parent and depth < max_depth:
-                categories_to_add.add(current.parent)
-                current = current.parent
-                depth += 1
-        
-        # Шинэ категориудыг нэмэх
-        if categories_to_add:
-            self.categories.add(*categories_to_add)
+            if cat.parent:
+                self.categories.add(cat.parent)
+
+            if cat.parent and cat.parent.parent:
+                self.categories.add(cat.parent.parent)
 
 # Бүтээгдэхүүн эд
 
