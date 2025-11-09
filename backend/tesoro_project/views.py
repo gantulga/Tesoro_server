@@ -54,7 +54,9 @@ def home(request):
 
     for cat in gal_togoo.commodity_categories.all():
         for com in cat.commodities.all():
-            print(cat, com)
+            balance = Item_balance.objects.filter(commodity=com.id, client=19)
+            print(balance, balance.commodity, balance.client)
+            
 
     commodities = Commodity.objects.all().order_by('categories')
 
