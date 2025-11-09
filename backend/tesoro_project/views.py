@@ -44,14 +44,15 @@ from structure_app.decorators import group_required
 User = get_user_model()
 
 def home(request):
-    cat = Commodity_category.objects.get(pk=10)
-    hool = Commodity_category.objects.get(pk=11)
-    for com in cat.commodities.all():
-        print(com.name)
-        cat.commodities.remove(com)
-        hool.commodities.add(com)
+    # cat = Commodity_category.objects.get(pk=10)
+    # hool = Commodity_category.objects.get(pk=11)
+    # for com in cat.commodities.all():
+    #     cat.commodities.remove(com)
+    #     hool.commodities.add(com)
 
-
+    cats = Commodity_category.objects.all()
+    for cat in cats:
+        print(len(cat.commodities.all()))
 
     commodities = Commodity.objects.all().order_by('categories')
 
