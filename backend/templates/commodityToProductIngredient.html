@@ -39,7 +39,7 @@
               {% for balance in ingredient.client_balances %}
                 <span style="
                 {% if ingredient.size > balance.balance %}
-                    color:'red'
+                    color:red
                 {% endif %}
                 ">
                 {{balance.client}} ({{balance.balance}}{{balance.abbreviation}}),
