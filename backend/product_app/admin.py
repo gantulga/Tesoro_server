@@ -45,9 +45,12 @@ class ProductAdmin(admin.ModelAdmin):
 class Item_balanceAdmin(admin.ModelAdmin):
     list_display = ('division', 'client', 'user', 'commodity', 'product', 'quantity', 'size')
 
+class CommodityCategoryAdmin(admin.ModelAdmin):
+    list_display = ('parent', 'name', 'description')
+
 # Register your models here.
 admin.site.register(Product_category, ProductCategoryAdmin)
-admin.site.register(Commodity_category)
+admin.site.register(Commodity_category, CommodityCategoryAdmin)
 admin.site.register(Product, ProductAdmin)
 admin.site.register(Commodity)
 admin.site.register(Size_type)
