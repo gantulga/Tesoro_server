@@ -51,14 +51,16 @@ def home(request):
     #     hool.commodities.add(com)
 
     gal_togoo = Division.objects.get(pk=2)
+    gal_togoo_client = Client.objects.get(pk=43)
 
     for cat in gal_togoo.commodity_categories.all():
         for com in cat.commodities.all():
             balances = Item_balance.objects.filter(commodity=com.id, client=19)
             for balance in balances:
-                if len(balances) > 1:
-                    print(balance.commodity, balances)
                 print(balance, balance.commodity, balance.client)
+                balance.division = gal_togoo
+                balance.client = gal_togoo_client
+                balance.save()
             
 
     commodities = Commodity.objects.all().order_by('categories')
