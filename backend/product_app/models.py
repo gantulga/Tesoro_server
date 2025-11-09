@@ -80,10 +80,10 @@ class Commodity(Createdinfo):
         for cat in com.categories.all():
             print(cat.parent, cat)
             if cat.parent:
-                com.categories.add(cat.parent)
+                com.categories.add(cat.parent.id)
 
             if cat.parent and cat.parent.parent:
-                com.categories.add(cat.parent.parent)
+                com.categories.add(cat.parent.parent.id)
 
 # Бүтээгдэхүүн эд
 
