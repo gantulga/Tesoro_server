@@ -16,40 +16,34 @@
         <th>Х/Н</th>
         <th>Нөөц</th>
       </tr>
-    {% with count=0 next_count=1 %}
     {% for product in products %}
-      {% if product.ingredients.all|length > 0 %}
-        <tr style="border-top: 1px solid black; border-collapse: collapse;">
-          <th>№</th>
-          {% with count=count|add:1 %}
-          <th>{{ count }}</div>
-          {% endwith %}
-          <th>{{product.name}}</th>
-          <th></th>
-          <th></th>
-          <th></th>
-          <th></th>
-        </tr>
-        {% for ingredient in product.ingredients.all %}
-          {% if forloop.first != product.ingredients.all.0 %}
-            <tr>
-              <td></td>
-              <td style="padding-left:15px"></td>
-              <td style="padding-left:15px"></td>
-              <td style="padding-left:15px">{{ ingredient.commodity.name }}</td>
-              <td style="padding-left:15px">{{ ingredient.size }}</td>
-              <td style="padding-left:15px">{{ ingredient.size_type.abbreviation }}</td>
-              <td style="padding-left:15px">
-                {% for balance in ingredient.client_balances.all %}
-                  {{balance.client}} = {{balance.balance}} {{balanace.abbreviation}}, 
-                {% endfor %}
-              </td>
-            </tr>
-          {% endif %}
-        {% endfor %}
-      {% endif %}
+      <tr style="border-top: 1px solid black; border-collapse: collapse;">
+        <th>№</th>
+        <th>{{ forloop.counter }}</div>
+        <th>{{ product.name }}</th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+      </tr>
+      {% for ingredient in product.ingredients.all %}
+        {% if forloop.first != product.ingredients.all.0 %}
+          <tr>
+            <td></td>
+            <td style="padding-left:15px"></td>
+            <td style="padding-left:15px"></td>
+            <td style="padding-left:15px">{{ ingredient.commodity.name }}</td>
+            <td style="padding-left:15px">{{ ingredient.size }}</td>
+            <td style="padding-left:15px">{{ ingredient.size_type.abbreviation }}</td>
+            <td style="padding-left:15px">
+              {% for balance in ingredient.client_balances.all %}
+                {{balance.client}} = {{balance.balance}} {{balanace.abbreviation}}, 
+              {% endfor %}
+            </td>
+          </tr>
+        {% endif %}
+      {% endfor %}
     {% endfor %}
-    {% endwith %}
   </table>
   <h3 style="margin-top: 50px;">Материалын орцгүй шууд зарагддаг бүтээгдэхүүнүүд</h3>
   <p>
