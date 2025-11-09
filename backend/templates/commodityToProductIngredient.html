@@ -36,7 +36,9 @@
             <td style="padding-left:15px">{{ ingredient.size }}</td>
             <td style="padding-left:15px">{{ ingredient.size_type.abbreviation }}</td>
             <td style="padding-left:15px">
-              {{ingredient.client_balances}}
+              {% for balance in ingredient.client_balances %}
+                {{balance.client}} = {{balance.balance}} {{balanace.abbreviation}}, 
+              {% endfor %}
             </td>
           </tr>
         {% endif %}
