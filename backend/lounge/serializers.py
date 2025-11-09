@@ -194,6 +194,7 @@ class OrderRecieverSerializer(serializers.ModelSerializer):
             detial = Order_detial.objects.create(order=order, **d)
             print(d)
             if detial:
+                print(detial)
                 itemTransferType = Item_transfer_type.objects.get(pk=3)
                 itemTransferType4 = Item_transfer_type.objects.get(pk=4)
                 # 19 5001 Лоунж бармен хэсэг
@@ -201,6 +202,7 @@ class OrderRecieverSerializer(serializers.ModelSerializer):
                 product = Product.objects.get(pk=d['product'].id)
                 if product.is_ingrediented:
                     for ingredents in product.ingredients.all():
+                        print("Ingredents commodity", ingredents)
                         hemjee = d['quantity'] * ingredents.size
                         if ingredents.size_type.id == 1:
                             itemTransfer = Item_transfer.objects.create(commodity=ingredents.commodity, fr_client=client, fr_division=client.division, quantity=hemjee, created_by=d['created_by'], order_detial=detial, item_transfer_type=itemTransferType4, to_product=product, product_quantity=d['quantity'])
@@ -209,6 +211,7 @@ class OrderRecieverSerializer(serializers.ModelSerializer):
                         
                         
                         if itemTransfer:
+                            print("itemTransfer commodity", itemTransfer)
                             fr_client_item_balance = Item_balance.objects.filter(
                                 commodity=ingredents.commodity, client=client).order_by('-id')[:1]
                             if fr_client_item_balance:
@@ -225,11 +228,13 @@ class OrderRecieverSerializer(serializers.ModelSerializer):
                                 balance.updated_by = d['created_by']
                                 balance.save()
                     for ingredents in product.ingredients_producted.all():
+                        print("Ingredents product", ingredents)
                         hemjee = d['quantity'] * ingredents.size
                         itemTransfer = Item_transfer.objects.create(product=ingredents.commodity, fr_client=client, fr_division=client.division, quantity=hemjee, created_by=d['created_by'], order_detial=detial, item_transfer_type=itemTransferType4, to_product=product, product_quantity=d['quantity'])
                         
                         
                         if itemTransfer:
+                            print("itemTransfer product", itemTransfer)
                             fr_client_item_balance = Item_balance.objects.filter(
                                 product=ingredents.commodity, client=client).order_by('-id')[:1]
                             if len(fr_client_item_balance) > 0:
@@ -241,6 +246,7 @@ class OrderRecieverSerializer(serializers.ModelSerializer):
                 else:
                     itemTransfer = Item_transfer.objects.create(product=d['product'], fr_client=client, fr_division=client.division, quantity=d['quantity'], created_by=d['created_by'], order_detial=detial, item_transfer_type=itemTransferType)
                     if itemTransfer:
+                        print("itemTransfer not ingredents", itemTransfer)
                         fr_client_item_balance = Item_balance.objects.filter(
                             product=d['product'].id, client=client).order_by('-id')[:1]
 
