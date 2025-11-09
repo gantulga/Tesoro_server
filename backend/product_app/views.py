@@ -12,10 +12,6 @@ def balanceChecker(request, client_id, product_id):
     hool_cat = Product_category.objects.get(pk=5)
     if client_id == 19 and hool_cat in product.categories.all():
         client = Client.objects.get(pk=43)
-        print(client)
-        print("TRUE")
-    else:
-        print("FALSE")
     balance = 0
     zadlah_bolomjtoi_products = []
     if product.is_ingrediented:

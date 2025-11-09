@@ -21,7 +21,7 @@ import time
 from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.models import Group
 from structure_app.models import Client, Division, Shift_work, Configuration_value, Customer
-from product_app.models import Product, Commodity, Item_transfer, Item_transfer_type, Item_balance, Item_balance_log, Product_category
+from product_app.models import Product, Commodity, Item_transfer, Item_transfer_type, Item_balance, Item_balance_log, Product_category, Commodity_category
 from financial_app.models import Budget, Wallet, Money_transfer
 from payment_app.models import Order_detial, Order, Payment
 from django.views.decorators.cache import never_cache
@@ -44,7 +44,9 @@ from structure_app.decorators import group_required
 User = get_user_model()
 
 def home(request):
-    return render(request, 'home.html', {})
+    commodities = Commodity.objects.all()
+
+    return render(request, 'home.html', {'commodities':commodities})
 
 @group_required('Удирдлага', 'Нягтлан')
 @never_cache

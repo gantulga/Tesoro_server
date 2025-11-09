@@ -2,5 +2,7 @@
 
 {% block content %}
 {% load static %}
-hi
+{% for commodity in commodities %}
+{{commodity.name}} {% for category in commodity.categories.all %}{{category.name}}{% endfor %}
+{% endfor %}
 {% endblock %}
