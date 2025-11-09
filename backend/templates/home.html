@@ -16,9 +16,9 @@
         <td>{{commodity.name}}</td>
         <td>
             {% for category in commodity.categories.all %}
-            {% if not category.parent %}
-            {{category.name}}
-            {% endif %}
+                {% if category.parent == "" %}
+                {{category.name}}
+                {% endif %}
             {% endfor %}
         <td>
             {% for category in commodity.categories.all %}
