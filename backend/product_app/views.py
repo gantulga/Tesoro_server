@@ -36,7 +36,7 @@ def balanceChecker(request, client_id, product_id):
                                 data = {'product_id' : p_product.id, 'product_name': p_product.name, 'quantity': p_product_balance[0].quantity}
                                 zadlah_bolomjtoi_products.append(data)
             
-            print("product.ingredients.all()", product.ingredients.all())
+            print("product.ingredients_producted.all()", product.ingredients_producted.all())
             for ingredient_product in product.ingredients_producted.all():
                 balance_obj2 = Item_balance.objects.filter(client=client.id, product=ingredient_product.commodity.id)
                 if len(balance_obj2) > 0:
