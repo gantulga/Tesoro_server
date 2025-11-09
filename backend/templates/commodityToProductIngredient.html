@@ -38,6 +38,7 @@
             <td style="padding-left:15px">
               {% for balance in ingredient.client_balances %}
                 {{balance.client}}({{balance.balance}}{{balanace.abbreviation}}), 
+                {{balance}}
               {% endfor %}
             </td>
           </tr>
