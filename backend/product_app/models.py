@@ -72,8 +72,7 @@ class Commodity(Createdinfo):
     @property
     def uldegdel(self):
         balances = Item_balance.objects.filter(commodity=self.id)
-        print(balances)
-        return "asdad"
+        return balances
 
     def __str__(self):
         return self.name
