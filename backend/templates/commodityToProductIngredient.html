@@ -16,7 +16,7 @@
         <th>Х/Н</th>
         <th>Нөөц</th>
       </tr>
-    {% with count=0 %}
+    {% with count=0 next_count=1 %}
     {% for product in products %}
       {% if product.ingredients.all|length > 0 %}
         <tr style="border-top: 1px solid black; border-collapse: collapse;">
