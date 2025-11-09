@@ -79,7 +79,7 @@ class Commodity(Createdinfo):
             if cat.parent:
                 self.categories.add(cat.parent)
 
-            if cat.parent.parent:
+            if cat.parent and cat.parent.parent:
                 self.categories.add(cat.parent.parent)
 
 # Бүтээгдэхүүн эд
