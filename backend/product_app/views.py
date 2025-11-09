@@ -12,6 +12,7 @@ def balanceChecker(request, client_id, product_id):
     hool_cat = Product_category.objects.get(pk=5)
     if client_id == 19 and hool_cat in product.categories.all():
         client = Client.objects.get(pk=43)
+        print(client)
         print("TRUE")
     else:
         print("FALSE")
@@ -64,8 +65,9 @@ def balanceChecker(request, client_id, product_id):
     if balance == None:
         balance = 0
             
-
-    return JsonResponse({'division': client.division.id, 'client': client.number, 'product': product.name, 'balance':balance, 'zadlah_product':zadlah_bolomjtoi_products})
+    obj = {'division': client.division.id, 'client': client.number, 'product': product.name, 'balance':balance, 'zadlah_product':zadlah_bolomjtoi_products}
+    print(obj)
+    return JsonResponse(obj)
 
 
 def itemBalanceChanger(request, client_id):
