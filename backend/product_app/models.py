@@ -52,7 +52,7 @@ class Commodity_category(Createdinfo):
     parent = models.ForeignKey('self', null=True, blank=True, on_delete=models.PROTECT, related_name="child_categories")
     name = models.CharField(null=False, max_length=255)
     description = models.TextField(null=False, max_length=255)
-    division = models.ForeignKey('structure_app.Division', db_table="product_app_division_commodity_categories", related_name="commodity_categories")
+    division = models.ForeignKey('structure_app.Division', on_delete=models.PROTECT, db_table="product_app_division_commodity_categories", related_name="commodity_categories")
 
     def __str__(self):
         return self.name
@@ -66,7 +66,7 @@ class Commodity(Createdinfo):
     description = models.TextField(null=True, max_length=255)
     size_type = models.ForeignKey('Size_type', on_delete=models.DO_NOTHING, null=True, related_name="commodities")
     unit_size = models.PositiveIntegerField(null=False, blank=False, default=1)
-    categories = models.ManyToManyField('Commodity_category', on_delete=models.PROTECT, db_table="product_app_commodity_categories", related_name="commodities")
+    categories = models.ManyToManyField('Commodity_category', db_table="product_app_commodity_categories", related_name="commodities")
     image = models.ImageField(upload_to='commodity-images', null=True, blank=True)
 
     def __str__(self):
