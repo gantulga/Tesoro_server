@@ -2,7 +2,24 @@
 
 {% block content %}
 {% load static %}
-{% for commodity in commodities %}
-{{commodity.name}} {% for category in commodity.categories.all %}{{category.name}}{% endfor %}
-{% endfor %}
+<table>
+    <tr>
+        <th>№</th>
+        <th>Материалын нэр</th>
+        <th>Ангилал</th>
+        <th>Үлдэгдэл</th>
+    </tr>
+    {% for commodity in commodities %}
+    <tr>
+        <td>{{forloop.counter}}</td>
+        <td>{{commodity.name}}</td>
+        <td>
+            {% for category in commodity.categories.all %}
+            {{category.name}}, 
+            {% endfor %}
+        </td>
+        <td></td>
+    </tr>
+    {% endfor %}
+</table>
 {% endblock %}
