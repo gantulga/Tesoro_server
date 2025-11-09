@@ -6,6 +6,7 @@
     <tr>
         <th>№</th>
         <th>Материалын нэр</th>
+        <th>Эцэг ангилал</th>
         <th>Ангилал</th>
         <th>Үлдэгдэл</th>
     </tr>
@@ -13,6 +14,12 @@
     <tr>
         <td>{{forloop.counter}}</td>
         <td>{{commodity.name}}</td>
+        <td>
+            {% for category in commodity.categories.all %}
+            {% if not category.parent %}
+            {{category.name}}
+            {% endif %}
+            {% endfor %}
         <td>
             {% for category in commodity.categories.all %}
             {{category.name}}, 

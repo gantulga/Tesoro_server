@@ -44,7 +44,6 @@ def balanceChecker(request, client_id, product_id):
             
             for ingredient_product in product.ingredients_producted.all():
                 balance_obj2 = Item_balance.objects.filter(client=client.id, product=ingredient_product.commodity.id)
-                print("-------------- item balance", ingredient_product, len(balance_obj2))
                 if len(balance_obj2) > 0:
                     if balance_obj2[0].quantity >= ingredient_product.size:
                         bb = math.floor(balance_obj2[0].quantity / ingredient_product.size)
