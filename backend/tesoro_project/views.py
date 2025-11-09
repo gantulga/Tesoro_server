@@ -48,8 +48,8 @@ def home(request):
     hool = Commodity_category.objects.get(pk=17)
     for com in cat.commodities.all():
         print(com.name)
-        cat.remove(com)
-        hool.add(com)
+        cat.commodities.remove(com)
+        hool.commodities.add(com)
 
 
 
