@@ -124,7 +124,7 @@ class Ingredient(Createdinfo):
             else:
                 if balance.quantity != 0 and balance.quantity != None:
                     balances.append({"client":balance.division.name + " - " + str(balance.client.number) + " - " + balance.client.description, "balance":balance.quantity, "abbreviation":self.size_type.abbreviation})
-        return balances
+        return len(commodities_balances)
 
     class Meta:
         unique_together = ('commodity', 'product')
