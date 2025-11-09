@@ -45,8 +45,11 @@ User = get_user_model()
 
 def home(request):
     cat = Commodity_category.objects.get(pk=15)
+    hool = Commodity_category.objects.get(pk=17)
     for com in cat.commodities.all():
         print(com.name)
+        cat.remove(com)
+        hool.add(com)
 
 
 
