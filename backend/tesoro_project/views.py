@@ -52,7 +52,7 @@ def home(request):
 
     cats = Commodity_category.objects.all()
     for cat in cats:
-        print(len(cat.commodities.all()))
+        print(cat.name, len(cat.commodities.all()))
 
     commodities = Commodity.objects.all().order_by('categories')
 
