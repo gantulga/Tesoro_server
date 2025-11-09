@@ -73,7 +73,7 @@ class Commodity(Createdinfo):
     def balances(self):
         balances = Item_balance.objects.filter(commodity=self.id)
         print(balances)
-        return balances
+        return "asdad"
 
     def __str__(self):
         return self.name
