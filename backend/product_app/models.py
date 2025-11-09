@@ -72,6 +72,7 @@ class Commodity(Createdinfo):
     @property
     def balances(self):
         balances = Item_balance.objects.filter(commodity=self.id)
+        print(balances)
         return balances
 
     def __str__(self):
