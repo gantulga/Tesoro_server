@@ -21,9 +21,9 @@
         <td>
             {% for balance in commodity.uldegdel %}
                 {% if balance.commodity.size_type.abbreviation == "гр" %}
-                    {{balance.client.name}} ({{balance.size}} {{balance.commodity.size_type.abbreviation}})
+                    {{balance.client.description}} ({{balance.size}} {{balance.commodity.size_type.abbreviation}})
                 {% else %}
-                    {{balance.client.name}} ({{balance.quantity}} {{balance.commodity.size_type.abbreviation}})
+                    {{balance.client.description}} ({{balance.quantity}} {{balance.commodity.size_type.abbreviation}})
                 {% endif %}
             {% endfor %}
         </td>
