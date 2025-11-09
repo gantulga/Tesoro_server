@@ -56,6 +56,7 @@ class Commodity_category(Createdinfo):
 
     def __str__(self):
         return self.name
+        
 
 # Түүхий эд
 
@@ -70,6 +71,16 @@ class Commodity(Createdinfo):
 
     def __str__(self):
         return self.name
+    
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+
+        for cat in self.categories.all():
+            if cat.parent:
+                self.categories.add(cat.parent)
+
+            if cat.parent.parent:
+                self.categories.add(cat.parent.parent)
 
 # Бүтээгдэхүүн эд
 
