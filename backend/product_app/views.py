@@ -15,6 +15,7 @@ def balanceChecker(request, client_id, product_id):
         if len(product.ingredients.all()) == 0:
             balance = 1000
         else:
+            print("product.ingredients.all()", product.ingredients.all())
             for ingredient in product.ingredients.all():
                 size_type = ingredient.size_type.abbreviation
                 if size_type == 'гр':
@@ -34,7 +35,8 @@ def balanceChecker(request, client_id, product_id):
                             if p_product_balance[0].quantity > 0:
                                 data = {'product_id' : p_product.id, 'product_name': p_product.name, 'quantity': p_product_balance[0].quantity}
                                 zadlah_bolomjtoi_products.append(data)
-
+            
+            print("product.ingredients.all()", product.ingredients.all())
             for ingredient_product in product.ingredients_producted.all():
                 balance_obj2 = Item_balance.objects.filter(client=client.id, product=ingredient_product.commodity.id)
                 if len(balance_obj2) > 0:
