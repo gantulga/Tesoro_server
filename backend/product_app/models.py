@@ -75,13 +75,13 @@ class Commodity(Createdinfo):
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
 
-        print(self.id)
-        for cat in self.categories.all():
+        com = Commodity.objects.get(pk=self.id)
+        for cat in com.categories.all():
             if cat.parent:
-                self.categories.add(cat.parent)
+                com.categories.add(cat.parent)
 
             if cat.parent and cat.parent.parent:
-                self.categories.add(cat.parent.parent)
+                com.categories.add(cat.parent.parent)
 
 # Бүтээгдэхүүн эд
 
