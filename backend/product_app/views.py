@@ -25,8 +25,12 @@ def balanceChecker(request, client_id, product_id):
                     if len(balance_obj) > 0:
                         if balance_obj[0].size >= ingredient.size:
                             b = math.floor(balance_obj[0].size / ingredient.size)
-                            if b > balance:
+                            if b > balance and balance != -1000:
                                 balance = b
+                        else:
+                            balance = 0
+                            #Хэрэв аль нэг материал нь үлдэгдэл хүрэхгүй бол шууд давталтыг зогсоох
+                            break
 
                     # Үлдэгдэл 0 байвал задлаад материал болгох бүтээгдэхүүн байна уу? шалгах
                     p_products = ingredient.commodity.same_products.all()
