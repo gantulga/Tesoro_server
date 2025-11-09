@@ -50,9 +50,10 @@ def home(request):
     #     cat.commodities.remove(com)
     #     hool.commodities.add(com)
 
-    cats = Commodity_category.objects.all()
+    cats = Commodity_category.objects.all(parent__isnull=False)
     for cat in cats:
-        print(cat.name, len(cat.commodities.all()))
+        for com in cat.commodities.all():
+            com.categories.add(cat.parent)
 
     commodities = Commodity.objects.all().order_by('categories')
 
