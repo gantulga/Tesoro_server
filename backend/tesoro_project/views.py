@@ -44,7 +44,7 @@ from structure_app.decorators import group_required
 User = get_user_model()
 
 def home(request):
-    commodities = Commodity.objects.all()
+    commodities = Commodity.objects.all().order_by('categories')
 
     return render(request, 'home.html', {'commodities':commodities})
 
