@@ -75,7 +75,7 @@ class Commodity(Createdinfo):
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
 
-        print(self, *args, **kwargs)
+        print(self.id)
         for cat in self.categories.all():
             if cat.parent:
                 self.categories.add(cat.parent)
