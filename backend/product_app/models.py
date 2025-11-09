@@ -111,7 +111,7 @@ class Size_type(Createdinfo):
 class Ingredient(Createdinfo):
     product = models.ForeignKey('Product', on_delete=models.CASCADE, related_name="ingredients", verbose_name='Бүтээгдэхүүн')
     commodity = models.ForeignKey('Commodity', on_delete=models.CASCADE, related_name="ingredients", verbose_name='Бүтээгдэхүүнд орох материал')
-    size = models.PositiveIntegerField(null=False)
+    size = models.PositiveIntegerField(null=False, default=0)
     size_type = models.ForeignKey('Size_type', on_delete=models.DO_NOTHING, null=False, related_name="ingredients")
 
     class Meta:
