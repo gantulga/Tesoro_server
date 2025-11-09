@@ -16,7 +16,7 @@
         <td>{{commodity.name}}</td>
         <td>
             {% for category in commodity.categories.all %}
-                {% if category.parent == "" %}
+                {% if category.parent == None %}
                 {{category.name}}
                 {% endif %}
             {% endfor %}
