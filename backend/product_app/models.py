@@ -78,11 +78,13 @@ class Commodity(Createdinfo):
         com = Commodity.objects.get(pk=self.id)
         print(com.categories.all())
         for cat in com.categories.all():
-            print(cat.parent, cat)
+            print( cat)
             if cat.parent:
+                print(cat.parent)
                 com.categories.add(cat.parent.id)
 
             if cat.parent and cat.parent.parent:
+                print(cat.parent.parent)
                 com.categories.add(cat.parent.parent.id)
 
 # Бүтээгдэхүүн эд
