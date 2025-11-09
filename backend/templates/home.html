@@ -24,6 +24,7 @@
                     {{balance.client.name}} ({{balance.size}} {{balance.commodity.size_type.abbreviation}})
                 {% else %}
                     {{balance.client.name}} ({{balance.quantity}} {{balance.commodity.size_type.abbreviation}})
+                {% endif %}
             {% endfor %}
         </td>
     </tr>
