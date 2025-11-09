@@ -850,7 +850,7 @@ def productToProductIngredient(request):
     
 @group_required('Удирдлага', 'Нягтлан')
 def commodityToProductIngredient(request):
-    products = Product.objects.all()
+    products = Product.objects.all().exclude(division=3)
     not_ingredient_products = Product.objects.filter(ingredients__isnull=True).exclude(division=3)
     return render(request, 'commodityToProductIngredient.html', {'products':products, 'not_ingredient_products':not_ingredient_products})
 
