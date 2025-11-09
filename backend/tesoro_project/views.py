@@ -50,6 +50,12 @@ def home(request):
     #     cat.commodities.remove(com)
     #     hool.commodities.add(com)
 
+    gal_togoo = Division.objects.get(pk=2)
+
+    for cat in gal_togoo.commodity_categories.all():
+        for com in cat.commodities.all():
+            print(cat, com)
+
     commodities = Commodity.objects.all().order_by('categories')
 
     return render(request, 'home.html', {'commodities':commodities})

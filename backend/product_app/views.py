@@ -24,8 +24,8 @@ def balanceChecker(request, client_id, product_id):
 
                 for cat in ingredient.commodity.categories.all():
                     if cat in gal_togoo.commodity_categories.all():
-                        client = client = Client.objects.get(pk=43)
-                        
+                        client = Client.objects.get(pk=43)
+
                 if size_type == 'гр':
                     balance_obj = Item_balance.objects.filter(client=client.id, commodity=ingredient.commodity.id)
                     if len(balance_obj) > 0:
