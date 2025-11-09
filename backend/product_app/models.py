@@ -114,6 +114,18 @@ class Ingredient(Createdinfo):
     size = models.PositiveBigIntegerField(null=False, default=0)
     size_type = models.ForeignKey('Size_type', on_delete=models.DO_NOTHING, null=False, related_name="ingredients")
 
+    @property
+    def client_balances(self):
+        balances = []
+        commodities_balances = Item_balance.objects.filter(commodity = self.commodity.id)
+        for balance in commodities_balances:
+            if self.size_type.abbreviation == "гр" and balance.size != 0 and balance.size != None:
+                balances.append({"client":balance.division.name + " - " + str(balance.client.number) + " - " + balance.client.description, "balance":balance.size, "abbreviation":self.size_type.abbreviation})
+            else:
+                if balance.quantity != 0 and balance.quantity != None:
+                    balances.append({"client":balance.division.name + " - " + str(balance.client.number) + " - " + balance.client.description, "balance":balance.quantity, "abbreviation":self.size_type.abbreviation})
+        return balances
+
     class Meta:
         unique_together = ('commodity', 'product')
 
@@ -198,7 +210,7 @@ class Item_balance(Modifiedinfo):
     commodity = models.ForeignKey('Commodity', on_delete=models.CASCADE, null=True, blank=True, related_name="balances")
     product = models.ForeignKey('Product', on_delete=models.DO_NOTHING, null=True, blank=True, related_name="balances")
     # Түүхий эдийн хэмжээ
-    quantity = models.PositiveIntegerField(null=True, blank=True)
+    quantity = models.PositiveIntegerField(null=True, blank=True, default=0)
     size = models.PositiveBigIntegerField(null=True, blank=True, default=0)
 
 
