@@ -81,11 +81,11 @@ class Commodity(Createdinfo):
             print( cat)
             if cat.parent:
                 print(cat.parent)
-                com.categories.add(cat.parent.id)
+                cat.parent.commodities.add(com)
 
             if cat.parent and cat.parent.parent:
                 print(cat.parent.parent)
-                com.categories.add(cat.parent.parent.id)
+                cat.parent.parent.commodities.add(com)
 
 # Бүтээгдэхүүн эд
 
