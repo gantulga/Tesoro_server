@@ -111,7 +111,7 @@ class Size_type(Createdinfo):
 class Ingredient(Createdinfo):
     product = models.ForeignKey('Product', on_delete=models.CASCADE, related_name="ingredients", verbose_name='Бүтээгдэхүүн')
     commodity = models.ForeignKey('Commodity', on_delete=models.CASCADE, related_name="ingredients", verbose_name='Бүтээгдэхүүнд орох материал')
-    size = models.PositiveIntegerField(null=False, default=0)
+    size = models.BigIntegerField(null=False, default=0)
     size_type = models.ForeignKey('Size_type', on_delete=models.DO_NOTHING, null=False, related_name="ingredients")
 
     class Meta:
@@ -127,7 +127,7 @@ class Ingredient(Createdinfo):
 class Ingredient_product(Createdinfo):
     product = models.ForeignKey('Product', on_delete=models.CASCADE, related_name="ingredients_producted", verbose_name='Бүтээгдэхүүн')
     commodity = models.ForeignKey('Product', on_delete=models.CASCADE, related_name="ingredients_commoditied", verbose_name='Бүтээгдэхүүнд орох орц бүтээгдэхүүн')
-    size = models.PositiveIntegerField(null=False)
+    size = models.PositiveIntegerField(null=False, default=0)
 
     class Meta:
         unique_together = ('commodity', 'product')
@@ -186,7 +186,7 @@ class Item_transfer(Modifiedinfo):
     total_amount = models.DecimalField(max_digits=14, decimal_places=2, null=True, blank=True)
     # Шилжүүлж буй түүхий эдийн хэмжээ
     quantity = models.PositiveIntegerField(null=True, blank=True)
-    size = models.PositiveIntegerField(null=True, blank=True)
+    size = models.BigIntegerField(null=True, blank=True)
 
 # Түүхий эдийн үлдэгдэл Clien болон ажилтанд ямар байгааг бүртгэх Balance table
 
@@ -199,7 +199,7 @@ class Item_balance(Modifiedinfo):
     product = models.ForeignKey('Product', on_delete=models.DO_NOTHING, null=True, blank=True, related_name="balances")
     # Түүхий эдийн хэмжээ
     quantity = models.PositiveIntegerField(null=True, blank=True)
-    size = models.PositiveIntegerField(null=True, blank=True)
+    size = models.BigIntegerField(null=True, blank=True, default=0)
 
 
 class Item_balance_log(Modifiedinfo):
@@ -211,7 +211,7 @@ class Item_balance_log(Modifiedinfo):
     product = models.ForeignKey('Product', on_delete=models.DO_NOTHING, null=True, blank=True, related_name="item_balance_logs")
     # Түүхий эдийн хэмжээ
     quantity = models.PositiveIntegerField(null=True, blank=True)
-    size = models.PositiveIntegerField(null=True, blank=True)
+    size = models.BigIntegerField(null=True, blank=True)
 
 
 # Барилгын үндсэн хөрөнгийн жагсаалт байх юм.
@@ -250,7 +250,7 @@ class broken_item (Modifiedinfo):
     basic_asset = models.ForeignKey('Basic_asset', related_name='broken_basic_assets', null=False, blank=False, on_delete=models.DO_NOTHING)
     product = models.ForeignKey('Product', related_name='broken_products', null=False, blank=False, on_delete=models.DO_NOTHING)
     commodity = models.ForeignKey('Commodity', related_name='broken_commodities', null=False, blank=False, on_delete=models.DO_NOTHING)
-    size = models.PositiveIntegerField(null=False)
+    size = models.BigIntegerField(null=False, default=0)
     size_type = models.ForeignKey('Size_type', on_delete=models.DO_NOTHING, null=True, related_name="broken_items")
     description = models.TextField(null=True, max_length=255)
     damage_paid = models.BooleanField(default=0)
