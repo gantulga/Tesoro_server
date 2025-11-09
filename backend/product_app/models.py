@@ -52,7 +52,7 @@ class Commodity_category(Createdinfo):
     parent = models.ForeignKey('self', null=True, blank=True, on_delete=models.PROTECT, related_name="child_categories")
     name = models.CharField(null=False, max_length=255)
     description = models.TextField(null=False, max_length=255)
-    division = models.ForeignKey('structure_app.Division', on_delete=models.PROTECT, related_name="commodity_categories")
+    division = models.ForeignKey('structure_app.Division', null=True, blank=True, on_delete=models.PROTECT, related_name="commodity_categories")
 
     def __str__(self):
         return self.name
