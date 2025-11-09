@@ -70,7 +70,7 @@ class Commodity(Createdinfo):
     image = models.ImageField(upload_to='commodity-images', null=True, blank=True)
 
     @property
-    def balances(self):
+    def uldegdel(self):
         balances = Item_balance.objects.filter(commodity=self.id)
         print(balances)
         return "asdad"
