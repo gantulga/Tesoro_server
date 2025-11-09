@@ -69,6 +69,11 @@ class Commodity(Createdinfo):
     categories = models.ManyToManyField('Commodity_category', db_table="product_app_commodity_categories", related_name="commodities")
     image = models.ImageField(upload_to='commodity-images', null=True, blank=True)
 
+    @property
+    def balances(self):
+        balances = Item_balance.objects.filter(commodity=self.id)
+        return balances
+
     def __str__(self):
         return self.name
 

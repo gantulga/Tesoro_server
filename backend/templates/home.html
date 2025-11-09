@@ -5,20 +5,27 @@
 <table>
     <tr>
         <th>№</th>
-        <th>Материалын нэр</th>
         <th>Ангилал</th>
+        <th>Материалын нэр</th>
         <th>Үлдэгдэл</th>
     </tr>
     {% for commodity in commodities %}
     <tr>
         <td>{{forloop.counter}}</td>
-        <td>{{commodity.name}}</td>
         <td>
             {% for category in commodity.categories.all %}
             {{category.name}}, 
             {% endfor %}
         </td>
-        <td></td>
+        <td>{{commodity.name}}</td>
+        <td>
+            {% for balance in commodity.balances.all %}
+                {% if balance.commodity.size_type == "гр" %}
+                    {{balance.client.name}} ({{balance.size}} {{balance.commodity.size_type.abbreviation}})
+                {% else %}
+                    {{balance.client.name}} ({{balance.quantity}} {{balance.commodity.size_type.abbreviation}})
+            {% endfor %}
+        </td>
     </tr>
     {% endfor %}
 </table>
