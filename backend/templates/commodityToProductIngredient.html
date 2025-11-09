@@ -16,11 +16,14 @@
         <th>Х/Н</th>
         <th>Нөөц</th>
       </tr>
+    {% with count=0 %}
     {% for product in products %}
       {% if product.ingredients.all|length > 0 %}
         <tr style="border-top: 1px solid black; border-collapse: collapse;">
           <th>№</th>
-          <th>{{forloop.counter}}</div>
+          {% with count=count|add:1 %}
+          <th>{{ count }}</div>
+          {% endwith %}
           <th>{{product.name}}</th>
           <th></th>
           <th></th>
@@ -46,6 +49,7 @@
         {% endfor %}
       {% endif %}
     {% endfor %}
+    {% endwith %}
   </table>
   <h3 style="margin-top: 50px;">Материалын орцгүй шууд зарагддаг бүтээгдэхүүнүүд</h3>
   <p>
