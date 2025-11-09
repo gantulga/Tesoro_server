@@ -1,5 +1,5 @@
 from django.http import JsonResponse
-from product_app.models import Product, Item_balance, Item_transfer, Item_transfer_type
+from product_app.models import Product, Item_balance, Item_transfer, Item_transfer_type, Product_category
 from structure_app.models import Client
 from django.shortcuts import render, redirect, get_list_or_404, get_object_or_404
 import math
@@ -9,6 +9,9 @@ from django.views.decorators.csrf import csrf_exempt
 def balanceChecker(request, client_id, product_id):
     product = get_object_or_404(Product, pk=product_id)
     client = get_object_or_404(Client, pk=client_id)
+    hool_cat = Product_category.objects.get(pk=5)
+    if client_id == 19 and hool_cat in product.categories.all():
+        client = Client.objects.get(pk=43)
     balance = 0
     zadlah_bolomjtoi_products = []
     if product.is_ingrediented:
