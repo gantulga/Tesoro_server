@@ -120,10 +120,10 @@ class Ingredient(Createdinfo):
         commodities_balances = Item_balance.objects.filter(commodity = self.commodity.id)
         for balance in commodities_balances:
             if self.size_type.abbreviation == "гр" and balance.size != 0 and balance.size != None:
-                balances.append({"client":balance.division.name + " - " + str(balance.client.number) + " - " + balance.client.description, "balance":balance.size, "abbreviation":self.size_type.abbreviation})
+                balances.append({"client":balance.client.description, "balance":balance.size, "abbreviation":self.size_type.abbreviation})
             else:
                 if balance.quantity != 0 and balance.quantity != None:
-                    balances.append({"client":balance.division.name + " - " + str(balance.client.number) + " - " + balance.client.description, "balance":balance.quantity, "abbreviation":self.size_type.abbreviation})
+                    balances.append({"client":balance.client.description, "balance":balance.quantity, "abbreviation":self.size_type.abbreviation})
         return balances
 
     class Meta:
