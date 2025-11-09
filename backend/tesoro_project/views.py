@@ -50,11 +50,6 @@ def home(request):
     #     cat.commodities.remove(com)
     #     hool.commodities.add(com)
 
-    cats = Commodity_category.objects.filter(parent__isnull=False)
-    for cat in cats:
-        for com in cat.commodities.all():
-            com.categories.add(cat.parent)
-
     commodities = Commodity.objects.all().order_by('categories')
 
     return render(request, 'home.html', {'commodities':commodities})

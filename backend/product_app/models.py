@@ -52,7 +52,7 @@ class Commodity_category(Createdinfo):
     parent = models.ForeignKey('self', null=True, blank=True, on_delete=models.PROTECT, related_name="child_categories")
     name = models.CharField(null=False, max_length=255)
     description = models.TextField(null=False, max_length=255)
-    Division = models.ManyToManyField('structure_app.Division', db_table="product_app_division_commodity_categories")
+    division = models.ManyToManyField('structure_app.Division', db_table="product_app_division_commodity_categories", related_name="commodity_categories")
 
     def __str__(self):
         return self.name
@@ -71,21 +71,6 @@ class Commodity(Createdinfo):
 
     def __str__(self):
         return self.name
-    
-    def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
-
-        com = Commodity.objects.get(pk=self.id)
-        print(com.categories.all())
-        for cat in com.categories.all():
-            print( cat)
-            if cat.parent:
-                print(cat.parent)
-                cat.parent.commodities.add(com)
-
-            if cat.parent and cat.parent.parent:
-                print(cat.parent.parent)
-                cat.parent.parent.commodities.add(com)
 
 # Бүтээгдэхүүн эд
 

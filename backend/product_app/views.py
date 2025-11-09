@@ -1,6 +1,6 @@
 from django.http import JsonResponse
 from product_app.models import Product, Item_balance, Item_transfer, Item_transfer_type, Product_category
-from structure_app.models import Client
+from structure_app.models import Client, Division
 from django.shortcuts import render, redirect, get_list_or_404, get_object_or_404
 import math
 from django.contrib.auth.models import Group
@@ -9,9 +9,9 @@ from django.views.decorators.csrf import csrf_exempt
 def balanceChecker(request, client_id, product_id):
     product = get_object_or_404(Product, pk=product_id)
     client = get_object_or_404(Client, pk=client_id)
-    hool_cat = Product_category.objects.get(pk=5)
-    if client_id == 19 and hool_cat in product.categories.all():
-        client = Client.objects.get(pk=43)
+    # hool_cat = Product_category.objects.get(pk=5)
+    # if client_id == 19 and hool_cat in product.categories.all():
+    #     client = Client.objects.get(pk=43)
     balance = 0
     zadlah_bolomjtoi_products = []
     if product.is_ingrediented:
@@ -20,6 +20,12 @@ def balanceChecker(request, client_id, product_id):
         else:
             for ingredient in product.ingredients.all():
                 size_type = ingredient.size_type.abbreviation
+                gal_togoo = Division.objects.get(pk=2)
+
+                for cat in ingredient.commodity.categories.all():
+                    if cat in gal_togoo.commodity_categories.all():
+                        client = client = Client.objects.get(pk=43)
+                        
                 if size_type == 'гр':
                     balance_obj = Item_balance.objects.filter(client=client.id, commodity=ingredient.commodity.id)
                     if len(balance_obj) > 0:
@@ -34,7 +40,7 @@ def balanceChecker(request, client_id, product_id):
 
                     # Үлдэгдэл 0 байвал задлаад материал болгох бүтээгдэхүүн байна уу? шалгах
                     p_products = ingredient.commodity.same_products.all()
-                    print(p_products)
+                    
                     for p_product in p_products:
                         p_product_balance = Item_balance.objects.filter(client=client.id, product=p_product.id)
                         if len(p_product_balance) > 0:
