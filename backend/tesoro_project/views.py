@@ -44,8 +44,8 @@ from structure_app.decorators import group_required
 User = get_user_model()
 
 def home(request):
-    cat = Commodity_category.objects.get(pk=7)
-    hool = Commodity_category.objects.get(pk=17)
+    cat = Commodity_category.objects.get(pk=10)
+    hool = Commodity_category.objects.get(pk=11)
     for com in cat.commodities.all():
         print(com.name)
         cat.commodities.remove(com)
