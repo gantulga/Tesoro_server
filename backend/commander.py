@@ -498,11 +498,5 @@ data = [
 
 for i in data:
     product = Product.objects.filter(name=i['name'])
-    counter = 0
     if product:
-        print("aaaa")
-    else:
-        print(i['name'])
-        counter += 1
-
-print(counter)
+        print(product[0])
