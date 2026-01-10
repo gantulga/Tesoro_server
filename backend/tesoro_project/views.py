@@ -554,10 +554,10 @@ def home(request):
     for i in data:
         product = Product.objects.filter(name=i['name'])
         if product:
-            print('oldoj bn')
+            product = product
         else:
             print(i['name'])
-            
+
     commodities = Commodity.objects.all().order_by('categories')
 
     return render(request, 'home.html', {'commodities':commodities})
