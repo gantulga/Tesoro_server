@@ -93,6 +93,7 @@ class Product(Createdinfo):
     is_gramm = models.BooleanField(default=0, verbose_name='Граммын бүтээгдэхүүн?')
     gramm = models.PositiveIntegerField(null=True, blank=True, verbose_name='Грамм?')
     same_commodity = models.ForeignKey('Commodity', related_name='same_products', on_delete=models.DO_NOTHING, null=True, blank=True, verbose_name='Адил материал?')
+    enabled = models.BooleanField(default=True, verbose_name='Идэвхтэй юу?')
 
     def __str__(self):
         return self.name

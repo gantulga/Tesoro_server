@@ -24,7 +24,7 @@ class ProductCategoriesViewSet(viewsets.ModelViewSet):
 
 
 class LoungeProductsViewSet(generics.ListAPIView):
-    queryset = Product.objects.all().exclude(division=3)
+    queryset = Product.objects.filter(enabled=True).exclude(division=3)
     #permission_classes = [permissions.AllowAny]
     serializer_class = ProductsSerializer
     authentication_classes = (TokenAuthentication,)
@@ -166,7 +166,7 @@ class LoungeOrderUpdateViewSet(viewsets.ModelViewSet):
 
 # @api_view(['GET'])
 class unSafe_WorkersViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.filter(groups__in=[2, 12, 13], is_active=True)
+    queryset = User.objects.filter(groups__in=[2, 12, 13])
     permission_classes = [permissions.AllowAny]
     serializer_class = unSafe_WorkersSerializer
     authentication_classes = (TokenAuthentication,)
