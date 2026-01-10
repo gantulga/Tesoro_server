@@ -499,4 +499,6 @@ data = [
 for i in data:
     product = Product.objects.filter(name=i['name'])
     if product:
-        print(product[0])
+        product[0].enabled = False
+        product[0].save()
+        print(product[0].name, product[0].enabled)
