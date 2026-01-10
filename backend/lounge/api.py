@@ -166,7 +166,7 @@ class LoungeOrderUpdateViewSet(viewsets.ModelViewSet):
 
 # @api_view(['GET'])
 class unSafe_WorkersViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.filter(groups__in=[2, 12, 13])
+    queryset = User.objects.filter(groups__in=[2, 12, 13], is_active=True)
     permission_classes = [permissions.AllowAny]
     serializer_class = unSafe_WorkersSerializer
     authentication_classes = (TokenAuthentication,)
