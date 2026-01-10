@@ -504,3 +504,5 @@ for i in data:
     else:
         print(i['name'])
         counter += 1
+
+print(counter)
