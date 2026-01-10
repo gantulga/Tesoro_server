@@ -25,7 +25,7 @@ class ProductCategoryAdmin(admin.ModelAdmin):
 
 
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ('name', 'get_categories', 'is_ingrediented', 'get_ingredients', 'is_gramm', 'gramm', 'same_commodity', 'cost')
+    list_display = ('name', 'enabled', 'get_categories', 'is_ingrediented', 'get_ingredients', 'is_gramm', 'gramm', 'same_commodity', 'cost')
     list_per_page = 500
     exclude = ['created_by']
     ordering = ('is_ingrediented', 'is_gramm', 'name')
