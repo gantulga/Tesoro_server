@@ -17,8 +17,7 @@ User = get_user_model()
 
 class Createdinfo(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
-    created_by = models.ForeignKey(
-        User, related_name='%(class)s_createdby', null=True, blank=True, on_delete=models.DO_NOTHING)
+    created_by = models.ForeignKey(User, related_name='%(class)s_createdby', null=True, blank=True, on_delete=models.DO_NOTHING)
 
     class Meta:
         abstract = True

@@ -1,0 +1,458 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <h1 class="h3 mb-0">Төсөв</h1>
+                <a href="{% url 'budget_create' %}" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Шинэ төсөв
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Шүүлтүүр хэсэг -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-4">
+                    <input type="text" name="q" class="form-control" placeholder="Төсвийн нэрээр хайх..." 
+                           value="{{ query }}">
+                </div>
+                <div class="col-md-3">
+                    <select name="status" class="form-control">
+                        <option value="">Төлөвөөр шүүх</option>
+                        {% for status in status_choices %}
+                            <option value="{{ status }}" {% if status_filter == status %}selected{% endif %}>
+                                {{ status }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <select name="type" class="form-control">
+                        <option value="">Төрлөөр шүүх</option>
+                        {% for type in budget_types %}
+                            <option value="{{ type.id }}" {% if type_filter == type.id|stringformat:"i" %}selected{% endif %}>
+                                {{ type.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-search"></i> Шүүх
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Нийт статистик -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Нийт төсөв
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                {{ total_amount }} ₮
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-wallet fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Зарцуулсан
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                {{ total_oppressed }} ₮
+                            </div>
+                            {% if total_amount > 0 %}
+                            <div class="text-xs text-muted">
+                                {{ total_oppressed|floatformat:0 }}/{{ total_amount|floatformat:0 }} ₮
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-money-bill-wave fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                Буцаасан
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                {{ total_returned }} ₮
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-undo fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Үлдэгдэл
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                {{ total_balance }} ₮
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-piggy-bank fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Зөрүү статистик -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card border-left-secondary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">
+                                Зарцуулалтын хувь
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                {% if total_amount > 0 %}
+                                    {% widthratio total_oppressed total_amount 100 %}%
+                                {% else %}
+                                    0%
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-chart-pie fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                Нийт төсөв
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                {{ page_obj.paginator.count }}
+                            </div>
+                            <div class="text-xs text-muted">
+                                ширхэг
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-list fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Төсвийн жагсаалт -->
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="thead-light">
+                        <tr>
+                            <th width="40">№</th>
+                            <th>Төсвийн нэр</th>
+                            <th>Төрөл</th>
+                            <th>Зохицуулагч</th>
+                            <th>Нийт дүн</th>
+                            <th>Зарцуулсан</th>
+                            <th>Буцаасан</th>
+                            <th>Үлдэгдэл</th>
+                            <th>Төлөв</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for budget in page_obj %}
+                        <tr class="clickable-row" data-href="{% url 'budget_detail' budget.pk %}">
+                            <td class="text-center text-muted">
+                                {{ forloop.counter0|add:page_obj.start_index }}
+                            </td>
+                            <td>
+                                <a href="{% url 'budget_detail' budget.pk %}" class="text-decoration-none">
+                                    <div class="font-weight-bold text-primary">
+                                        {{ budget.name }}
+                                    </div>
+                                </a>
+                                {% if budget.description %}
+                                <div class="text-muted small mt-1">
+                                    <i class="fas fa-file-alt"></i> {{ budget.description|truncatechars:60 }}
+                                </div>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <span class="text-dark font-weight-medium">
+                                    {{ budget.budget_type.name }}
+                                </span>
+                            </td>
+                            <td>
+                                {% if budget.coordinator %}
+                                    <div class="text-dark">
+                                        {{ budget.coordinator.username }}
+                                    </div>
+                                {% else %}
+                                    <span class="text-muted">-</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-right">
+                                <div class="font-weight-bold text-primary">
+                                    {{ budget.amount }} ₮
+                                </div>
+                            </td>
+                            <td class="text-right">
+                                <div class="font-weight-bold text-warning">
+                                    {{ budget.oppressed }} ₮
+                                </div>
+                                {% if budget.amount > 0 %}
+                                <div class="small text-muted">
+                                    {% widthratio budget.oppressed budget.amount 100 %}%
+                                </div>
+                                {% endif %}
+                            </td>
+                            <td class="text-right">
+                                <div class="font-weight-bold text-success">
+                                    {{ budget.returned }} ₮
+                                </div>
+                            </td>
+                            <td class="text-right">
+                                <div class="font-weight-bold {% if budget.balance >= 0 %}text-danger{% else %}text-danger{% endif %}">
+                                    {{ budget.balance }} ₮
+                                </div>
+                                {% if budget.amount > 0 %}
+                                <div class="small text-muted">
+                                    {% widthratio budget.balance budget.amount 100 %}%
+                                </div>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if budget.status == 'Төсөвлөсөн' %}
+                                    <span class="badge-warning text-dark">{{ budget.status }}</span>
+                                {% elif budget.status == 'Мөнгөө хүлээн авсан' %}
+                                    <span class="badge-info text-dark">{{ budget.status }}</span>
+                                {% elif budget.status == 'Барааг авч дууссан' %}
+                                    <span class="badge-primary text-dark">{{ budget.status }}</span>
+                                {% elif budget.status == 'Тооцоо тулгасан' %}
+                                    <span class="badge-dark text-dark">{{ budget.status }}</span>
+                                {% elif budget.status == 'Дууссан' %}
+                                    <span class="badge-success text-dark">{{ budget.status }}</span>
+                                {% else %}
+                                    <span class="badge-light text-dark">{{ budget.status }}</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="10" class="text-center text-muted py-5">
+                                <i class="fas fa-inbox fa-3x mb-3"></i>
+                                <h5>Төсөв олдсонгүй</h5>
+                                <p class="mb-0">Шинэ төсөв үүсгэхийн тулд дээд баруун буланд байрлах "Шинэ төсөв" товчийг дарна уу.</p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Хуудаслалт -->
+            {% if page_obj.has_other_pages %}
+            <nav aria-label="Page navigation" class="mt-4">
+                <ul class="pagination justify-content-center">
+                    {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page=1{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                            <i class="fas fa-angle-double-left"></i>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                            <i class="fas fa-angle-left"></i>
+                        </a>
+                    </li>
+                    {% endif %}
+
+                    {% for num in page_obj.paginator.page_range %}
+                        {% if page_obj.number == num %}
+                        <li class="page-item active">
+                            <span class="page-link">{{ num }}</span>
+                        </li>
+                        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ num }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                                {{ num }}
+                            </a>
+                        </li>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                            <i class="fas fa-angle-right"></i>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">
+                            <i class="fas fa-angle-double-right"></i>
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block styles %}
+<style>
+.table th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+    border-bottom: 2px solid #dee2e6;
+}
+
+.table td {
+    vertical-align: middle;
+    border-top: 1px solid #f1f1f1;
+}
+
+.clickable-row {
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.clickable-row:hover {
+    background-color: #f8f9fa;
+}
+
+.{
+    font-size: 0.8em;
+    padding: 0.4em 0.8em;
+    font-weight: 500;
+}
+
+.text-dark {
+    color: #343a40 !important;
+}
+
+.text-muted {
+    color: #6c757d !important;
+}
+
+.text-warning {
+    color: #ffc107 !important;
+}
+
+.text-info {
+    color: #17a2b8 !important;
+}
+
+.text-danger {
+    color: #dc3545 !important;
+}
+
+.text-primary {
+    color: #007bff !important;
+}
+
+.text-success {
+    color: #28a745 !important;
+}
+
+.border-left-primary {
+    border-left: 0.25rem solid #007bff !important;
+}
+
+.border-left-warning {
+    border-left: 0.25rem solid #ffc107 !important;
+}
+
+.border-left-info {
+    border-left: 0.25rem solid #17a2b8 !important;
+}
+
+.border-left-success {
+    border-left: 0.25rem solid #28a745 !important;
+}
+
+.border-left-dark {
+    border-left: 0.25rem solid #343a40 !important;
+}
+
+.border-left-secondary {
+    border-left: 0.25rem solid #6c757d !important;
+}
+
+.table-hover tbody tr:hover {
+    box-shadow: 0 0 10px rgba(0,0,0,0.05);
+}
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+$(document).ready(function() {
+    // Мөр дээр дархад detail хуудас руу шилжих
+    $(".clickable-row").click(function() {
+        window.location = $(this).data("href");
+    });
+    
+    // Шүүлтүүрийн dropdown өөрчлөгдөхөд автоматаар submit
+    $('select[name="status"], select[name="type"]').change(function() {
+        $(this).closest('form').submit();
+    });
+    
+    // Хүснэгтийн мөр дээр hover үед гар үзүүлэх
+    $(".clickable-row").hover(
+        function() {
+            $(this).css('cursor', 'pointer');
+        },
+        function() {
+            $(this).css('cursor', 'auto');
+        }
+    );
+});
+</script>
+{% endblock %}

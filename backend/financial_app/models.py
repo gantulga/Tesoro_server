@@ -23,10 +23,22 @@ class Modifiedinfo(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
     created_by = models.ForeignKey(
-        User, related_name='%(class)s_createdby', null=True, blank=True, on_delete=models.DO_NOTHING)
+        User, 
+        related_name='%(class)s_createdby', 
+        null=True, 
+        blank=True, 
+        on_delete=models.SET_NULL,
+        editable=False
+    )
     updated_by = models.ForeignKey(
-        User, related_name='%(class)s_modifiedby', null=True, blank=True, on_delete=models.DO_NOTHING)
-
+        User, 
+        related_name='%(class)s_modifiedby', 
+        null=True, 
+        blank=True, 
+        on_delete=models.SET_NULL,
+        editable=False
+    )
+    
     class Meta:
         abstract = True
 
@@ -112,22 +124,89 @@ class Wallet(Createdinfo):
 class Budget_type(Createdinfo):
     name = models.CharField(null=False, max_length=255)
     description = models.TextField(null=True)
-
-# Төсөв
-
+    
+    def __str__(self):
+        return self.name
+    
+    class Meta:
+        verbose_name = "Төсвийн төрөл"
+        verbose_name_plural = "Төсвийн төрлүүд"
 
 class Budget(Modifiedinfo):
+    # Төлөвүүдийн сонголтууд
+    STATUS_PLANNED = 'Төсөвлөсөн'
+    STATUS_RECEIVED_MONEY = 'Мөнгөө хүлээн авсан'
+    STATUS_COMPLETED = 'Тооцоо тулгасан, дууссан'
+    
+    STATUS_CHOICES = [
+        (STATUS_PLANNED, 'Төсөвлөсөн'),
+        (STATUS_RECEIVED_MONEY, 'Мөнгөө хүлээн авсан'),
+        (STATUS_COMPLETED, 'Тооцоо тулгасан, дууссан'),
+    ]
+
     name = models.CharField(null=False, max_length=255)
     budget_type = models.ForeignKey(
         'Budget_type', related_name='%(class)s_type', null=False, blank=False, on_delete=models.DO_NOTHING)
     coordinator = models.ForeignKey(
-        User, related_name='%(class)s_coordinator', null=True, blank=True, on_delete=models.DO_NOTHING)
+        User, related_name='%(class)s_coordinator', null=False, blank=False, on_delete=models.DO_NOTHING)
     description = models.TextField(null=True)
-    amount = models.DecimalField(
-        max_digits=14, decimal_places=2, null=True, blank=True, default=0)
-    balance = models.DecimalField(
-        max_digits=14, decimal_places=2, null=True, blank=True, default=0)
-    status = models.CharField(null=False, max_length=255, default='Төсөвлөсөн')
+    amount = models.BigIntegerField(null=True, blank=True, default=0)
+    oppressed = models.BigIntegerField(null=True, blank=True, default=0)
+    balance = models.BigIntegerField(null=True, blank=True, default=0)
+    returned = models.BigIntegerField(null=True, blank=True, default=0)
+    status = models.CharField(
+        null=False, 
+        max_length=255, 
+        default=STATUS_PLANNED,
+        choices=STATUS_CHOICES,
+        verbose_name="Төсвийн төлөв"
+    )
+
+    # Төлөвүүдийн дараалал
+    STATUS_FLOW = {
+        STATUS_PLANNED: [STATUS_RECEIVED_MONEY],
+        STATUS_RECEIVED_MONEY: [STATUS_COMPLETED],
+        STATUS_COMPLETED: []
+    }
+
+    def can_change_to_status(self, new_status):
+        """Өгөгдсөн төлөв рүү шилжих боломжтой эсэхийг шалгах"""
+        return new_status in self.STATUS_FLOW.get(self.status, []) or new_status == self.status
+
+    def calculate_balance(self):
+        """Үлдэгдэл тооцоолох"""
+        if self.oppressed and self.returned:
+            return self.amount - self.oppressed - self.returned
+        elif self.oppressed:
+            return self.amount - self.oppressed
+        elif self.returned:
+            return self.amount - self.returned
+        else:
+            return self.amount
+
+    def __str__(self):
+        return f"{self.name} - {self.get_status_display()} - {self.amount}₮ - {self.balance}₮"
+    
+    class Meta:
+        verbose_name = "Төсөв"
+        verbose_name_plural = "Төсөвүүд"
+        ordering = ['-created_at']
+    
+    def save(self, *args, **kwargs):
+        # Шинэ төсөв үүсгэх үед
+        if self.pk is None:
+            # Үлдэгдэл нь нийт дүнтэй тэнцүү
+            self.balance = self.amount
+        
+        # Үлдэгдэл тооцоолох
+        self.balance = self.calculate_balance()
+        
+        # Үлдэгдэл нь сөрөг байж болохгүй
+        if self.balance < 0:
+            raise ValueError(f'Үлдэгдэл дүн сөрөг байж болохгүй! Төсвийн дүн: {self.amount}₮')
+        
+        super().save(*args, **kwargs)
+
 
 # Мөнгөн шилжүүлгийн өгөгдөл
 

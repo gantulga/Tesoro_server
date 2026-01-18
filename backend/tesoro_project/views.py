@@ -92,21 +92,31 @@ def itemBalanceShiftWorker(request, shiftworker):
 @never_cache
 def addProduct(request):
     if request.method == 'POST':
-        budget = None
         if request.POST['budget']:
             budget = Budget.objects.get(pk=request.POST['budget'])
+        else:
+            return redirect('addProduct')
+
         # fr_wallet = request.POST['fr_wallet']
         to_client = Client.objects.get(pk=request.POST['client'])
         to_division = to_client.division
         item_transfer_type = Item_transfer_type.objects.get(pk=1)
+
         index = 1
-        while index < 31:
-            if request.POST['product'+str(index)]:
+        while True:
+            if 'product'+str(index) in request.POST and request.POST['product'+str(index)]:
                 total_amount = int(request.POST['quantity'+str(index)]) * int(request.POST['price'+str(index)])
                 product = Product.objects.get(pk=request.POST['product'+str(index)])
                 item_transfer = Item_transfer.objects.create(item_transfer_type=item_transfer_type, product=product, to_division=to_division, to_client=to_client, is_confirmed=True, confirmed_by=request.user, created_by=request.user, quantity=int(request.POST['quantity'+str(index)]), unit_price=float(request.POST['price'+str(index)]), total_amount=total_amount)
+
                 if item_transfer:
                     itemBalance = Item_balance.objects.filter(product=product, client=item_transfer.to_client.id)
+
+                    budget.oppressed = budget.oppressed + total_amount
+                    budget.save()
+                    item_transfer.budget = budget
+                    item_transfer.save()
+
                     if len(itemBalance) > 0:
                         itemBalance[0].quantity = itemBalance[0].quantity + item_transfer.quantity
                         itemBalance[0].save()
@@ -115,14 +125,14 @@ def addProduct(request):
                     
 
             else:
-                print("None")
+                break
             index += 1
 
 
-        return redirect('/addProduct')
+        return redirect('/budgets/' + str(budget.id) + '/')
     else:
         all_products = Product.objects.filter(is_ingrediented=False)
-        all_budgets = Budget.objects.filter(status='Төсөвлөсөн').order_by("-id")
+        all_budgets = Budget.objects.filter(coordinator=request.user.id).exclude(status='Тооцоо тулгасан, дууссан').order_by("-id")
         all_wallets = Wallet.objects.filter(is_pos=False)
         all_divisions = Division.objects.all()
         all_clients = Client.objects.all()
@@ -220,22 +230,33 @@ def addCommodity(request):
         budget = None
         if request.POST['budget']:
             budget = Budget.objects.get(pk=request.POST['budget'])
+        else:
+            return redirect('addCommodity')
         # fr_wallet = request.POST['fr_wallet']
         to_client = Client.objects.get(pk=request.POST['client'])
         to_division = to_client.division
         item_transfer_type = Item_transfer_type.objects.get(pk=1)
         index = 1
-        while index < 31:
-            if request.POST['commodity'+str(index)]:
-                commodity = Commodity.objects.get(pk=request.POST['commodity'+str(index)])
-                print(request.POST)
-                if request.POST['size_type'+str(index)] == "quantity":
+        while True:
+            if 'material'+str(index) in request.POST and request.POST['material'+str(index)]:
+                commodity = Commodity.objects.get(pk=request.POST['material'+str(index)])
+                if request.POST['size_type'+str(index)] == "ш":
                     item_transfer = Item_transfer.objects.create(item_transfer_type=item_transfer_type, commodity=commodity, to_division=to_division, to_client=to_client, is_confirmed=True, confirmed_by=request.user, created_by=request.user, quantity=int(request.POST['quantity'+str(index)]), unit_price=float(request.POST['price'+str(index)]), total_amount=float(request.POST['total'+str(index)]))
+
+                    total_amount = float(request.POST['total'+str(index)])
                 else:
                     item_transfer = Item_transfer.objects.create(item_transfer_type=item_transfer_type, commodity=commodity, to_division=to_division, to_client=to_client, is_confirmed=True, confirmed_by=request.user, created_by=request.user, size=int(request.POST['quantity'+str(index)]), unit_price=float(request.POST['price'+str(index)]), total_amount=float(request.POST['total'+str(index)]))
-                
+
+                    total_amount = float(request.POST['total'+str(index)])
+
                 if item_transfer:
                     itemBalance = Item_balance.objects.filter(commodity=commodity, client=item_transfer.to_client.id)
+                    
+                    budget.oppressed = budget.oppressed + total_amount
+                    budget.save()
+                    item_transfer.budget = budget
+                    item_transfer.save()
+
                     if len(itemBalance) > 0:
                         if request.POST['size_type'+str(index)] == "quantity":
                             itemBalance[0].quantity = itemBalance[0].quantity + item_transfer.quantity
@@ -248,14 +269,15 @@ def addCommodity(request):
                         else:
                             item = Item_balance.objects.create(created_by=request.user, size=item_transfer.size, client=item_transfer.to_client, division=item_transfer.to_division, commodity=commodity)
             else:
-                print("None")
+                print("notting")
+                break
             index += 1
 
 
         return redirect('/addCommodity')
     else:
         all_commodities = Commodity.objects.all().order_by('name')
-        all_budgets = Budget.objects.filter(status='Төсөвлөсөн').order_by("-id")
+        all_budgets = Budget.objects.filter(coordinator=request.user.id).exclude(status='Тооцоо тулгасан, дууссан').order_by("-id")
         all_wallets = Wallet.objects.filter(is_pos=False)
         all_divisions = Division.objects.all()
         all_clients = Client.objects.all()

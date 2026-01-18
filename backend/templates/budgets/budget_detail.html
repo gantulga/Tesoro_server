@@ -1,0 +1,720 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Төсвийн нэр ба үйлдлүүд -->
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h1 class="h3 mb-0 text-dark">{{ budget.name }}</h1>
+            <p class="text-muted mb-0">Төсвийн дэлгэрэнгүй мэдээлэл</p>
+        </div>
+        <div class="col-md-4 text-right">
+            <div class="btn-group" role="group">
+                <a href="{% url 'budget_list' %}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left"></i> Жагсаалт руу буцах
+                </a>
+                <a href="{% url 'budget_update' budget.pk %}" class="btn btn-warning">
+                    <i class="fas fa-edit"></i> Төсөв засах
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Үндсэн мэдээлэл -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0"><i class="fas fa-info-circle"></i> Үндсэн мэдээлэл</h6>
+                </div>
+                <div class="card-body">
+                    <dl class="row mb-0">
+                        <dt class="col-sm-5 text-dark">Төрөл:</dt>
+                        <dd class="col-sm-7">{{ budget.budget_type.name }}</dd>
+                        
+                        <dt class="col-sm-5 text-dark">Зохицуулагч:</dt>
+                        <dd class="col-sm-7">
+                            {% if budget.coordinator %}
+                                {{ budget.coordinator.get_full_name|default:budget.coordinator.username }}
+                            {% else %}
+                                <span class="text-muted">Тодорхойгүй</span>
+                            {% endif %}
+                        </dd>
+                        
+                        <dt class="col-sm-5 text-dark">Төлөв:</dt>
+                        <dd class="col-sm-7">
+                            {% if budget.status == 'Төсөвлөсөн' %}
+                                <span class="badge-warning text-dark">{{ budget.status }}</span>
+                            {% elif budget.status == 'Мөнгөө хүлээн авсан' %}
+                                <span class="badge-info text-white">{{ budget.status }}</span>
+                            {% elif budget.status == 'Барааг авч дууссан' %}
+                                <span class="badge-primary text-white">{{ budget.status }}</span>
+                            {% elif budget.status == 'Тооцоо тулгасан' %}
+                                <span class="badge-dark text-white">{{ budget.status }}</span>
+                            {% elif budget.status == 'Дууссан' %}
+                                <span class="badge-success text-white">{{ budget.status }}</span>
+                            {% else %}
+                                <span class="badge-light text-dark">{{ budget.status }}</span>
+                            {% endif %}
+                        </dd>
+                        
+                        {% if budget.description %}
+                        <dt class="col-sm-12 text-dark mt-2">Тайлбар:</dt>
+                        <dd class="col-sm-12 mt-1">
+                            <div class="border rounded p-3 bg-light">
+                                {{ budget.description|linebreaks }}
+                            </div>
+                        </dd>
+                        {% endif %}
+                    </dl>
+                </div>
+            </div>
+        </div>
+
+        <!-- Санхүүгийн мэдээлэл -->
+        <div class="col-md-8">
+            <div class="card h-100">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0"><i class="fas fa-chart-line"></i> Санхүүгийн мэдээлэл</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <!-- Нийт дүн -->
+                        <div class="col-6 col-md-3 mb-3">
+                            <div class="card border-primary h-100">
+                                <div class="card-body text-center p-2">
+                                    <h6 class="text-primary mb-1 text-truncate">Нийт дүн</h6>
+                                    <h5 class="font-weight-bold text-primary mb-0">{{ budget.amount }} ₮</h5>
+                                    <small class="text-muted">Төсвийн нийт дүн</small>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Зарцуулсан -->
+                        <div class="col-6 col-md-3 mb-3">
+                            <div class="card border-warning h-100">
+                                <div class="card-body text-center p-2">
+                                    <h6 class="text-warning mb-1 text-truncate">Зарцуулсан</h6>
+                                    <h5 class="font-weight-bold text-warning mb-0">{{ budget.oppressed }} ₮</h5>
+                                    {% if budget.amount > 0 %}
+                                    <div class="progress mt-1" style="height: 4px;">
+                                        <div class="progress-bar bg-warning" role="progressbar" 
+                                             style="width: {% widthratio budget.oppressed budget.amount 100 %}%"></div>
+                                    </div>
+                                    <small class="text-muted">{% widthratio budget.oppressed budget.amount 100 %}%</small>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Буцаасан -->
+                        <div class="col-6 col-md-3 mb-3">
+                            <div class="card border-info h-100">
+                                <div class="card-body text-center p-2">
+                                    <h6 class="text-info mb-1 text-truncate">Буцаасан</h6>
+                                    <h5 class="font-weight-bold text-info mb-0">{{ budget.returned }} ₮</h5>
+                                    <small class="text-muted">Буцаан өгсөн дүн</small>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Үлдэгдэл -->
+                        <div class="col-6 col-md-3 mb-3">
+                            <div class="card border-success h-100">
+                                <div class="card-body text-center p-2">
+                                    <h6 class="text-success mb-1 text-truncate">Үлдэгдэл</h6>
+                                    <h5 class="font-weight-bold {% if budget.balance >= 0 %}text-success{% else %}text-danger{% endif %} mb-0">
+                                        {{ budget.balance }} ₮
+                                    </h5>
+                                    {% if budget.amount > 0 %}
+                                    <div class="progress mt-1" style="height: 4px;">
+                                        <div class="progress-bar bg-success" role="progressbar" 
+                                             style="width: {% widthratio budget.balance budget.amount 100 %}%"></div>
+                                    </div>
+                                    <small class="text-muted">{% widthratio budget.balance budget.amount 100 %}%</small>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Тооцоолол -->
+                    <div class="row mt-3">
+                        <div class="col-md-6 mb-3">
+                            <div class="card h-100">
+                                <div class="card-header bg-light py-2">
+                                    <h6 class="mb-0"><i class="fas fa-calculator"></i> Тооцоолол</h6>
+                                </div>
+                                <div class="card-body py-2">
+                                    <dl class="row mb-0">
+                                        <dt class="col-7 col-sm-6 text-dark">Үлдэгдэл:</dt>
+                                        <dd class="col-5 col-sm-6 text-right font-weight-bold text-danger">
+                                            {{ budget.balance }} ₮
+                                        </dd>
+                                        
+                                        <dt class="col-7 col-sm-6 text-dark">Зарцуулалтын хувь:</dt>
+                                        <dd class="col-5 col-sm-6 text-right">
+                                            {% if budget.amount > 0 %}
+                                                {% widthratio budget.oppressed budget.amount 100 %}%
+                                            {% else %}
+                                                0%
+                                            {% endif %}
+                                        </dd>
+                                        
+                                        <dt class="col-7 col-sm-6 text-dark">Үлдэгдэл хувь:</dt>
+                                        <dd class="col-5 col-sm-6 text-right">
+                                            {% if budget.amount > 0 %}
+                                                {% widthratio budget.balance budget.amount 100 %}%
+                                            {% else %}
+                                                0%
+                                            {% endif %}
+                                        </dd>
+                                    </dl>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Томьёо -->
+                        <div class="col-md-6 mb-3">
+                            <div class="card h-100">
+                                <div class="card-header bg-light py-2">
+                                    <h6 class="mb-0"><i class="fas fa-list-alt"></i> Томьёо</h6>
+                                </div>
+                                <div class="card-body py-2">
+                                    <ul class="list-unstyled mb-0 small">
+                                        <li class="mb-1">
+                                            <span class="text-muted">Үлдэгдэл = Нийт дүн - Зарцуулсан - Буцаасан</span>
+                                        </li>
+                                        <li class="mb-1">
+                                            <span class="text-muted">Зарцуулалтын хувь = (Зарцуулсан / Нийт дүн) × 100</span>
+                                        </li>
+                                        <li>
+                                            <span class="text-muted">Үлдэгдлийн хувь = (Үлдэгдэл / Нийт дүн) × 100</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Системийн мэдээлэл хэсэг -->
+    <div class="card mb-4">
+        <div class="card-header bg-light">
+            <h6 class="mb-0"><i class="fas fa-history"></i> Системийн мэдээлэл</h6>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <dt class="text-dark">Үүсгэсэн огноо:</dt>
+                    <dd>
+                        <span class="badge-light">
+                            {{ budget.created_at|date:"Y-m-d H:i" }}
+                        </span>
+                    </dd>
+                    
+                    <dt class="text-dark mt-2">Үүсгэсэн хэрэглэгч:</dt>
+                    <dd>
+                        {% if budget.created_by %}
+                            <span class="badge-info">
+                                <i class="fas fa-user"></i>
+                                {{ budget.created_by.get_full_name|default:budget.created_by.username }}
+                            </span>
+                        {% else %}
+                            <span class="text-muted">Систем</span>
+                        {% endif %}
+                    </dd>
+                </div>
+                
+                <div class="col-md-4 mb-3">
+                    <dt class="text-dark">Сүүлд шинэчлэгдсэн огноо:</dt>
+                    <dd>
+                        <span class="badge-light">
+                            {{ budget.updated_at|date:"Y-m-d H:i" }}
+                        </span>
+                    </dd>
+                    
+                    <dt class="text-dark mt-2">Сүүлд шинэчлэсэн хэрэглэгч:</dt>
+                    <dd>
+                        {% if budget.updated_by %}
+                            <span class="badge-warning">
+                                <i class="fas fa-user-edit"></i>
+                                {{ budget.updated_by.get_full_name|default:budget.updated_by.username }}
+                            </span>
+                        {% else %}
+                            <span class="text-muted">Систем</span>
+                        {% endif %}
+                    </dd>
+                </div>
+                
+                <div class="col-md-4 mb-3">
+                    <dt class="text-dark">Үлдэгдэл:</dt>
+                    <dd>
+                        <span class="badge-dark">
+                            {{ budget.balance|floatformat:2 }} ₮
+                        </span>
+                    </dd>
+                    
+                    <dt class="text-dark mt-2">Төлөв:</dt>
+                    <dd>
+                        {% if budget.status == 'Төсөвлөсөн' %}
+                            <span class="badge-warning">{{ budget.status }}</span>
+                        {% elif budget.status == 'Мөнгөө хүлээн авсан' %}
+                            <span class="badge-info">{{ budget.status }}</span>
+                        {% elif budget.status == 'Барааг авч дууссан' %}
+                            <span class="badge-primary">{{ budget.status }}</span>
+                        {% elif budget.status == 'Тооцоо тулгасан' %}
+                            <span class="badge-dark">{{ budget.status }}</span>
+                        {% elif budget.status == 'Дууссан' %}
+                            <span class="badge-success">{{ budget.status }}</span>
+                        {% else %}
+                            <span class="badge-light">{{ budget.status }}</span>
+                        {% endif %}
+                    </dd>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Худалдан авсан барааны мэдээлэл -->
+    <div class="card mb-4">
+        <div class="card-header bg-light">
+            <div class="d-flex justify-content-between align-items-center">
+                <h6 class="mb-0"><i class="fas fa-shopping-cart"></i> Худалдан авсан барааны мэдээлэл</h6>
+                <div>
+                    <span class="badge-primary">{{ product_transfers.count }} бүтээгдэхүүн</span>
+                    <span class="badge-info ml-1">{{ commodity_transfers.count }} материал</span>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            
+            <!-- Бүтээгдэхүүн хэсэг -->
+            {% if product_transfers %}
+            <div class="mb-5">
+                <h6 class="text-primary mb-3"><i class="fas fa-box"></i> Бүтээгдэхүүн</h6>
+                <div class="table-responsive">
+                    <table class="table table-hover table-sm">
+                        <thead class="bg-light">
+                            <tr>
+                                <th scope="col" class="text-center">№</th>
+                                <th scope="col">Барааны нэр</th>
+                                <th scope="col" class="text-center">Тоо</th>
+                                <th scope="col" class="text-right">Нэгж үнэ</th>
+                                <th scope="col" class="text-right">Нийт үнэ</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for transfer in product_transfers %}
+                            <tr>
+                                <td class="text-center align-middle">{{forloop.counter}}</td>
+                                <td class="align-middle">
+                                    <strong>{{transfer.product.name}}</strong>
+                                    {% if transfer.product.description %}
+                                    <br>
+                                    <small class="text-muted">{{transfer.product.description|truncatechars:50}}</small>
+                                    {% endif %}
+                                </td>
+                                <td class="text-center align-middle">
+                                    <span class="badge-secondary">{{transfer.quantity}} ш</span>
+                                </td>
+                                <td class="text-right align-middle">{{transfer.unit_price|floatformat:2}} ₮</td>
+                                <td class="text-right align-middle font-weight-bold">
+                                    <span id="transferid_{{forloop.counter}}">{{transfer.total_amount|floatformat:2}} ₮</span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                        <tfoot class="bg-light">
+                            <tr>
+                                <th colspan="4" class="text-right">Нийт:</th>
+                                <th class="text-right">
+                                    <span id="total" class="text-primary"></span>
+                                </th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+            {% endif %}
+            
+            <!-- Материал хэсэг -->
+            {% if commodity_transfers %}
+            <div>
+                <h6 class="text-info mb-3"><i class="fas fa-industry"></i> Материал</h6>
+                <div class="table-responsive">
+                    <table class="table table-hover table-sm">
+                        <thead class="bg-light">
+                            <tr>
+                                <th scope="col" class="text-center">№</th>
+                                <th scope="col">Материалын нэр</th>
+                                <th scope="col" class="text-center">Тоо/хэмжээ</th>
+                                <th scope="col" class="text-right">Нэгж үнэ</th>
+                                <th scope="col" class="text-right">Нийт үнэ</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for transfer in commodity_transfers %}
+                            <tr>
+                                <td class="text-center align-middle">{{forloop.counter}}</td>
+                                <td class="align-middle">
+                                    <strong>{{transfer.commodity.name}}</strong>
+                                    {% if transfer.commodity.description %}
+                                    <br>
+                                    <small class="text-muted">{{transfer.commodity.description|truncatechars:50}}</small>
+                                    {% endif %}
+                                </td>
+                                <td class="text-center align-middle">
+                                    {% if transfer.commodity.size_type.abbreviation == "гр" %}
+                                        <span class="badge-info">{{transfer.size}} гр</span>
+                                        <br>
+                                        <small class="text-muted">Савалгаа: {{transfer.commodity.unit_size}} гр</small>
+                                    {% else %}
+                                        <span class="badge-secondary">{{transfer.quantity}} ш</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-right align-middle">{{transfer.unit_price|floatformat:2}} ₮</td>
+                                <td class="text-right align-middle font-weight-bold">
+                                    <span id="transfer_commodity_id_{{forloop.counter}}">{{transfer.total_amount|floatformat:2}} ₮</span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                        <tfoot class="bg-light">
+                            <tr>
+                                <th colspan="4" class="text-right">Нийт:</th>
+                                <th class="text-right">
+                                    <span id="total_commodity" class="text-info"></span>
+                                </th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+            {% endif %}
+            
+            <!-- Хэрэв хоёр хүснэгт хоосон бол -->
+            {% if not product_transfers and not commodity_transfers %}
+            <div class="text-center py-5">
+                <i class="fas fa-shopping-cart fa-3x text-muted mb-3"></i>
+                <h5 class="text-muted">Худалдан авсан бараа байхгүй</h5>
+                <p class="text-muted">Энэ төсөвт худалдан авсан барааны мэдээлэл оруулаагүй байна.</p>
+            </div>
+            {% endif %}
+            
+            <!-- Нийт дүнгийн хураангуй -->
+            {% if product_transfers or commodity_transfers %}
+            <div class="row mt-4">
+                <div class="col-md-6 offset-md-6">
+                    <div class="card border-success">
+                        <div class="card-body p-3">
+                            <div class="row">
+                                <div class="col-7">
+                                    <h6 class="mb-1 text-success">Нийт зарцуулалт:</h6>
+                                    <small class="text-muted">Бүтээгдэхүүн + Материал</small>
+                                </div>
+                                <div class="col-5 text-right">
+                                    <h4 class="font-weight-bold text-success mb-0">
+                                        <span id="grand_total"></span>
+                                    </h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Доод хэсгийн үйлдлүүд -->
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <div class="card border-top">
+                <div class="card-body">
+                    <div class="d-flex flex-wrap justify-content-center gap-2">
+                        <a href="{% url 'budget_list' %}" class="btn btn-outline-secondary">
+                            <i class="fas fa-list"></i> Төсвийн жагсаалт
+                        </a>
+                        <a href="{% url 'budget_update' budget.pk %}" class="btn btn-warning">
+                            <i class="fas fa-edit"></i> Төсөв засах
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// DOM бэлэн болсны дараа ажиллуулах
+document.addEventListener('DOMContentLoaded', function() {
+    // Бүтээгдэхүүний нийлбэр
+    function calculateProductTotal() {
+        let sum = 0;
+        let counter = 1;
+        
+        while (true) {
+            const elementId = `transferid_${counter}`;
+            const element = document.getElementById(elementId);
+            
+            if (!element) {
+                break;
+            }
+            
+            const text = element.textContent || element.innerText;
+            const number = parseFloat(text.replace(/[^0-9.-]+/g, ''));
+            
+            if (!isNaN(number)) {
+                sum += number;
+            }
+            
+            counter++;
+        }
+        
+        return sum;
+    }
+    
+    // Материалын нийлбэр
+    function calculateCommodityTotal() {
+        let sum = 0;
+        let counter = 1;
+        
+        while (true) {
+            const elementId = `transfer_commodity_id_${counter}`;
+            const element = document.getElementById(elementId);
+            
+            if (!element) {
+                break;
+            }
+            
+            const text = element.textContent || element.innerText;
+            const number = parseFloat(text.replace(/[^0-9.-]+/g, ''));
+            
+            if (!isNaN(number)) {
+                sum += number;
+            }
+            
+            counter++;
+        }
+        
+        return sum;
+    }
+    
+    // Нийт дүнг тооцоолох
+    function calculateTotals() {
+        const productTotal = calculateProductTotal();
+        const commodityTotal = calculateCommodityTotal();
+        const grandTotal = productTotal + commodityTotal;
+        
+        // Бүтээгдэхүүний нийт
+        const productTotalElement = document.getElementById("total");
+        if (productTotalElement && productTotal > 0) {
+            productTotalElement.textContent = productTotal.toLocaleString('mn-MN', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' ₮';
+        }
+        
+        // Материалын нийт
+        const commodityTotalElement = document.getElementById("total_commodity");
+        if (commodityTotalElement && commodityTotal > 0) {
+            commodityTotalElement.textContent = commodityTotal.toLocaleString('mn-MN', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' ₮';
+        }
+        
+        // Нийт дүн
+        const grandTotalElement = document.getElementById("grand_total");
+        if (grandTotalElement && grandTotal > 0) {
+            grandTotalElement.textContent = grandTotal.toLocaleString('mn-MN', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' ₮';
+        }
+    }
+    
+    // Тооцооллыг ажиллуулах
+    calculateTotals();
+    
+    // Утасны дэлгэцэнд зориулсан зарим тохируулга
+    function handleResponsive() {
+        const isMobile = window.innerWidth <= 768;
+        const tables = document.querySelectorAll('table');
+        
+        tables.forEach(table => {
+            if (isMobile) {
+                table.classList.add('table-sm');
+                // Утасны дэлгэцэнд баганыг дарахад илүү орон зай өгөх
+                const cells = table.querySelectorAll('td, th');
+                cells.forEach(cell => {
+                    cell.style.padding = '8px 4px';
+                });
+            }
+        });
+    }
+    
+    // Эхлээд дуудах
+    handleResponsive();
+    
+    // Дэлгэцийн хэмжээ өөрчлөгдөхөд дахин тохируулах
+    window.addEventListener('resize', handleResponsive);
+});
+
+// Таблет, утасны дэлгэцэнд зориулсан CSS нэмэлт
+</script>
+<style>
+/* Респонсив загварын нэмэлт CSS */
+@media (max-width: 768px) {
+    .card-body {
+        padding: 0.75rem;
+    }
+    
+    h1, h2, h3, h4, h5, h6 {
+        font-size: 0.9rem;
+    }
+    
+    .btn {
+        padding: 0.375rem 0.75rem;
+        font-size: 0.875rem;
+    }
+    
+    .{
+        font-size: 0.75rem;
+    }
+    
+    table {
+        font-size: 0.875rem;
+    }
+    
+    .table td, .table th {
+        padding: 0.5rem;
+    }
+    
+    .card-header h6 {
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .container-fluid {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+    
+    .row {
+        margin-left: -5px;
+        margin-right: -5px;
+    }
+    
+    .col, .col-1, .col-2, .col-3, .col-4, .col-5, .col-6, 
+    .col-7, .col-8, .col-9, .col-10, .col-11, .col-12,
+    .col-auto, .col-sm-1, .col-sm-2, .col-sm-3, .col-sm-4, 
+    .col-sm-5, .col-sm-6, .col-sm-7, .col-sm-8, .col-sm-9, 
+    .col-sm-10, .col-sm-11, .col-sm-12 {
+        padding-left: 5px;
+        padding-right: 5px;
+    }
+    
+    .btn-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+    }
+    
+    .btn-group .btn {
+        flex: 1;
+        min-width: 120px;
+        margin-bottom: 5px;
+    }
+    
+    .table-responsive {
+        border: 0;
+    }
+    
+    .table {
+        margin-bottom: 0;
+    }
+    
+    /* Утасны дэлгэцэнд хүснэгтийг илүү сайн харуулах */
+    .table td, .table th {
+        white-space: nowrap;
+        font-size: 0.8rem;
+    }
+    
+    .text-truncate {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+}
+
+/* Хүснэгтийн загвар */
+.table th {
+    border-top: none;
+    font-weight: 600;
+    color: #495057;
+    background-color: #f8f9fa;
+}
+
+.table tfoot th {
+    border-top: 2px solid #dee2e6;
+}
+
+.table-hover tbody tr:hover {
+    background-color: rgba(0, 123, 255, 0.05);
+}
+
+/* Картнуудын загвар */
+.card {
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    border: 1px solid rgba(0, 0, 0, 0.125);
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+/* Текст хэмжээг тохируулах */
+.font-size-sm {
+    font-size: 0.875rem;
+}
+
+.font-size-xs {
+    font-size: 0.75rem;
+}
+
+/* Дүнгийн утгууд */
+.text-primary {
+    color: #007bff !important;
+}
+
+.text-success {
+    color: #28a745 !important;
+}
+
+.text-info {
+    color: #17a2b8 !important;
+}
+
+.text-warning {
+    color: #ffc107 !important;
+}
+
+/* Мобайл товчлуурууд */
+.btn-mobile {
+    width: 100%;
+    margin-bottom: 5px;
+}
+
+/* Grid системийн засвар */
+.row.gap-2 {
+    margin-left: -4px;
+    margin-right: -4px;
+}
+
+.row.gap-2 > [class*="col-"] {
+    padding-left: 4px;
+    padding-right: 4px;
+}
+</style>
+{% endblock %}

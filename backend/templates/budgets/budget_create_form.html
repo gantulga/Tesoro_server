@@ -1,0 +1,158 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title mb-0">{{ title }}</h4>
+                </div>
+                <div class="card-body">
+                    <!-- <div class="alert alert-info mb-4">
+                        <i class="fas fa-info-circle"></i>
+                        <strong>Мэдээлэл:</strong> Зохицуулагчийн сонголтод зөвхөн "Төсөв авагч" GROUP-д 
+                        хамаарах хэрэглэгчид харуулагдана.
+                        {% if recipients_count == 0 %}
+                            <span class="text-danger"> 
+                                <i class="fas fa-exclamation-triangle"></i>
+                                "Төсөв авагч" GROUP дээр хэрэглэгч бүртгэгдээгүй байна.
+                            </span>
+                        {% endif %}
+                    </div> -->
+                    
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+                        
+                        {% if form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            {% for error in form.non_field_errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                        
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    {{ form.name.label_tag }}
+                                    {{ form.name }}
+                                    {% if form.name.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.name.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    {{ form.budget_type.label_tag }}
+                                    {{ form.budget_type }}
+                                    {% if form.budget_type.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.budget_type.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    {{ form.coordinator.label_tag }}
+                                    {{ form.coordinator }}
+                                    {% if form.coordinator.queryset.count == 0 %}
+                                        <small class="form-text text-danger">
+                                            <i class="fas fa-exclamation-triangle"></i>
+                                            "Төсөв авагч" GROUP-д хэрэглэгч бүртгэгдээгүй байна. 
+                                            Админ хэсгээр нэмнэ үү.
+                                        </small>
+                                    {% endif %}
+                                    {% if form.coordinator.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.coordinator.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    {{ form.amount.label_tag }}
+                                    <div class="input-group">
+                                        {{ form.amount }}
+                                        <div class="input-group-append">
+                                            <span class="input-group-text">₮</span>
+                                        </div>
+                                    </div>
+                                    <small class="form-text text-muted">
+                                        Төсвийн нийт дүн
+                                    </small>
+                                    {% if form.amount.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.amount.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    {{ form.description.label_tag }}
+                                    {{ form.description }}
+                                    {% if form.description.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.description.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group mt-4">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Хадгалах
+                            </button>
+                            <a href="{% url 'budget_list' %}" class="btn btn-secondary">
+                                <i class="fas fa-times"></i> Цуцлах
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+$(document).ready(function() {
+    // Form-ын field-үүдийг шалгах
+    $('form').on('submit', function(e) {
+        var amount = parseFloat($('#id_amount').val());
+        if (amount < 0) {
+            e.preventDefault();
+            alert('Төсвийн дүн сөрөг байж болохгүй!');
+            return false;
+        }
+    });
+});
+</script>
+{% endblock %}

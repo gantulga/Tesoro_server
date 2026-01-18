@@ -42,6 +42,20 @@ class ProductAdmin(admin.ModelAdmin):
         return categories
     get_categories.admin_order_field = 'categories'
 
+class CommodityAdmin(admin.ModelAdmin):
+    list_display = ('name', 'size_type', 'unit_size', 'get_categories')
+
+    list_per_page = 500
+    exclude = ['created_by']
+    ordering = ('categories', 'name')
+    
+    def get_categories(self, obj):
+        categories = []
+        for cat in obj.categories.all():
+            categories.append(cat.name)
+        return categories
+    get_categories.admin_order_field = 'categories'
+
 class Item_balanceAdmin(admin.ModelAdmin):
     list_display = ('division', 'client', 'user', 'commodity', 'product', 'quantity', 'size')
 
@@ -52,7 +66,7 @@ class CommodityCategoryAdmin(admin.ModelAdmin):
 admin.site.register(Product_category, ProductCategoryAdmin)
 admin.site.register(Commodity_category, CommodityCategoryAdmin)
 admin.site.register(Product, ProductAdmin)
-admin.site.register(Commodity)
+admin.site.register(Commodity, CommodityAdmin)
 admin.site.register(Size_type)
 admin.site.register(Ingredient)
 admin.site.register(Ingredient_product)

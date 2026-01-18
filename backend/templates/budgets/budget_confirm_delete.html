@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-danger text-white">
+                    <h4 class="mb-0">Төсөв устгах</h4>
+                </div>
+                <div class="card-body text-center">
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle fa-3x mb-3"></i>
+                        <h5 class="alert-heading">Анхаар!</h5>
+                        <p>Та дараах төсвийг устгахдаа итгэлтэй байна уу?</p>
+                    </div>
+                    
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h5>{{ budget.name }}</h5>
+                            <p class="text-muted">{{ budget.budget_type.name }}</p>
+                            <hr>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <strong>Нийт дүн:</strong><br>
+                                    <span class="text-primary">{{ budget.amount|floatformat:2 }} ₮</span>
+                                </div>
+                                <div class="col-md-6">
+                                    <strong>Үлдэгдэл:</strong><br>
+                                    <span class="{% if budget.balance >= 0 %}text-success{% else %}text-danger{% endif %}">
+                                        {{ budget.balance|floatformat:2 }} ₮
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-danger btn-lg">
+                                <i class="fas fa-trash"></i> Тийм, устгах
+                            </button>
+                            <a href="{% url 'budget_list' %}" class="btn btn-secondary btn-lg">
+                                <i class="fas fa-times"></i> Үгүй, буцах
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

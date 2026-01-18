@@ -1,0 +1,312 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title mb-0">{{ title }}</h4>
+                    <p class="text-muted mb-0">Төсвийн нэр: <strong>{{ budget.name }}</strong></p>
+                </div>
+                <div class="card-body">
+                    <!-- Төсвийн мэдээлэл харуулах -->
+                    <div class="card mb-4">
+                        <div class="card-body bg-light">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <h6 class="mb-1">Төсвийн нэр:</h6>
+                                    <p class="font-weight-bold">{{ budget.name }}</p>
+                                </div>
+                                <div class="col-md-4">
+                                    <h6 class="mb-1">Төрөл:</h6>
+                                    <p class="font-weight-bold">{{ budget.budget_type.name }}</p>
+                                </div>
+                                <div class="col-md-4">
+                                    <h6 class="mb-1">Зохицуулагч:</h6>
+                                    <p class="font-weight-bold">
+                                        {% if budget.coordinator %}
+                                            {{ budget.coordinator.get_full_name|default:budget.coordinator.username }}
+                                        {% else %}
+                                            <span class="text-muted">Тодорхойгүй</span>
+                                        {% endif %}
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-md-3">
+                                    <h6 class="mb-1">Нийт дүн:</h6>
+                                    <p class="font-weight-bold text-primary">{{ budget.amount|floatformat:2 }} ₮</p>
+                                </div>
+                                <div class="col-md-3">
+                                    <h6 class="mb-1">Одоогийн зарцуулалт:</h6>
+                                    <p class="font-weight-bold text-warning">{{ budget.oppressed|floatformat:2 }} ₮</p>
+                                </div>
+                                <div class="col-md-3">
+                                    <h6 class="mb-1">Одоогийн буцаалт:</h6>
+                                    <p class="font-weight-bold text-info">{{ budget.returned|floatformat:2 }} ₮</p>
+                                </div>
+                                <div class="col-md-3">
+                                    <h6 class="mb-1">Одоогийн үлдэгдэл:</h6>
+                                    <p class="font-weight-bold {% if budget.balance >= 0 %}text-success{% else %}text-danger{% endif %}">
+                                        {{ budget.balance|floatformat:2 }} ₮
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-md-6">
+                                    <h6 class="mb-1">Зөрүү (зарцуулалт - буцаалт):</h6>
+                                    <p class="font-weight-bold {% if budget.difference >= 0 %}text-dark{% else %}text-danger{% endif %}">
+                                        {{ budget.difference|floatformat:2 }} ₮
+                                    </p>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6 class="mb-1">Төлөв:</h6>
+                                    <p>
+                                        {% if budget.status == 'Төсөвлөсөн' %}
+                                            <span class="badge badge-warning">{{ budget.status }}</span>
+                                        {% elif budget.status == 'Мөнгөө хүлээн авсан' %}
+                                            <span class="badge badge-info">{{ budget.status }}</span>
+                                        {% elif budget.status == 'Барааг авч дууссан' %}
+                                            <span class="badge badge-primary">{{ budget.status }}</span>
+                                        {% elif budget.status == 'Тооцоо тулгасан' %}
+                                            <span class="badge badge-dark">{{ budget.status }}</span>
+                                        {% elif budget.status == 'Дууссан' %}
+                                            <span class="badge badge-success">{{ budget.status }}</span>
+                                        {% else %}
+                                            <span class="badge badge-light">{{ budget.status }}</span>
+                                        {% endif %}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Өөрчлөх боломжтой талбарууд -->
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+                        
+                        {% if form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            {% for error in form.non_field_errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    {{ form.oppressed.label_tag }}
+                                    <div class="input-group">
+                                        {{ form.oppressed }}
+                                        <div class="input-group-append">
+                                            <span class="input-group-text">₮</span>
+                                        </div>
+                                    </div>
+                                    <small class="form-text text-muted">
+                                        Зарцуулсан дүн (одоогийн: {{ budget.oppressed|floatformat:2 }} ₮)
+                                    </small>
+                                    {% if form.oppressed.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.oppressed.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    {{ form.returned.label_tag }}
+                                    <div class="input-group">
+                                        {{ form.returned }}
+                                        <div class="input-group-append">
+                                            <span class="input-group-text">₮</span>
+                                        </div>
+                                    </div>
+                                    <small class="form-text text-muted">
+                                        Буцаан өгсөн дүн (одоогийн: {{ budget.returned|floatformat:2 }} ₮)
+                                    </small>
+                                    {% if form.returned.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.returned.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    {{ form.status.label_tag }}
+                                    {{ form.status }}
+                                    <small class="form-text text-muted">
+                                        Төсвийн одоогийн төлөв
+                                    </small>
+                                    {% if form.status.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.status.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    {{ form.description.label_tag }}
+                                    {{ form.description }}
+                                    <small class="form-text text-muted">
+                                        Төсвийн тайлбар
+                                    </small>
+                                    {% if form.description.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.description.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Автомат тооцоолсон утгууд -->
+                        <div class="alert alert-info mt-3">
+                            <h6><i class="fas fa-calculator"></i> Автомат тооцоолол:</h6>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <strong>Үлдэгдэл:</strong><br>
+                                    <span id="calculated_balance" class="text-success font-weight-bold">
+                                        {{ budget.balance|floatformat:2 }} ₮
+                                    </span>
+                                </div>
+                                <div class="col-md-4">
+                                    <strong>Зөрүү:</strong><br>
+                                    <span id="calculated_difference" class="text-dark font-weight-bold">
+                                        {{ budget.difference|floatformat:2 }} ₮
+                                    </span>
+                                </div>
+                                <div class="col-md-4">
+                                    <strong>Үлдэх дүн:</strong><br>
+                                    <span id="remaining_amount" class="text-primary font-weight-bold">
+                                        {{ budget.amount|floatformat:2 }} ₮
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group mt-4">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Хадгалах
+                            </button>
+                            <a href="{% url 'budget_list' %}" class="btn btn-secondary">
+                                <i class="fas fa-times"></i> Цуцлах
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+$(document).ready(function() {
+    // Төсвийн нийт дүн
+    var totalAmount = parseFloat('{{ budget.amount|floatformat:2 }}'.replace(',', ''));
+    
+    // Тооцооллыг автоматаар хийх
+    function calculateValues() {
+        var oppressed = parseFloat($('#id_oppressed').val()) || 0;
+        var returned = parseFloat($('#id_returned').val()) || 0;
+        
+        // Үлдэгдэл = Нийт дүн - Зарцуулсан + Буцаан өгсөн
+        var balance = totalAmount - oppressed + returned;
+        
+        // Зөрүү = Зарцуулсан - Буцаан өгсөн
+        var difference = oppressed - returned;
+        
+        // Үлдэх дүн = Нийт дүн
+        var remaining = totalAmount;
+        
+        // Харуулах
+        $('#calculated_balance').text(balance.toFixed(2) + ' ₮');
+        $('#calculated_difference').text(difference.toFixed(2) + ' ₮');
+        $('#remaining_amount').text(remaining.toFixed(2) + ' ₮');
+        
+        // Өнгө өөрчлөх
+        $('#calculated_balance').removeClass('text-success text-danger');
+        if (balance >= 0) {
+            $('#calculated_balance').addClass('text-success');
+        } else {
+            $('#calculated_balance').addClass('text-danger');
+        }
+        
+        $('#calculated_difference').removeClass('text-dark text-danger');
+        if (difference >= 0) {
+            $('#calculated_difference').addClass('text-dark');
+        } else {
+            $('#calculated_difference').addClass('text-danger');
+        }
+    }
+    
+    // Эхний удаа тооцоолох
+    calculateValues();
+    
+    // Утга өөрчлөгдөхөд дахин тооцоолох
+    $('#id_oppressed, #id_returned').on('input', calculateValues);
+    
+    // Form-ын validation
+    $('form').on('submit', function(e) {
+        var oppressed = parseFloat($('#id_oppressed').val()) || 0;
+        var returned = parseFloat($('#id_returned').val()) || 0;
+        
+        // Зарцуулсан дүн сөрөг байж болохгүй
+        if (oppressed < 0) {
+            e.preventDefault();
+            alert('Зарцуулсан дүн сөрөг байж болохгүй!');
+            return false;
+        }
+        
+        // Буцаан өгсөн дүн сөрөг байж болохгүй
+        if (returned < 0) {
+            e.preventDefault();
+            alert('Буцаан өгсөн дүн сөрөг байж болохгүй!');
+            return false;
+        }
+        
+        // Буцаан өгөх дүн нь үлдэгдэл мөнгөнөөс их байж болохгүй
+        if (totalAmount - oppressed < returned) {
+            e.preventDefault();
+            alert('Буцаан өгөх дүн нь үлдэгдэл мөнгөнөөс их байж болохгүй');
+            return false;
+        }
+        
+        // Зарцуулсан дүн нийт дүнгээс их байж болохгүй
+        if (oppressed > totalAmount) {
+            e.preventDefault();
+            alert('Зарцуулсан дүн нийт дүнгээс (' + totalAmount.toFixed(2) + ' ₮) их байж болохгүй!');
+            return false;
+        }
+        
+        // Үлдэгдэл сөрөг байж болохгүй
+        var balance = totalAmount - oppressed + returned;
+        if (balance < 0) {
+            e.preventDefault();
+            alert('Үлдэгдэл дүн сөрөг байж болохгүй!');
+            return false;
+        }
+    });
+});
+</script>
+{% endblock %}

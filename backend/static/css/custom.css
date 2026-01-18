@@ -1,0 +1,86 @@
+/* Search Container */
+.product-search-container {
+    position: relative;
+}
+
+.product-search-input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.product-search-results {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid #ddd;
+    border-top: none;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 100;
+    display: none;
+}
+
+.product-search-results .search-result-item {
+    padding: 8px;
+    cursor: pointer;
+    border-bottom: 1px solid #eee;
+    font-size: 0.9em;
+}
+
+.product-search-results .search-result-item:hover {
+    background-color: #f0f8ff;
+}
+
+/* Auto-complete */
+.ui-autocomplete {
+    max-height: 200px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.ui-menu-item {
+    padding: 8px;
+    cursor: pointer;
+    border-bottom: 1px solid #eee;
+}
+
+.ui-menu-item:hover {
+    background-color: #f0f8ff;
+}
+
+/* Remove button animation */
+.remove-btn {
+    transition: all 0.3s ease;
+}
+
+.remove-btn:hover {
+    transform: scale(1.1);
+}
+
+/* Budget info alert */
+.budget-info.alert {
+    font-size: 0.9em;
+    padding: 10px;
+}
+
+/* Scrollbar styling */
+.product-table-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.product-table-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.product-table-container::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+.product-table-container::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}

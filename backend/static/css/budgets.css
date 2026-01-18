@@ -1,0 +1,134 @@
+/* Budget-т зориулсан нэмэлт CSS */
+
+.budget-status-badge {
+    padding: 0.25em 0.6em;
+    font-size: 75%;
+    font-weight: 700;
+    line-height: 1;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: 10rem;
+}
+
+.budget-amount-positive {
+    color: #28a745 !important;
+}
+
+.budget-amount-negative {
+    color: #dc3545 !important;
+}
+
+.table-budgets tbody tr:hover {
+    background-color: rgba(0, 123, 255, 0.05);
+    cursor: pointer;
+}
+
+.budget-progress {
+    height: 20px;
+    border-radius: 10px;
+}
+
+.budget-card {
+    transition: all 0.3s ease;
+    border-left: 4px solid #007bff;
+}
+
+.budget-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .budget-table-actions .btn-group {
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .budget-table-actions .btn {
+        margin-bottom: 5px;
+        width: 100%;
+    }
+}
+
+/* Budget update form styling */
+.readonly-info {
+    background-color: #f8f9fa;
+    border-left: 4px solid #007bff;
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+.readonly-info h6 {
+    color: #6c757d;
+    font-size: 0.875rem;
+    margin-bottom: 0.25rem;
+}
+
+.readonly-info p {
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+}
+
+.form-section {
+    background-color: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.form-section-title {
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+    color: #007bff;
+}
+
+/* static/css/budgets.css дээр нэмэх */
+.table-budget {
+    font-size: 0.9rem;
+}
+
+.table-budget th {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+}
+
+.table-budget tr:hover {
+    background-color: rgba(102, 126, 234, 0.05);
+}
+
+.budget-stat-card {
+    transition: all 0.3s ease;
+    border: none;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+.budget-stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.currency-symbol {
+    font-size: 0.8em;
+    color: #6c757d;
+}
+
+.progress-thin {
+    height: 6px;
+    margin-top: 5px;
+}
+
+/* Зарцуулалтын progress bar */
+.usage-progress .progress-bar {
+    background: linear-gradient(90deg, #ffc107, #fd7e14);
+}
+
+/* Үлдэгдлийн progress bar */
+.balance-progress .progress-bar {
+    background: linear-gradient(90deg, #28a745, #20c997);
+}

@@ -17,6 +17,7 @@ from rest_framework.authtoken import views as auth_views
 from structure_app.views import index as structure_app_index, shiftWorkUnpaidOrderChecker
 from django.views.generic.base import TemplateView # new
 from payment_app import views as payment_views
+from financial_app import views as financial_views
 
 router = routers.DefaultRouter()
 
@@ -142,6 +143,13 @@ urlpatterns = [
     path('notPaidOrdersUser', views.notPaidOrdersUser),
     path('notPaidOrdersCustomer', views.notPaidOrdersCustomer),
     re_path('^printer/$', views.printer),
+    
+    path('budgets', financial_views.budget_list, name='budget_list'),
+    path('budgets/create/', financial_views.budget_create, name='budget_create'),
+    path('budgets/<int:pk>/', financial_views.budget_detail, name='budget_detail'),
+    path('budgets/<int:pk>/update/', financial_views.budget_update, name='budget_update'),
+    path('budgets/<int:pk>/delete/', financial_views.budget_delete, name='budget_delete'),
+    path('budgets/<int:pk>/json/', financial_views.budget_json, name='budget_json'),
 
     #EBARIMT
     path('api/bill/getInformation', payment_views.getInformation),
