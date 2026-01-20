@@ -202,11 +202,18 @@ class Budget(Modifiedinfo):
         self.balance = self.calculate_balance()
         
         # Үлдэгдэл нь сөрөг байж болохгүй
-        if self.balance < 0:
-            raise ValueError(f'Үлдэгдэл дүн сөрөг байж болохгүй! Төсвийн дүн: {self.amount}₮')
+        # if self.balance < 0:
+        #     raise ValueError(f'Үлдэгдэл дүн сөрөг байж болохгүй! Төсвийн дүн: {self.amount}₮')
         
         super().save(*args, **kwargs)
 
+
+class EbarimtPhoto(Createdinfo):
+    budget = models.ForeignKey('Budget', on_delete=models.CASCADE, null=True, related_name="ebarimt_photos")
+    image = models.ImageField(upload_to='ebarimt_photos', null=False, blank=False)
+
+    def __str__(self):
+        return self.image.url
 
 # Мөнгөн шилжүүлгийн өгөгдөл
 

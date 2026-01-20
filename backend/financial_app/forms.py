@@ -79,13 +79,18 @@ class BudgetCreateForm(forms.ModelForm):
 class BudgetUpdateForm(forms.ModelForm):
     class Meta:
         model = Budget
-        fields = ['description', 'oppressed', 'returned', 'status']
+        fields = ['description', 'amount', 'oppressed', 'returned', 'status']
         
         widgets = {
             'description': forms.Textarea(attrs={
                 'class': 'form-control',
                 'rows': 4,
                 'placeholder': 'Тайлбар'
+            }),
+            'amount': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'step': '1',
+                'min': '0',
             }),
             'oppressed': forms.NumberInput(attrs={
                 'class': 'form-control',
@@ -106,6 +111,7 @@ class BudgetUpdateForm(forms.ModelForm):
         
         labels = {
             'description': 'Тайлбар',
+            'amount': 'Төсвийн дүн дүн (₮)',
             'oppressed': 'Зарцуулсан дүн (₮)',
             'returned': 'Буцаан өгсөн дүн (₮)',
             'status': 'Төлөв'
@@ -133,18 +139,18 @@ class BudgetUpdateForm(forms.ModelForm):
         returned = cleaned_data.get('returned')
         instance = getattr(self, 'instance', None)
         
-        if instance and oppressed is not None and returned is not None:
+        # if instance and oppressed is not None and returned is not None:
             # Зарцуулсан дүн буцаан өгсөн дүнгээс бага байж болохгүй
-            if oppressed < returned:
-                raise forms.ValidationError(
-                    'Зарцуулсан дүн буцаан өгсөн дүнгээс бага байж болохгүй!'
-                )
+            # if oppressed < returned:
+            #     raise forms.ValidationError(
+            #         'Зарцуулсан дүн буцаан өгсөн дүнгээс бага байж болохгүй!'
+            #     )
             
             # Зарцуулсан дүн нийт дүнгээс их байж болохгүй
-            if oppressed > instance.amount:
-                raise forms.ValidationError(
-                    f'Зарцуулсан дүн нийт дүнгээс ({instance.amount:.2f} ₮) их байж болохгүй!'
-                )
+            # if oppressed > instance.amount:
+            #     raise forms.ValidationError(
+            #         f'Зарцуулсан дүн нийт дүнгээс ({instance.amount:.2f} ₮) их байж болохгүй!'
+            #     )
         
         return cleaned_data
     
@@ -152,16 +158,16 @@ class BudgetUpdateForm(forms.ModelForm):
         oppressed = self.cleaned_data.get('oppressed')
         instance = getattr(self, 'instance', None)
         
-        if instance and oppressed is not None:
-            # Зарцуулсан дүн сөрөг байж болохгүй
-            if oppressed < 0:
-                raise forms.ValidationError('Зарцуулсан дүн сөрөг байж болохгүй!')
+        # if instance and oppressed is not None:
+        #     # Зарцуулсан дүн сөрөг байж болохгүй
+        #     if oppressed < 0:
+        #         raise forms.ValidationError('Зарцуулсан дүн сөрөг байж болохгүй!')
             
-            # Зарцуулсан дүн нийт дүнгээс их байж болохгүй
-            if oppressed > instance.amount:
-                raise forms.ValidationError(
-                    f'Зарцуулсан дүн нийт дүнгээс ({instance.amount:.2f} ₮) их байж болохгүй!'
-                )
+        #     # Зарцуулсан дүн нийт дүнгээс их байж болохгүй
+        #     if oppressed > instance.amount:
+        #         raise forms.ValidationError(
+        #             f'Зарцуулсан дүн нийт дүнгээс ({instance.amount:.2f} ₮) их байж болохгүй!'
+        #         )
         
         return oppressed
     
