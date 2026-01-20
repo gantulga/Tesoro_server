@@ -5,10 +5,11 @@ from django.contrib.auth.models import Group
 from django.contrib import messages
 from django.core.paginator import Paginator
 from django.db.models import Q, Sum
-from .models import Budget, Budget_type
+from .models import Budget, Budget_type, EbarimtPhoto
 from .forms import BudgetCreateForm, BudgetUpdateForm
 from django.http import JsonResponse
 from structure_app.decorators import group_required
+from django.views.decorators.csrf import csrf_exempt
 
 # Төсвийн жагсаалт
 @login_required
