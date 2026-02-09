@@ -1507,5 +1507,39 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
 });
+
+
+// Энгийн lock механизм
+let isSubmitting = false;
+
+document.getElementById('addProductForm').addEventListener('submit', function(e) {
+  if (isSubmitting) {
+    e.preventDefault();
+    return;
+  }
+  
+  isSubmitting = true;
+  
+  // Товчийн текстийг өөрчлөх
+  const submitBtn = document.querySelector('.btn-submit');
+  const originalText = submitBtn.innerHTML;
+  submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Хадгалж байна...';
+  
+  // Бусад шалгалтуудыг хийх...
+  
+  // Хэрэв алдаа гарвал isSubmitting-г false болгох
+  if (e.defaultPrevented) {
+    isSubmitting = false;
+    submitBtn.innerHTML = originalText;
+  }
+  
+  // Амжилттай илгээгдсэн тохиолдолд хуудас дахин ачааллахад 
+  // автоматаар unlock хийгдэнэ
+});
+
+// Хуудас ачааллахад isSubmitting-г reset хийх
+window.addEventListener('pageshow', function() {
+  isSubmitting = false;
+});
 </script>
 {% endblock %}
