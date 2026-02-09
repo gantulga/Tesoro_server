@@ -306,11 +306,12 @@
                                 <th scope="col" class="text-center">Тоо</th>
                                 <th scope="col" class="text-right">Нэгж үнэ</th>
                                 <th scope="col" class="text-right">Нийт үнэ</th>
+                                <th scope="col" class="text-center">Үйлдэл</th> <!-- Шинэ багана -->
                             </tr>
                         </thead>
                         <tbody>
                             {% for transfer in product_transfers %}
-                            <tr>
+                            <tr id="product-transfer-{{ transfer.id }}">
                                 <td class="text-center align-middle">{{forloop.counter}}</td>
                                 <td class="align-middle">
                                     <strong>{{transfer.product.name}}</strong>
@@ -326,12 +327,24 @@
                                 <td class="text-right align-middle font-weight-bold">
                                     <span id="transferid_{{forloop.counter}}">{{transfer.total_amount|floatformat:2}} ₮</span>
                                 </td>
+                                <td class="text-center align-middle">
+                                    <!-- Устгах товч -->
+                                    <button type="button" class="btn btn-outline-danger btn-sm delete-btn" 
+                                            data-id="{{ transfer.id }}" 
+                                            data-type="product" 
+                                            data-name="{{ transfer.product.name }}"
+                                            data-quantity="{{ transfer.quantity }}"
+                                            data-total="{{ transfer.total_amount }}"
+                                            title="Энэ барааг төсвөөс хас">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </td>
                             </tr>
                             {% endfor %}
                         </tbody>
                         <tfoot class="bg-light">
                             <tr>
-                                <th colspan="4" class="text-right">Нийт:</th>
+                                <th colspan="5" class="text-right">Нийт:</th>
                                 <th class="text-right">
                                     <span id="total" class="text-primary"></span>
                                 </th>
@@ -355,11 +368,12 @@
                                 <th scope="col" class="text-center">Тоо/хэмжээ</th>
                                 <th scope="col" class="text-right">Нэгж үнэ</th>
                                 <th scope="col" class="text-right">Нийт үнэ</th>
+                                <th scope="col" class="text-center">Үйлдэл</th> <!-- Шинэ багана -->
                             </tr>
                         </thead>
                         <tbody>
                             {% for transfer in commodity_transfers %}
-                            <tr>
+                            <tr id="commodity-transfer-{{ transfer.id }}">
                                 <td class="text-center align-middle">{{forloop.counter}}</td>
                                 <td class="align-middle">
                                     <strong>{{transfer.commodity.name}}</strong>
@@ -381,12 +395,24 @@
                                 <td class="text-right align-middle font-weight-bold">
                                     <span id="transfer_commodity_id_{{forloop.counter}}">{{transfer.total_amount|floatformat:2}} ₮</span>
                                 </td>
+                                <td class="text-center align-middle">
+                                    <!-- Устгах товч -->
+                                    <button type="button" class="btn btn-outline-danger btn-sm delete-btn" 
+                                            data-id="{{ transfer.id }}" 
+                                            data-type="commodity" 
+                                            data-name="{{ transfer.commodity.name }}"
+                                            data-quantity="{{ transfer.quantity }}"
+                                            data-total="{{ transfer.total_amount }}"
+                                            title="Энэ материалыг төсвөөс хас">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </td>
                             </tr>
                             {% endfor %}
                         </tbody>
                         <tfoot class="bg-light">
                             <tr>
-                                <th colspan="4" class="text-right">Нийт:</th>
+                                <th colspan="5" class="text-right">Нийт:</th>
                                 <th class="text-right">
                                     <span id="total_commodity" class="text-info"></span>
                                 </th>
@@ -560,6 +586,269 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // Таблет, утасны дэлгэцэнд зориулсан CSS нэмэлт
+
+// Устгах товчлуурын event listener
+document.addEventListener('DOMContentLoaded', function() {
+    // Тооцооллын функцууд (өмнөхтэй адил)
+    function calculateProductTotal() {
+        let sum = 0;
+        let counter = 1;
+        
+        while (true) {
+            const elementId = `transferid_${counter}`;
+            const element = document.getElementById(elementId);
+            
+            if (!element) {
+                break;
+            }
+            
+            const text = element.textContent || element.innerText;
+            const number = parseFloat(text.replace(/[^0-9.-]+/g, ''));
+            
+            if (!isNaN(number)) {
+                sum += number;
+            }
+            
+            counter++;
+        }
+        
+        return sum;
+    }
+    
+    function calculateCommodityTotal() {
+        let sum = 0;
+        let counter = 1;
+        
+        while (true) {
+            const elementId = `transfer_commodity_id_${counter}`;
+            const element = document.getElementById(elementId);
+            
+            if (!element) {
+                break;
+            }
+            
+            const text = element.textContent || element.innerText;
+            const number = parseFloat(text.replace(/[^0-9.-]+/g, ''));
+            
+            if (!isNaN(number)) {
+                sum += number;
+            }
+            
+            counter++;
+        }
+        
+        return sum;
+    }
+    
+    function calculateTotals() {
+        const productTotal = calculateProductTotal();
+        const commodityTotal = calculateCommodityTotal();
+        const grandTotal = productTotal + commodityTotal;
+        
+        const productTotalElement = document.getElementById("total");
+        if (productTotalElement) {
+            productTotalElement.textContent = productTotal.toLocaleString('mn-MN', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' ₮';
+        }
+        
+        const commodityTotalElement = document.getElementById("total_commodity");
+        if (commodityTotalElement) {
+            commodityTotalElement.textContent = commodityTotal.toLocaleString('mn-MN', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' ₮';
+        }
+        
+        const grandTotalElement = document.getElementById("grand_total");
+        if (grandTotalElement) {
+            grandTotalElement.textContent = grandTotal.toLocaleString('mn-MN', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' ₮';
+        }
+    }
+    
+    // Устгах товчлуурын event listener
+    document.querySelectorAll('.delete-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const id = this.getAttribute('data-id');
+            const type = this.getAttribute('data-type');
+            const name = this.getAttribute('data-name');
+            const quantity = this.getAttribute('data-quantity');
+            const total = this.getAttribute('data-total');
+            
+            // Баталгаажуулах
+            if (confirm(`Та "${name}" барааг төсвөөс хасахдаа итгэлтэй байна уу?\n\nТоо хэмжээ: ${quantity}\nНийт үнэ: ${total}₮`)) {
+                // AJAX хүсэлт илгээх
+                deleteTransfer(id, type);
+            }
+        });
+    });
+    
+    // AJAX хүсэлт илгээх функц
+    async function deleteTransfer(id, type) {
+        const button = document.querySelector(`.delete-btn[data-id="${id}"]`);
+        const originalContent = button.innerHTML;
+        
+        // Товчлуурыг lock хийх
+        button.disabled = true;
+        button.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+        button.classList.remove('btn-outline-danger');
+        button.classList.add('btn-secondary');
+        
+        try {
+            const csrfToken = getCookie('csrftoken');
+            const response = await fetch(`/delete-transfer/${id}/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken,
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify({
+                    transfer_type: type
+                })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                // Мөрийг хүснэгтээс устгах
+                const row = document.getElementById(`${type}-transfer-${id}`);
+                if (row) {
+                    row.remove();
+                }
+                
+                // Дүнг шинэчлэх
+                calculateTotals();
+                
+                // Төсвийн дүнг шинэчлэх
+                updateBudgetTotals(data.budget_totals);
+                
+                // Амжилттай мессеж харуулах
+                showAlert('success', 'Амжилттай', 'Бараа төсвөөс хаслаа');
+            } else {
+                throw new Error(data.error || 'Алдаа гарлаа');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            showAlert('danger', 'Алдаа', error.message || 'Устгах үйлдэл амжилтгүй боллоо');
+            
+            // Товчлуурыг unlock хийх
+            button.disabled = false;
+            button.innerHTML = originalContent;
+            button.classList.remove('btn-secondary');
+            button.classList.add('btn-outline-danger');
+        }
+    }
+    
+    // Төсвийн дүнг шинэчлэх функц
+    function updateBudgetTotals(totals) {
+        if (totals) {
+            // Үлдэгдлийг шинэчлэх
+            const balanceElement = document.querySelector('.badge-dark:contains("₮")') || 
+                                   document.querySelector('[class*="balance"]');
+            if (balanceElement) {
+                balanceElement.textContent = `${parseFloat(totals.balance).toFixed(2)} ₮`;
+            }
+            
+            // Зарцуулсан дүнг шинэчлэх
+            const oppressedElement = document.querySelector('.text-warning.font-weight-bold');
+            if (oppressedElement) {
+                oppressedElement.textContent = `${parseFloat(totals.oppressed).toFixed(2)} ₮`;
+            }
+            
+            // Прогресс баарыг шинэчлэх
+            const progressBars = document.querySelectorAll('.progress-bar');
+            progressBars.forEach(bar => {
+                const budgetAmount = parseFloat('{{ budget.amount }}');
+                if (budgetAmount > 0) {
+                    if (bar.classList.contains('bg-warning')) {
+                        // Зарцуулалтын прогресс
+                        const percent = (totals.oppressed / budgetAmount) * 100;
+                        bar.style.width = `${percent}%`;
+                        bar.parentElement.nextElementSibling.textContent = `${percent.toFixed(1)}%`;
+                    } else if (bar.classList.contains('bg-success')) {
+                        // Үлдэгдлийн прогресс
+                        const percent = (totals.balance / budgetAmount) * 100;
+                        bar.style.width = `${percent}%`;
+                        bar.parentElement.nextElementSibling.textContent = `${percent.toFixed(1)}%`;
+                    }
+                }
+            });
+        }
+    }
+    
+    // Мессеж харуулах функц
+    function showAlert(type, title, message) {
+        // Хэрэв аль хэдийн alert байвал устгах
+        const existingAlert = document.querySelector('.custom-alert');
+        if (existingAlert) {
+            existingAlert.remove();
+        }
+        
+        const alertHtml = `
+            <div class="alert alert-${type} custom-alert alert-dismissible fade show position-fixed" 
+                 style="top: 20px; right: 20px; z-index: 1050; min-width: 300px;">
+                <strong>${title}</strong> ${message}
+                <button type="button" class="close" data-dismiss="alert">
+                    <span>&times;</span>
+                </button>
+            </div>
+        `;
+        
+        document.body.insertAdjacentHTML('beforeend', alertHtml);
+        
+        // 5 секундын дараа автоматаар хаах
+        setTimeout(() => {
+            const alert = document.querySelector('.custom-alert');
+            if (alert) {
+                alert.remove();
+            }
+        }, 5000);
+    }
+    
+    // CSRF cookie авах функц
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    
+    // Эхлээд тооцоолол хийх
+    calculateTotals();
+    
+    // Мобайл responsive тохируулга
+    function handleResponsive() {
+        const isMobile = window.innerWidth <= 768;
+        const tables = document.querySelectorAll('table');
+        
+        tables.forEach(table => {
+            if (isMobile) {
+                table.classList.add('table-sm');
+                // Устгах товчлуурын хэмжээг жижигрүүлэх
+                const deleteBtns = table.querySelectorAll('.delete-btn');
+                deleteBtns.forEach(btn => {
+                    btn.classList.add('btn-xs');
+                    btn.innerHTML = '<i class="fas fa-trash-alt fa-xs"></i>';
+                });
+            } else {
+                // Дэлгэц том бол товчлуурын текст нэмэх
+                const deleteBtns = table.querySelectorAll('.delete-btn');
+                deleteBtns.forEach(btn => {
+                    if (!btn.querySelector('span')) {
+                        btn.innerHTML = '<i class="fas fa-trash-alt"></i> <span class="d-none d-md-inline">Хасах</span>';
+                    }
+                });
+            }
+        });
+    }
+    
+    handleResponsive();
+    window.addEventListener('resize', handleResponsive);
+});
 </script>
 <style>
 /* Респонсив загварын нэмэлт CSS */
@@ -716,5 +1005,73 @@ document.addEventListener('DOMContentLoaded', function() {
     padding-left: 4px;
     padding-right: 4px;
 }
+
+/* Устгах товчлуурын стил */
+.delete-btn {
+    transition: all 0.3s ease;
+    min-width: 40px;
+}
+
+.delete-btn:hover {
+    background-color: #dc3545 !important;
+    color: white !important;
+    transform: scale(1.05);
+}
+
+.delete-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Жижиг товчлуур (мобайл дээр) */
+.btn-xs {
+    padding: 0.1rem 0.3rem;
+    font-size: 0.75rem;
+    line-height: 1.2;
+    border-radius: 0.2rem;
+}
+
+/* Alert мессежийн стил */
+.custom-alert {
+    animation: slideInRight 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* Мобайл дэлгэцэнд зориулсан зарим тохируулга */
+@media (max-width: 768px) {
+    .table th:nth-child(6),
+    .table td:nth-child(6) {
+        width: 50px;
+        min-width: 50px;
+        max-width: 50px;
+    }
+    
+    .delete-btn {
+        padding: 2px 5px;
+    }
+    
+    .delete-btn .fa-trash-alt {
+        font-size: 12px;
+    }
+}
+
+/* Хүснэгтийн баганын өргөнийг тохируулах */
+.table th:nth-child(1) { width: 5%; }
+.table th:nth-child(2) { width: 30%; }
+.table th:nth-child(3) { width: 10%; }
+.table th:nth-child(4) { width: 15%; }
+.table th:nth-child(5) { width: 15%; }
+.table th:nth-child(6) { width: 10%; }
 </style>
 {% endblock %}
