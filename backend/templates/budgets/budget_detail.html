@@ -690,9 +690,9 @@ document.addEventListener('DOMContentLoaded', function() {
         button.classList.add('btn-secondary');
         
         try {
-            // const csrfToken = getCookie('csrftoken');
-            const csrfToken = "{{ csrf_token }}";
-            const response = await fetch(`/delete-transfer/${id}/`, {
+            const csrfToken = getCookie('csrftoken');
+            // const csrfToken = "{{ csrf_token }}";
+            const response = await fetch(`/budgets/delete-transfer/${id}/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
