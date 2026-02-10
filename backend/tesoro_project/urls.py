@@ -150,6 +150,8 @@ urlpatterns = [
     path('budgets/<int:pk>/update/', financial_views.budget_update, name='budget_update'),
     path('budgets/<int:pk>/delete/', financial_views.budget_delete, name='budget_delete'),
     path('budgets/<int:pk>/json/', financial_views.budget_json, name='budget_json'),
+    path('budgets/delete-transfer/<int:id>/', financial_views.delete_transfer, name='delete_transfer'),
+    
 
     #EBARIMT
     path('api/bill/getInformation', payment_views.getInformation),
