@@ -201,6 +201,14 @@ def delete_transfer(request, id):
     """
     AJAX хүсэлтээр бараа/материал төсвөөс хасдаг view
     """
+
+    is_director = request.user.groups.filter(name='Захирал').exists()
+    if not is_director:
+        return JsonResponse({
+            'success': False,
+            'error': 'Та энэ үйлдлийг хийх эрхгүй байна. Зөвхөн Захирал болон Админ устгах боломжтой.'
+        }, status=403)
+
     from product_app.models import Item_transfer
     try:
         # JSON өгөгдөл унших
