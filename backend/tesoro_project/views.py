@@ -240,6 +240,7 @@ def addCommodity(request):
         while True:
             if 'material'+str(index) in request.POST and request.POST['material'+str(index)]:
                 commodity = Commodity.objects.get(pk=request.POST['material'+str(index)])
+                print(request.POST)
                 if request.POST['size_type'+str(index)] == "ш":
                     item_transfer = Item_transfer.objects.create(item_transfer_type=item_transfer_type, commodity=commodity, to_division=to_division, to_client=to_client, is_confirmed=True, confirmed_by=request.user, created_by=request.user, quantity=int(request.POST['quantity'+str(index)]), unit_price=float(request.POST['price'+str(index)]), total_amount=float(request.POST['total'+str(index)]))
 
