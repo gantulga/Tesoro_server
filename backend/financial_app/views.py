@@ -195,6 +195,7 @@ from django.views.decorators.csrf import csrf_exempt
 import json
 
 @require_POST
+@group_required('Захирал')
 @csrf_exempt  # AJAX хүсэлтэд зориулсанfrom product_app.models import Item_transfer
 def delete_transfer(request, id):
     """
