@@ -180,9 +180,9 @@
             <option value="{{commodity.id}}" 
                     data-name="{{commodity.name}}"
                     data-unit_size="{{commodity.unit_size|default:1}}"
-                    data-size_type="{{commodity.size_type.abbreviation|default:'ш'}}"
+                    data-size_type="{{commodity.size_type|default:'size'}}"
                     data-price="{{commodity.price|default:0}}">
-              {{commodity.name}} ({{commodity.unit_size|default:1}}{% if commodity.size_type %}{{commodity.size_type.abbreviation|default:'ш'}}{% else %}ш{% endif %})
+              {{commodity.name}}
             </option>
           {% endfor %}
         </select>
@@ -194,7 +194,7 @@
              class="unit-size-input" data-index="{index}" readonly />
     </div>
     <div class="cell input">
-      <select name="size_type{index}" class="size-type-select" data-index="{index}" disabled>
+      <select name="size_type{index}" class="size-type-select" data-index="{index}" readonly>
         <option value="гр">гр</option>
         <option value="ш">ш</option>
       </select>
@@ -682,11 +682,6 @@
   color: #666;
 }
 
-.size-type-select:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
-}
-
 .btn-remove {
   background: #e74c3c;
   color: white;
@@ -1024,52 +1019,9 @@
     -webkit-overflow-scrolling: touch;
   }
 }
-
-/* Алдааны мессеж */
-.form-error-alert {
-  animation: slideDown 0.3s ease;
-  margin-bottom: 20px;
-  border-left: 4px solid #dc3545;
-}
-
-.form-error-alert ul {
-  margin-bottom: 0;
-  padding-left: 20px;
-}
-
-.form-error-alert li {
-  margin-bottom: 5px;
-}
-
-.form-error-alert li:last-child {
-  margin-bottom: 0;
-}
-
-/* Submit button lock хийгдсэн үед */
-.btn-submit:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
-}
-
-/* Spinner animation */
-.fa-spinner {
-  margin-right: 8px;
-}
-
-.fa-spin {
-  animation: fa-spin 1s infinite linear;
-}
-
-@keyframes fa-spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
 </style>
 
 <script>
-// Submit lock механизм
-let isSubmitting = false;
-
 document.addEventListener('DOMContentLoaded', function() {
   let nextMaterialIndex = 1;
   const materialRowsContainer = document.getElementById('materialRowsContainer');
@@ -1090,7 +1042,7 @@ document.addEventListener('DOMContentLoaded', function() {
       id: "{{commodity.id}}",
       name: "{{commodity.name}}",
       unit_size: "{{commodity.unit_size|default:1}}",
-      size_type: "{% if commodity.size_type %}{{commodity.size_type.abbreviation|default:'ш'}}{% else %}ш{% endif %}",
+      size_type: "{{commodity.size_type|default:'size'}}",
       price: "{{commodity.price|default:0}}"
     },
     {% endfor %}
@@ -1183,20 +1135,18 @@ document.addEventListener('DOMContentLoaded', function() {
       warningElement.style.display = 'block';
       
       // Submit товчийг идэвхгүй болгох
-      const submitBtn = document.querySelector('.btn-submit');
-      submitBtn.disabled = true;
-      submitBtn.style.opacity = '0.6';
-      submitBtn.style.cursor = 'not-allowed';
+      document.querySelector('.btn-submit').disabled = true;
+      document.querySelector('.btn-submit').style.opacity = '0.6';
+      document.querySelector('.btn-submit').style.cursor = 'not-allowed';
     } else {
       remainingElement.classList.remove('remaining-negative');
       remainingElement.classList.add('remaining-positive');
       warningElement.style.display = 'none';
       
       // Submit товчийг идэвхтэй болгох
-      const submitBtn = document.querySelector('.btn-submit');
-      submitBtn.disabled = false;
-      submitBtn.style.opacity = '1';
-      submitBtn.style.cursor = 'pointer';
+      document.querySelector('.btn-submit').disabled = false;
+      document.querySelector('.btn-submit').style.opacity = '1';
+      document.querySelector('.btn-submit').style.cursor = 'pointer';
     }
   }
   
@@ -1235,7 +1185,7 @@ document.addEventListener('DOMContentLoaded', function() {
            data-unit_size="${material.unit_size}"
            data-size_type="${material.size_type}"
            data-price="${material.price}">
-        ${material.name} (${material.unit_size}${material.size_type})
+        ${material.name}
       </div>
     `).join('');
     
@@ -1311,15 +1261,12 @@ document.addEventListener('DOMContentLoaded', function() {
       if (selectedOption.value) {
         // Материалын мэдээллийг авах
         const unitSize = selectedOption.dataset.unit_size || "1";
-        const sizeType = selectedOption.dataset.size_type || "ш";
+        const sizeType = selectedOption.dataset.size_type || "size";
         const price = selectedOption.dataset.price || "0";
         
         // Утгуудыг тохируулах
         unitSizeInput.value = unitSize;
-        
-        // Size type select-ийг тохируулах
         sizeTypeSelect.value = sizeType;
-        sizeTypeSelect.disabled = true; // Material сонгогдсоноор disable хийх
         
         if (price && price !== "0") {
           priceInput.value = price;
@@ -1332,8 +1279,7 @@ document.addEventListener('DOMContentLoaded', function() {
       } else {
         // Материал сонгоогүй бол цэвэрлэх
         unitSizeInput.value = "0";
-        sizeTypeSelect.value = "ш";
-        sizeTypeSelect.disabled = false;
+        sizeTypeSelect.value = "size";
         priceInput.value = "0";
         quantityInput.value = "0";
       }
@@ -1474,9 +1420,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const totalInput = document.querySelector(`input[name="total${index}"]`);
     
     // Материалын тооцоо: (тоо хэмжээ / нэгж хэмжээ) * үнэ
-    // Хэрэв нэгж хэмжээ 0 бол 1-ээр тооцно
-    const effectiveUnitSize = unitSize > 0 ? unitSize : 1;
-    const total = (quantity / effectiveUnitSize) * price;
+    const total = (quantity / unitSize) * price;
     
     totalInput.value = total.toFixed(2);
     updateTotals();
@@ -1519,6 +1463,94 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
   
+  // Форм илгээхэд баталгаажуулалт
+  document.getElementById('addMaterialForm').addEventListener('submit', function(e) {
+    const materialRows = materialRowsContainer.querySelectorAll('.material-row');
+    
+    // Төсөв сонгоогүй эсэхийг шалгах
+    if (!budgetSelect.value) {
+      e.preventDefault();
+      alert('Төсөв сонгоно уу!');
+      budgetSelect.focus();
+      return;
+    }
+    
+    // Хаашаа сонгоогүй эсэхийг шалгах
+    if (!document.getElementById('client').value) {
+      e.preventDefault();
+      alert('Хаашаа гэдгээ сонгоно уу!');
+      document.getElementById('client').focus();
+      return;
+    }
+    
+    // Материал байхгүй эсэхийг шалгах
+    if (materialRows.length === 0) {
+      e.preventDefault();
+      alert('Дор хаяж нэг материал нэмнэ үү!');
+      return;
+    }
+    
+    // Материал бүрийг шалгах
+    let hasEmptyMaterial = false;
+    let hasZeroQuantity = false;
+    
+    materialRows.forEach(row => {
+      const index = row.getAttribute('data-index');
+      const select = document.querySelector(`select[name="material${index}"]`);
+      const quantity = parseFloat(document.querySelector(`input[name="quantity${index}"]`).value) || 0;
+      const unitSize = parseFloat(document.querySelector(`input[name="unit_size${index}"]`).value) || 1;
+      
+      if (!select.value) {
+        hasEmptyMaterial = true;
+        row.style.backgroundColor = '#ffe6e6';
+      }
+      
+      if (quantity === 0) {
+        hasZeroQuantity = true;
+        row.style.backgroundColor = '#fff3cd';
+      }
+      
+      if (unitSize === 0) {
+        hasZeroQuantity = true;
+        row.style.backgroundColor = '#fff3cd';
+      }
+    });
+    
+    if (hasEmptyMaterial) {
+      e.preventDefault();
+      alert('Бүх материалыг сонгож, тоо хэмжээгээ оруулна уу!');
+      return;
+    }
+    
+    if (hasZeroQuantity) {
+      e.preventDefault();
+      alert('Бүх материалын тоо хэмжээ 0-ээс их байх ёстой!');
+      return;
+    }
+    
+    // Төсвийн үлдэгдэл шалгах
+    if (budgetSelect.value) {
+      const selectedOption = budgetSelect.options[budgetSelect.selectedIndex];
+      const budgetBalance = parseFloat(selectedOption.dataset.balance) || 0;
+      const materialsTotal = parseFloat(totalAmount.value) || 0;
+      
+      if (budgetBalance < materialsTotal) {
+        const deficit = materialsTotal - budgetBalance;
+        
+        if (!confirm(
+          `Төсвийн үлдэгдэл хангалтгүй!\n\n` +
+          `Үлдэгдэл: ${formatCurrency(budgetBalance)}\n` +
+          `Нийт дүн: ${formatCurrency(materialsTotal)}\n` +
+          `Дутуу: ${formatCurrency(deficit)}\n\n` +
+          `Үргэлжлүүлэх үү?`
+        )) {
+          e.preventDefault();
+          return;
+        }
+      }
+    }
+  });
+  
   // Эхлээд нэг хоосон мөр нэмэх
   addMaterialBtn.addEventListener('click', addMaterialRow);
   
@@ -1531,186 +1563,6 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     }
   });
-});
-
-// Submit lock механизм - материалын form-д зориулсан
-document.getElementById('addMaterialForm').addEventListener('submit', function(e) {
-  // Хэрэв аль хэдиэн илгээгдэж байвал зогсоох
-  if (isSubmitting) {
-    e.preventDefault();
-    return;
-  }
-  
-  const submitBtn = document.querySelector('.btn-submit');
-  const originalText = submitBtn.innerHTML;
-  
-  // Товчийг lock хийх
-  isSubmitting = true;
-  submitBtn.disabled = true;
-  submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Хадгалж байна...';
-  
-  // Form validation хийх
-  const isValid = validateForm();
-  
-  if (!isValid) {
-    // Validation алдаа гарвал unlock хийх
-    isSubmitting = false;
-    submitBtn.disabled = false;
-    submitBtn.innerHTML = originalText;
-    e.preventDefault(); // Form илгээхийг зогсоох
-    return;
-  }
-  
-  // Хэрэв form илгээгдэхгүй бол (жишээ нь: алдаа гарвал) 5 секундын дараа unlock хийх
-  setTimeout(() => {
-    if (isSubmitting) {
-      isSubmitting = false;
-      const submitBtn = document.querySelector('.btn-submit');
-      if (submitBtn) {
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = '<i class="fas fa-save"></i> Материалыг оруулах';
-      }
-    }
-  }, 5000);
-  
-  // Form амжилттай илгээгдсэн тохиолдолд хуудас дахин ачааллахад unlock хийгдэнэ
-});
-
-// Form validation функц
-function validateForm() {
-  let isValid = true;
-  const errors = [];
-  
-  // Төсөв сонгоогүй эсэхийг шалгах
-  if (!document.getElementById('budget').value) {
-    errors.push('Төсөв сонгоно уу!');
-    document.getElementById('budget').focus();
-    isValid = false;
-  }
-  
-  // Хаашаа сонгоогүй эсэхийг шалгах
-  if (!document.getElementById('client').value) {
-    errors.push('Хаашаа гэдгээ сонгоно уу!');
-    document.getElementById('client').focus();
-    isValid = false;
-  }
-  
-  // Материал байхгүй эсэхийг шалгах
-  const materialRows = document.querySelectorAll('.material-row');
-  if (materialRows.length === 0) {
-    errors.push('Дор хаяж нэг материал нэмнэ үү!');
-    isValid = false;
-  }
-  
-  // Материал бүрийг шалгах
-  materialRows.forEach(row => {
-    const index = row.getAttribute('data-index');
-    const select = document.querySelector(`select[name="material${index}"]`);
-    const quantity = parseFloat(document.querySelector(`input[name="quantity${index}"]`).value) || 0;
-    const unitSize = parseFloat(document.querySelector(`input[name="unit_size${index}"]`).value) || 1;
-    const price = parseFloat(document.querySelector(`input[name="price${index}"]`).value) || 0;
-    
-    if (!select.value) {
-      errors.push('Бүх материалыг сонгож, тоо хэмжээгээ оруулна уу!');
-      row.style.backgroundColor = '#ffe6e6';
-      isValid = false;
-    }
-    
-    if (quantity === 0) {
-      errors.push('Бүх материалын тоо хэмжээ 0-ээс их байх ёстой!');
-      row.style.backgroundColor = '#fff3cd';
-      isValid = false;
-    }
-    
-    if (price === 0) {
-      errors.push('Бүх материалын үнэ 0-ээс их байх ёстой!');
-      row.style.backgroundColor = '#fff3cd';
-      isValid = false;
-    }
-    
-    if (unitSize === 0) {
-      errors.push('Материалын нэгж хэмжээ 0-ээс их байх ёстой!');
-      row.style.backgroundColor = '#fff3cd';
-      isValid = false;
-    }
-  });
-  
-  // Төсвийн үлдэгдэл шалгах
-  const budgetSelect = document.getElementById('budget');
-  if (budgetSelect.value) {
-    const selectedOption = budgetSelect.options[budgetSelect.selectedIndex];
-    const budgetBalance = parseFloat(selectedOption.dataset.balance) || 0;
-    const materialsTotal = parseFloat(document.getElementById('totalAmount').value) || 0;
-    
-    if (budgetBalance < materialsTotal) {
-      const deficit = materialsTotal - budgetBalance;
-      
-      if (!confirm(
-        `Төсвийн үлдэгдэл хангалтгүй!\n\n` +
-        `Үлдэгдэл: ${formatCurrency(budgetBalance)}\n` +
-        `Нийт дүн: ${formatCurrency(materialsTotal)}\n` +
-        `Дутуу: ${formatCurrency(deficit)}\n\n` +
-        `Үргэлжлүүлэх үү?`
-      )) {
-        isValid = false;
-      }
-    }
-  }
-  
-  // Алдаануудыг харуулах
-  if (errors.length > 0) {
-    showFormErrors(errors);
-  }
-  
-  return isValid;
-}
-
-// Алдаануудыг харуулах функц
-function showFormErrors(errors) {
-  // Хуучин алдаануудыг устгах
-  const oldErrors = document.querySelectorAll('.form-error-alert');
-  oldErrors.forEach(error => error.remove());
-  
-  // Шинэ алдаануудыг харуулах
-  const form = document.getElementById('addMaterialForm');
-  const errorHtml = `
-    <div class="alert alert-danger form-error-alert" role="alert">
-      <h5 class="alert-heading"><i class="fas fa-exclamation-triangle"></i> Алдаа</h5>
-      <ul class="mb-0">
-        ${errors.map(error => `<li>${error}</li>`).join('')}
-      </ul>
-    </div>
-  `;
-  
-  form.insertAdjacentHTML('afterbegin', errorHtml);
-  
-  // 5 секундын дараа алдааг автоматаар устгах
-  setTimeout(() => {
-    const alerts = document.querySelectorAll('.form-error-alert');
-    alerts.forEach(alert => {
-      alert.style.transition = 'opacity 0.5s';
-      alert.style.opacity = '0';
-      setTimeout(() => alert.remove(), 500);
-    });
-  }, 5000);
-}
-
-// Мөнгөний форматыг тохируулах (глобал функц)
-function formatCurrency(amount) {
-  return amount.toLocaleString('mn-MN', {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2
-  }) + '₮';
-}
-
-// Хуудас ачааллахад reset хийх
-window.addEventListener('pageshow', function() {
-  isSubmitting = false;
-  const submitBtn = document.querySelector('.btn-submit');
-  if (submitBtn) {
-    submitBtn.disabled = false;
-    submitBtn.innerHTML = '<i class="fas fa-save"></i> Материалыг оруулах';
-  }
 });
 </script>
 {% endblock %}
