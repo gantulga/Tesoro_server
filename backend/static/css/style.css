@@ -184,7 +184,6 @@ background: transparent;
 .pageBody .oneRow{
     width: 100%;
     position: relative;
-    border-bottom: 1px solid #333;
 }
 
 .pageBody .oneRow .index{
