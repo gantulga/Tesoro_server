@@ -275,7 +275,7 @@ def addCommodity(request):
             index += 1
 
 
-        return redirect('/addCommodity')
+        return redirect('/budgets/' + str(budget.id) + '/')
     else:
         all_commodities = Commodity.objects.all().order_by('name')
         all_budgets = Budget.objects.filter(coordinator=request.user.id).exclude(status='Тооцоо тулгасан, дууссан').order_by("-id")
