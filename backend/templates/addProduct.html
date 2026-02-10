@@ -1509,37 +1509,139 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 
-// Энгийн lock механизм
+// Submit lock механизм
 let isSubmitting = false;
 
 document.getElementById('addProductForm').addEventListener('submit', function(e) {
+  // Хэрэв аль хэдиэн илгээгдэж байвал зогсоох
   if (isSubmitting) {
     e.preventDefault();
     return;
   }
   
-  isSubmitting = true;
-  
-  // Товчийн текстийг өөрчлөх
   const submitBtn = document.querySelector('.btn-submit');
   const originalText = submitBtn.innerHTML;
+  
+  // Товчийг lock хийх
+  isSubmitting = true;
+  submitBtn.disabled = true;
   submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Хадгалж байна...';
   
-  // Бусад шалгалтуудыг хийх...
+  // Form validation хийх
+  const isValid = validateForm();
   
-  // Хэрэв алдаа гарвал isSubmitting-г false болгох
-  if (e.defaultPrevented) {
+  if (!isValid) {
+    // Validation алдаа гарвал unlock хийх
     isSubmitting = false;
+    submitBtn.disabled = false;
     submitBtn.innerHTML = originalText;
+    e.preventDefault(); // Form илгээхийг зогсоох
+    return;
   }
   
-  // Амжилттай илгээгдсэн тохиолдолд хуудас дахин ачааллахад 
-  // автоматаар unlock хийгдэнэ
+  // Хэрэв form илгээгдэхгүй бол (жишээ нь: алдаа гарвал) 5 секундын дараа unlock хийх
+  setTimeout(() => {
+    if (isSubmitting) {
+      isSubmitting = false;
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = originalText;
+    }
+  }, 5000);
+  
+  // Form амжилттай илгээгдсэн тохиолдолд хуудас дахин ачааллахад unlock хийгдэнэ
 });
 
-// Хуудас ачааллахад isSubmitting-г reset хийх
+// Form validation функц
+function validateForm() {
+  let isValid = true;
+  const errors = [];
+  
+  // Төсөв сонгоогүй эсэхийг шалгах
+  if (!document.getElementById('budget').value) {
+    errors.push('Төсөв сонгоно уу!');
+    document.getElementById('budget').focus();
+    isValid = false;
+  }
+  
+  // Хаашаа сонгоогүй эсэхийг шалгах
+  if (!document.getElementById('client').value) {
+    errors.push('Хаашаа гэдгээ сонгоно уу!');
+    document.getElementById('client').focus();
+    isValid = false;
+  }
+  
+  // Бараа байхгүй эсэхийг шалгах
+  const productRows = document.querySelectorAll('.product-row');
+  if (productRows.length === 0) {
+    errors.push('Дор хаяж нэг бараа нэмнэ үү!');
+    isValid = false;
+  }
+  
+  // Бараа бүрийг шалгах
+  productRows.forEach(row => {
+    const index = row.getAttribute('data-index');
+    const select = document.querySelector(`select[name="product${index}"]`);
+    const quantity = parseFloat(document.querySelector(`input[name="quantity${index}"]`).value) || 0;
+    
+    if (!select.value) {
+      errors.push('Бүх барааг сонгож, тоо хэмжээгээ оруулна уу!');
+      row.style.backgroundColor = '#ffe6e6';
+      isValid = false;
+    }
+    
+    if (quantity === 0) {
+      errors.push('Бүх барааны тоо хэмжээ 0-ээс их байх ёстой!');
+      row.style.backgroundColor = '#fff3cd';
+      isValid = false;
+    }
+  });
+  
+  // Алдаануудыг харуулах
+  if (errors.length > 0) {
+    showFormErrors(errors);
+  }
+  
+  return isValid;
+}
+
+// Алдаануудыг харуулах функц
+function showFormErrors(errors) {
+  // Хуучин алдаануудыг устгах
+  const oldErrors = document.querySelectorAll('.form-error-alert');
+  oldErrors.forEach(error => error.remove());
+  
+  // Шинэ алдаануудыг харуулах
+  const form = document.getElementById('addProductForm');
+  const errorHtml = `
+    <div class="alert alert-danger form-error-alert" role="alert">
+      <h5 class="alert-heading"><i class="fas fa-exclamation-triangle"></i> Алдаа</h5>
+      <ul class="mb-0">
+        ${errors.map(error => `<li>${error}</li>`).join('')}
+      </ul>
+    </div>
+  `;
+  
+  form.insertAdjacentHTML('afterbegin', errorHtml);
+  
+  // 5 секундын дараа алдааг автоматаар устгах
+  setTimeout(() => {
+    const alerts = document.querySelectorAll('.form-error-alert');
+    alerts.forEach(alert => {
+      alert.style.transition = 'opacity 0.5s';
+      alert.style.opacity = '0';
+      setTimeout(() => alert.remove(), 500);
+    });
+  }, 5000);
+}
+
+// Хуудас ачааллахад reset хийх
 window.addEventListener('pageshow', function() {
   isSubmitting = false;
+  const submitBtn = document.querySelector('.btn-submit');
+  if (submitBtn) {
+    submitBtn.disabled = false;
+    submitBtn.innerHTML = '<i class="fas fa-save"></i> Барааг оруулах';
+  }
 });
 </script>
 {% endblock %}
