@@ -52,6 +52,7 @@
         {% elif item.size != None %}
           {{item.size}} гр
         {% else %}
+          !
         {% endif %}
       </div>
       <div class="division">
@@ -83,7 +84,10 @@
         {% elif item.size != None %}
           {{item.size}} гр
         {% else %}
+          !
         {% endif %}
+        {{item.quantity}}
+        {{item.size}}
       </div>
       <div class="division">
         {{item.division.name}}
