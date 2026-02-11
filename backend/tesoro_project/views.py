@@ -259,13 +259,13 @@ def addCommodity(request):
                     item_transfer.save()
 
                     if len(itemBalance) > 0:
-                        if request.POST['size_type'+str(index)] == "quantity":
+                        if request.POST['size_type'+str(index)] == "ш":
                             itemBalance[0].quantity = itemBalance[0].quantity + item_transfer.quantity
                         else:
                             itemBalance[0].size = itemBalance[0].size + item_transfer.size
                         itemBalance[0].save()
                     else:
-                        if request.POST['size_type'+str(index)] == "quantity":
+                        if request.POST['size_type'+str(index)] == "ш":
                             item = Item_balance.objects.create(created_by=request.user, quantity=item_transfer.quantity, client=item_transfer.to_client, division=item_transfer.to_division, commodity=commodity)
                         else:
                             item = Item_balance.objects.create(created_by=request.user, size=item_transfer.size, client=item_transfer.to_client, division=item_transfer.to_division, commodity=commodity)
