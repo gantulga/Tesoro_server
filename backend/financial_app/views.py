@@ -246,7 +246,8 @@ def delete_transfer(request, id):
                     client_balance = Item_balance.objects.filter(client=fr_client.id, product=transfer.product.id)
                     if len(client_balance) > 0:
                         client_balance = client_balance[0]
-                           
+
+                print(user_balance, client_balance)
                 if user_balance and not client_balance:
                     if transfer.product.is_gramm:
                         if user_balance.size > transfer.size:
