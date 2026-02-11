@@ -209,7 +209,7 @@ def delete_transfer(request, id):
             'error': 'Та энэ үйлдлийг хийх эрхгүй байна. Зөвхөн Захирал болон Админ устгах боломжтой.'
         }, status=403)
 
-    from product_app.models import Item_transfer
+    from product_app.models import Item_transfer, Item_balance
     try:
         # JSON өгөгдөл унших
         data = json.loads(request.body)
@@ -230,6 +230,63 @@ def delete_transfer(request, id):
                 transfer_name = transfer.product.name
                 transfer_amount = transfer.total_amount
                 
+                # Үлдэгдлийг balance аас хасах
+                fr_division = transfer.fr_division
+                fr_client = transfer.fr_client
+                fr_user = transfer.fr_user
+                
+                user_balance = None
+                client_balance = None
+                if fr_user:
+                    user_balance = Item_balance.objects.filter(user=fr_user.id, product=transfer.product.id)
+                    if len(user_balance) > 0:
+                        user_balance = user_balance[0]
+
+                if fr_client:
+                    client_balance = Item_balance.objects.filter(client=fr_client.id, product=transfer.product.id)
+                    if len(client_balance) > 0:
+                        client_balance = client_balance[0]
+                           
+                if user_balance and not client_balance:
+                    if transfer.product.is_gramm:
+                        if user_balance.size > transfer.size:
+                            user_balance.size = user_balance.size - transfer.size
+                            user_balance.save()
+                        else:
+                            return JsonResponse({
+                                'success': False,
+                                'error': 'Хэрэглэгчийн үлдэгдэл хасах утгаас бага байна.'
+                            }, status=404)
+                    else:
+                        if user_balance.quantity > transfer.quantity:
+                            user_balance.quantity = user_balance.quantity - transfer.quantity
+                            user_balance.save()
+                        else:
+                            return JsonResponse({
+                                'success': False,
+                                'error': 'Хэрэглэгчийн үлдэгдэл хасах утгаас бага байна.'
+                            }, status=404)
+
+                if client_balance and not user_balance:
+                    if transfer.product.is_gramm:
+                        if client_balance.size > transfer.size:
+                            client_balance.size = client_balance.size - transfer.size
+                            client_balance.save()
+                        else:
+                            return JsonResponse({
+                                'success': False,
+                                'error': 'Цэгийн үлдэгдэл хасах утгаас бага байна.'
+                            }, status=404)
+                    else:
+                        if client_balance.quantity > transfer.quantity:
+                            client_balance.quantity = client_balance.quantity - transfer.quantity
+                            client_balance.save()
+                        else:
+                            return JsonResponse({
+                                'success': False,
+                                'error': 'Цэгийн үлдэгдэл хасах утгаас бага байна.'
+                            }, status=404)
+                        
                 # Transfer-ийг устгах
                 transfer.delete()
                 
@@ -264,6 +321,73 @@ def delete_transfer(request, id):
                 transfer_name = transfer.commodity.name
                 transfer_amount = transfer.total_amount
                 
+                # Үлдэгдлийг balance аас хасах
+                fr_division = transfer.fr_division
+                fr_client = transfer.fr_client
+                fr_user = transfer.fr_user
+                
+                user_balance = None
+                client_balance = None
+                if fr_user:
+                    user_balance = Item_balance.objects.filter(user=fr_user.id, commodity=transfer.commodity.id)
+                    if len(user_balance) > 0:
+                        user_balance = user_balance[0]
+
+                if fr_client:
+                    client_balance = Item_balance.objects.filter(client=fr_client.id, commodity=transfer.commodity.id)
+                    if len(client_balance) > 0:
+                        client_balance = client_balance[0]
+                           
+                if user_balance and not client_balance:
+                    if transfer.commodity.size_type.abbreviation == "гр":
+                        if user_balance.size > transfer.size:
+                            user_balance.size = user_balance.size - transfer.size
+                            user_balance.save()
+                        else:
+                            return JsonResponse({
+                                'success': False,
+                                'error': 'Хэрэглэгчийн үлдэгдэл хасах утгаас бага байна.'
+                            }, status=404)
+                    elif transfer.commodity.size_type.abbreviation == "Ш":
+                        if user_balance.quantity > transfer.quantity:
+                            user_balance.quantity = user_balance.quantity - transfer.quantity
+                            user_balance.save()
+                        else:
+                            return JsonResponse({
+                                'success': False,
+                                'error': 'Хэрэглэгчийн үлдэгдэл хасах утгаас бага байна.'
+                            }, status=404)
+                    else:
+                        return JsonResponse({
+                            'success': False,
+                            'error': 'Материалын хэмжих нэгж гр, ш -ийн аль нэг нь биш байна. Шалгана уу!'
+                        }, status=404)
+
+                if client_balance and not user_balance:
+                    if transfer.commodity.size_type.abbreviation == "гр":
+                        if client_balance.size > transfer.size:
+                            client_balance.size = client_balance.size - transfer.size
+                            client_balance.save()
+                        else:
+                            return JsonResponse({
+                                'success': False,
+                                'error': 'Цэгийн үлдэгдэл хасах утгаас бага байна.'
+                            }, status=404)
+                    elif transfer.commodity.size_type.abbreviation == "Ш":
+                        if client_balance.quantity > transfer.quantity:
+                            client_balance.quantity = client_balance.quantity - transfer.quantity
+                            client_balance.save()
+                        else:
+                            return JsonResponse({
+                                'success': False,
+                                'error': 'Цэгийн үлдэгдэл хасах утгаас бага байна.'
+                            }, status=404)
+                    else:
+                        return JsonResponse({
+                            'success': False,
+                            'error': 'Материалын хэмжих нэгж гр, ш -ийн аль нэг нь биш байна. Шалгана уу!'
+                        }, status=404)
+
                 # Transfer-ийг устгах
                 transfer.delete()
                 
