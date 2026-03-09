@@ -170,8 +170,9 @@ class Item_transfer_type(Createdinfo):
 
 
 class Store(Createdinfo):
-    name = models.CharField(null=False, max_length=30)
+    name = models.CharField(null=False, max_length=40)
     store_info = models.TextField(null=True, max_length=255)
+    register = models.PositiveIntegerField(null=True, blank=True)
 
 # Түүхий эд нэмэгдэх, бүтээгдэхүүнд ороод хасагдах, ажилчидад олгох, шилжүүлэх бүх гүйлгээний мэдээлэл
 
