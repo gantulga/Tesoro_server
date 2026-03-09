@@ -203,7 +203,7 @@
       <select name="store{index}" class="store-select" data-index="{index}" required>
         <option value="">Байгууллага сонгох</option>
         {% for store in all_stores %}
-          <option value="{{store.id}}">{{store.name}}</option>
+          <option value="{{store.id}}">{{store.name}} /{{store.register}}/ НӨАТ: {{store.noat_payer}}</option>
         {% endfor %}
       </select>
     </div>
