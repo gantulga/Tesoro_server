@@ -168,7 +168,7 @@
   </form>
 </div>
 
-<!-- Материалын мөрийн template -->
+<!-- Материалын мөрийн template-д store column нэмэх -->
 <template id="materialRowTemplate">
   <div class="material-row" data-index="{index}">
     <div class="cell index">{counter}</div>
@@ -210,6 +210,15 @@
     <div class="cell input">
       <input type="text" name="total{index}" value="0" 
              class="total-input" data-index="{index}" readonly />
+    </div>
+    <!-- Шинээр нэмэгдэх Store сонголт -->
+    <div class="cell select store-cell">
+      <select name="store{index}" class="store-select" data-index="{index}" required>
+        <option value="">Байгууллага сонгох</option>
+        {% for store in all_stores %}
+          <option value="{{store.id}}">{{store.name}}</option>
+        {% endfor %}
+      </select>
     </div>
     <div class="cell action">
       <button type="button" class="btn-remove" data-index="{index}">
@@ -586,12 +595,12 @@
 
 .table-header {
   display: grid;
-  grid-template-columns: 50px minmax(150px, 2fr) 80px 60px 80px 100px 100px 60px;
+  grid-template-columns: 50px minmax(150px, 2fr) 80px 60px 80px 100px 100px minmax(120px, 1fr) 60px;
   background: #f8f9fa;
   font-weight: 600;
   color: #2c3e50;
   border-bottom: 2px solid #dee2e6;
-  min-width: 700px;
+  min-width: 820px;
 }
 
 .header-cell {
@@ -601,17 +610,32 @@
   white-space: nowrap;
 }
 
+.header-cell.store {
+  text-align: center;
+}
+
 .header-cell.select {
   text-align: left;
 }
 
 .material-row {
   display: grid;
-  grid-template-columns: 50px minmax(150px, 2fr) 80px 60px 80px 100px 100px 60px;
+  grid-template-columns: 50px minmax(150px, 2fr) 80px 60px 80px 100px 100px minmax(120px, 1fr) 60px;
   align-items: center;
   border-bottom: 1px solid #ecf0f1;
   transition: background 0.3s;
-  min-width: 700px;
+  min-width: 820px;
+}
+
+.store-select {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  background-color: white;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .material-row:hover {
@@ -914,11 +938,16 @@
   
   .table-header {
     font-size: 11px;
-    grid-template-columns: 40px minmax(120px, 1fr) 70px 50px 70px 90px 90px 50px;
+    grid-template-columns: 40px minmax(120px, 1fr) 70px 50px 70px 90px 90px minmax(100px, 0.8fr) 50px;
   }
   
   .material-row {
-    grid-template-columns: 40px minmax(120px, 1fr) 70px 50px 70px 90px 90px 50px;
+    grid-template-columns: 40px minmax(120px, 1fr) 70px 50px 70px 90px 90px minmax(100px, 0.8fr) 50px;
+  }
+
+  .store-select {
+    padding: 6px;
+    font-size: 12px;
   }
   
   .header-cell, .cell {
@@ -955,11 +984,11 @@
 
 @media (max-width: 480px) {
   .table-header {
-    grid-template-columns: 35px minmax(100px, 1fr) 60px 40px 60px 80px 80px 45px;
+    grid-template-columns: 35px minmax(100px, 1fr) 60px 40px 60px 80px 80px minmax(90px, 0.7fr) 45px;
   }
-  
+
   .material-row {
-    grid-template-columns: 35px minmax(100px, 1fr) 60px 40px 60px 80px 80px 45px;
+    grid-template-columns: 35px minmax(100px, 1fr) 60px 40px 60px 80px 80px minmax(90px, 0.7fr) 45px;
   }
   
   .header-cell, .cell {
@@ -1304,6 +1333,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const sizeTypeSelect = newRow.querySelector(`select[name="size_type${newIndex}"]`);
     const quantityInput = newRow.querySelector(`input[name="quantity${newIndex}"]`);
     const priceInput = newRow.querySelector(`input[name="price${newIndex}"]`);
+    const storeSelect = newRow.querySelector(`select[name="store${newIndex}"]`);
     const removeBtn = newRow.querySelector(`.btn-remove[data-index="${newIndex}"]`);
     
     select.addEventListener('change', function() {
@@ -1316,10 +1346,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Утгуудыг тохируулах
         unitSizeInput.value = unitSize;
-        
-        // Size type select-ийг тохируулах
         sizeTypeSelect.value = sizeType;
-        // sizeTypeSelect.disabled = true; // Material сонгогдсоноор disable хийх
         
         if (price && price !== "0") {
           priceInput.value = price;
@@ -1333,7 +1360,6 @@ document.addEventListener('DOMContentLoaded', function() {
         // Материал сонгоогүй бол цэвэрлэх
         unitSizeInput.value = "0";
         sizeTypeSelect.value = "ш";
-        sizeTypeSelect.disabled = false;
         priceInput.value = "0";
         quantityInput.value = "0";
       }
@@ -1346,6 +1372,11 @@ document.addEventListener('DOMContentLoaded', function() {
     
     priceInput.addEventListener('input', function() {
       calculateTotal(this.dataset.index);
+    });
+    
+    storeSelect.addEventListener('change', function() {
+      // Store сонголтыг validate хийх
+      validateStoreSelection(this);
     });
     
     removeBtn.addEventListener('click', function() {
@@ -1390,7 +1421,7 @@ document.addEventListener('DOMContentLoaded', function() {
     nextMaterialIndex = rows.length + 1;
   }
   
-  // Нэг мөрийн бүх элементийг шинэчлэх
+  // Мөр шинэчлэх функцийг шинэчлэх
   function updateRowElements(row, oldIndex, newIndex) {
     // № дугаар шинэчлэх
     const counterCell = row.querySelector('.index');
@@ -1441,6 +1472,13 @@ document.addEventListener('DOMContentLoaded', function() {
       totalInput.dataset.index = newIndex;
     }
     
+    // Store select шинэчлэх
+    const storeSelect = row.querySelector(`select[name="store${oldIndex}"]`);
+    if (storeSelect) {
+      storeSelect.name = `store${newIndex}`;
+      storeSelect.dataset.index = newIndex;
+    }
+    
     // Устгах товчны data-index шинэчлэх
     const removeBtn = row.querySelector(`.btn-remove[data-index="${oldIndex}"]`);
     if (removeBtn) {
@@ -1463,6 +1501,19 @@ document.addEventListener('DOMContentLoaded', function() {
       emptyState.style.display = 'block';
     } else {
       emptyState.style.display = 'none';
+    }
+  }
+
+  // Store сонголтыг шалгах функц
+  function validateStoreSelection(storeSelect) {
+    if (!storeSelect.value) {
+      storeSelect.style.borderColor = '#dc3545';
+      storeSelect.style.backgroundColor = '#fff8f8';
+      return false;
+    } else {
+      storeSelect.style.borderColor = '#ddd';
+      storeSelect.style.backgroundColor = 'white';
+      return true;
     }
   }
   
@@ -1496,7 +1547,7 @@ document.addEventListener('DOMContentLoaded', function() {
     updateBudgetComparison();
   }
   
-  // Цэвэрлэх товч
+  // Цэвэрлэх товчны функцийг шинэчлэх
   resetBtn.addEventListener('click', function() {
     if (confirm('Бүх материалын мэдээллийг цэвэрлэх үү?')) {
       materialRowsContainer.innerHTML = '';
@@ -1609,10 +1660,18 @@ function validateForm() {
     const quantity = parseFloat(document.querySelector(`input[name="quantity${index}"]`).value) || 0;
     const unitSize = parseFloat(document.querySelector(`input[name="unit_size${index}"]`).value) || 1;
     const price = parseFloat(document.querySelector(`input[name="price${index}"]`).value) || 0;
+    const storeSelect = document.querySelector(`select[name="store${index}"]`);
     
     if (!select.value) {
-      errors.push('Бүх материалыг сонгож, тоо хэмжээгээ оруулна уу!');
+      errors.push('Бүх материалыг сонгоно уу!');
       row.style.backgroundColor = '#ffe6e6';
+      isValid = false;
+    }
+    
+    if (!storeSelect.value) {
+      errors.push('Бүх материалын байгууллагыг сонгоно уу!');
+      storeSelect.style.borderColor = '#dc3545';
+      storeSelect.style.backgroundColor = '#fff8f8';
       isValid = false;
     }
     
@@ -1637,24 +1696,32 @@ function validateForm() {
   
   // Төсвийн үлдэгдэл шалгах
   const budgetSelect = document.getElementById('budget');
-  if (budgetSelect.value) {
-    const selectedOption = budgetSelect.options[budgetSelect.selectedIndex];
-    const budgetBalance = parseFloat(selectedOption.dataset.balance) || 0;
-    const materialsTotal = parseFloat(document.getElementById('totalAmount').value) || 0;
-    
-    if (budgetBalance < materialsTotal) {
-      const deficit = materialsTotal - budgetBalance;
+    if (budgetSelect.value) {
+      const selectedOption = budgetSelect.options[budgetSelect.selectedIndex];
+      const budgetBalance = parseFloat(selectedOption.dataset.balance) || 0;
+      const materialsTotal = parseFloat(document.getElementById('totalAmount').value) || 0;
       
-      if (!confirm(
-        `Төсвийн үлдэгдэл хангалтгүй!\n\n` +
-        `Үлдэгдэл: ${formatCurrency(budgetBalance)}\n` +
-        `Нийт дүн: ${formatCurrency(materialsTotal)}\n` +
-        `Дутуу: ${formatCurrency(deficit)}\n\n` +
-        `Үргэлжлүүлэх үү?`
-      )) {
-        isValid = false;
+      if (budgetBalance < materialsTotal) {
+        const deficit = materialsTotal - budgetBalance;
+        
+        if (!confirm(
+          `Төсвийн үлдэгдэл хангалтгүй!\n\n` +
+          `Үлдэгдэл: ${formatCurrency(budgetBalance)}\n` +
+          `Нийт дүн: ${formatCurrency(materialsTotal)}\n` +
+          `Дутуу: ${formatCurrency(deficit)}\n\n` +
+          `Үргэлжлүүлэх үү?`
+        )) {
+          isValid = false;
+        }
       }
     }
+    
+    // Алдаануудыг харуулах
+    if (errors.length > 0) {
+      showFormErrors(errors);
+    }
+    
+    return isValid;
   }
   
   // Алдаануудыг харуулах

@@ -21,7 +21,7 @@ import time
 from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.models import Group
 from structure_app.models import Client, Division, Shift_work, Configuration_value, Customer
-from product_app.models import Product, Commodity, Item_transfer, Item_transfer_type, Item_balance, Item_balance_log, Product_category, Commodity_category
+from product_app.models import Product, Commodity, Item_transfer, Item_transfer_type, Item_balance, Item_balance_log, Product_category, Commodity_category, Store
 from financial_app.models import Budget, Wallet, Money_transfer
 from payment_app.models import Order_detial, Order, Payment
 from django.views.decorators.cache import never_cache
@@ -282,7 +282,7 @@ def addCommodity(request):
         all_wallets = Wallet.objects.filter(is_pos=False)
         all_divisions = Division.objects.all()
         all_clients = Client.objects.all()
-        return render(request, 'addCommodity.html', {'all_commodities':all_commodities, 'range': range(30), 'all_budgets':all_budgets, 'all_wallets':all_wallets, 'all_divisions':all_divisions, 'all_clients':all_clients})
+        return render(request, 'addCommodity.html', {'all_commodities':all_commodities, 'range': range(30), 'all_budgets':all_budgets, 'all_wallets':all_wallets, 'all_divisions':all_divisions, 'all_clients':all_clients, 'all_stores':Store.objects.all(),})
 
 
 @never_cache
