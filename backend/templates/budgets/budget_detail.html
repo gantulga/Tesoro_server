@@ -328,7 +328,7 @@
                                 <td class="text-right align-middle font-weight-bold">
                                     <span id="transferid_{{forloop.counter}}">{{transfer.total_amount|floatformat:2}} ₮</span>
                                 </td>
-                                <td class="text-right align-middle font-weight-bold">{{transfer.store.name}} /{{transfer.store.register}}/</td>
+                                <td class="text-right align-middle font-weight-bold">{% if transfer.store %}{{transfer.store.name}} /{{transfer.store.register}}/{% endif %}</td>
                                 <td class="text-center align-middle">
                                     <!-- Устгах товч -->
                                     <button type="button" class="btn btn-outline-danger btn-sm delete-btn" 
@@ -398,7 +398,7 @@
                                 <td class="text-right align-middle font-weight-bold">
                                     <span id="transfer_commodity_id_{{forloop.counter}}">{{transfer.total_amount|floatformat:2}} ₮</span>
                                 </td>
-                                <td class="text-right align-middle font-weight-bold">{{transfer.store.name}} /{{transfer.store.register}}/</td>
+                                <td class="text-right align-middle font-weight-bold">{% if transfer.store %}{{transfer.store.name}} /{{transfer.store.register}}/{% endif %}</td>
                                 <td class="text-center align-middle">
                                     <!-- Устгах товч -->
                                     <button type="button" class="btn btn-outline-danger btn-sm delete-btn" 
