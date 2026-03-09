@@ -306,6 +306,7 @@
                                 <th scope="col" class="text-center">Тоо</th>
                                 <th scope="col" class="text-right">Нэгж үнэ</th>
                                 <th scope="col" class="text-right">Нийт үнэ</th>
+                                <th scope="col" class="text-right">Дэлгүүр</th>
                                 <th scope="col" class="text-center">Үйлдэл</th> <!-- Шинэ багана -->
                             </tr>
                         </thead>
@@ -327,6 +328,7 @@
                                 <td class="text-right align-middle font-weight-bold">
                                     <span id="transferid_{{forloop.counter}}">{{transfer.total_amount|floatformat:2}} ₮</span>
                                 </td>
+                                <td class="text-right align-middle font-weight-bold">{{transfer.store.name}} /{{transfer.store.register}}/</td>
                                 <td class="text-center align-middle">
                                     <!-- Устгах товч -->
                                     <button type="button" class="btn btn-outline-danger btn-sm delete-btn" 
@@ -368,6 +370,7 @@
                                 <th scope="col" class="text-center">Тоо/хэмжээ</th>
                                 <th scope="col" class="text-right">Нэгж үнэ</th>
                                 <th scope="col" class="text-right">Нийт үнэ</th>
+                                <th scope="col" class="text-right">Дэлгүүр</th>
                                 <th scope="col" class="text-center">Үйлдэл</th> <!-- Шинэ багана -->
                             </tr>
                         </thead>
@@ -395,6 +398,7 @@
                                 <td class="text-right align-middle font-weight-bold">
                                     <span id="transfer_commodity_id_{{forloop.counter}}">{{transfer.total_amount|floatformat:2}} ₮</span>
                                 </td>
+                                <td class="text-right align-middle font-weight-bold">{{transfer.store.name}} /{{transfer.store.register}}/</td>
                                 <td class="text-center align-middle">
                                     <!-- Устгах товч -->
                                     <button type="button" class="btn btn-outline-danger btn-sm delete-btn" 
