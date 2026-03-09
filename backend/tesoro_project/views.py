@@ -109,7 +109,7 @@ def addProduct(request):
                 product = Product.objects.get(pk=request.POST['product'+str(index)])
                 
                 if request.POST['store'+str(index)]:
-                    store = Store.objects.get(request.POST['store'+str(index)])
+                    store = Store.objects.get(id=request.POST['store'+str(index)])
                 else:
                     store = None
 
@@ -249,7 +249,7 @@ def addCommodity(request):
                 commodity = Commodity.objects.get(pk=request.POST['material'+str(index)])
                 
                 if request.POST['store'+str(index)]:
-                    store = Store.objects.get(request.POST['store'+str(index)])
+                    store = Store.objects.get(id=request.POST['store'+str(index)])
                 else:
                     store = None
 
