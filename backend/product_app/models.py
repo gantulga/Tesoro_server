@@ -176,6 +176,9 @@ class Store(Createdinfo):
     ttd = models.CharField(null=True, blank=True, max_length=40)
     noat_payer = models.BooleanField(default=False)
 
+    def __str__(self):
+        return f"{self.name}  /{self.register}/"
+
 # Түүхий эд нэмэгдэх, бүтээгдэхүүнд ороод хасагдах, ажилчидад олгох, шилжүүлэх бүх гүйлгээний мэдээлэл
 
 
