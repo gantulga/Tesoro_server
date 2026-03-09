@@ -132,6 +132,7 @@
           <div class="header-cell input">гр/ш</div>
           <div class="header-cell input">Нэгж үнэ</div>
           <div class="header-cell input">Нийт үнэ</div>
+          <div class="header-cell store">Байгууллага</div>
           <div class="header-cell action">Үйлдэл</div>
         </div>
         
@@ -168,7 +169,7 @@
   </form>
 </div>
 
-<!-- Материалын мөрийн template-д store column нэмэх -->
+<!-- Материалын мөрийн template -->
 <template id="materialRowTemplate">
   <div class="material-row" data-index="{index}">
     <div class="cell index">{counter}</div>
@@ -211,7 +212,7 @@
       <input type="text" name="total{index}" value="0" 
              class="total-input" data-index="{index}" readonly />
     </div>
-    <!-- Шинээр нэмэгдэх Store сонголт -->
+    <!-- Store сонголт -->
     <div class="cell select store-cell">
       <select name="store{index}" class="store-select" data-index="{index}" required>
         <option value="">Байгууллага сонгох</option>
@@ -585,7 +586,7 @@
   }
 }
 
-/* Хүснэгтийн загвар - Mobile responsive */
+/* Хүснэгтийн загвар - Store баганатай шинэчилсэн */
 .material-list-container {
   border: 1px solid #ecf0f1;
   border-radius: 6px;
@@ -600,7 +601,7 @@
   font-weight: 600;
   color: #2c3e50;
   border-bottom: 2px solid #dee2e6;
-  min-width: 820px;
+  min-width: 900px;
 }
 
 .header-cell {
@@ -610,12 +611,12 @@
   white-space: nowrap;
 }
 
-.header-cell.store {
-  text-align: center;
-}
-
 .header-cell.select {
   text-align: left;
+}
+
+.header-cell.store {
+  text-align: center;
 }
 
 .material-row {
@@ -624,18 +625,7 @@
   align-items: center;
   border-bottom: 1px solid #ecf0f1;
   transition: background 0.3s;
-  min-width: 820px;
-}
-
-.store-select {
-  width: 100%;
-  padding: 8px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 14px;
-  background-color: white;
-  max-width: 100%;
-  box-sizing: border-box;
+  min-width: 900px;
 }
 
 .material-row:hover {
@@ -711,6 +701,29 @@
   cursor: not-allowed;
 }
 
+/* Store select styling */
+.store-select {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  background-color: white;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.store-select:focus {
+  border-color: #3498db;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+}
+
+.store-select.error {
+  border-color: #dc3545;
+  background-color: #fff8f8;
+}
+
 .btn-remove {
   background: #e74c3c;
   color: white;
@@ -735,7 +748,7 @@
   text-align: center;
   padding: 30px 15px;
   color: #95a5a6;
-  min-width: 700px;
+  min-width: 900px;
 }
 
 .empty-state i {
@@ -863,6 +876,12 @@
   background: #2980b9;
 }
 
+.btn-submit:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  background: #95a5a6;
+}
+
 .btn-reset {
   background: #95a5a6;
   color: white;
@@ -937,17 +956,12 @@
   }
   
   .table-header {
-    font-size: 11px;
     grid-template-columns: 40px minmax(120px, 1fr) 70px 50px 70px 90px 90px minmax(100px, 0.8fr) 50px;
+    font-size: 11px;
   }
   
   .material-row {
     grid-template-columns: 40px minmax(120px, 1fr) 70px 50px 70px 90px 90px minmax(100px, 0.8fr) 50px;
-  }
-
-  .store-select {
-    padding: 6px;
-    font-size: 12px;
   }
   
   .header-cell, .cell {
@@ -955,7 +969,7 @@
     font-size: 11px;
   }
   
-  .material-select, .unit-size-input, .size-type-select, .quantity-input, .price-input, .total-input {
+  .material-select, .unit-size-input, .size-type-select, .quantity-input, .price-input, .total-input, .store-select {
     padding: 6px;
     font-size: 12px;
   }
@@ -986,7 +1000,7 @@
   .table-header {
     grid-template-columns: 35px minmax(100px, 1fr) 60px 40px 60px 80px 80px minmax(90px, 0.7fr) 45px;
   }
-
+  
   .material-row {
     grid-template-columns: 35px minmax(100px, 1fr) 60px 40px 60px 80px 80px minmax(90px, 0.7fr) 45px;
   }
@@ -996,7 +1010,7 @@
     font-size: 10px;
   }
   
-  .material-select, .unit-size-input, .size-type-select, .quantity-input, .price-input, .total-input {
+  .material-select, .unit-size-input, .size-type-select, .quantity-input, .price-input, .total-input, .store-select {
     padding: 4px;
     font-size: 11px;
   }
@@ -1020,7 +1034,7 @@
     min-height: 44px;
   }
   
-  .material-select, .quantity-input, .price-input {
+  .material-select, .quantity-input, .price-input, .store-select {
     min-height: 36px;
   }
   
@@ -1045,7 +1059,7 @@
 
 /* iOS specific fixes */
 @supports (-webkit-touch-callout: none) {
-  .form-select, .search-input {
+  .form-select, .search-input, .store-select {
     -webkit-appearance: none;
   }
   
@@ -1072,12 +1086,6 @@
 
 .form-error-alert li:last-child {
   margin-bottom: 0;
-}
-
-/* Submit button lock хийгдсэн үед */
-.btn-submit:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
 }
 
 /* Spinner animation */
@@ -1346,6 +1354,8 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Утгуудыг тохируулах
         unitSizeInput.value = unitSize;
+        
+        // Size type select-ийг тохируулах
         sizeTypeSelect.value = sizeType;
         
         if (price && price !== "0") {
@@ -1386,6 +1396,20 @@ document.addEventListener('DOMContentLoaded', function() {
     // Хоосон төлөв нуух
     emptyState.style.display = 'none';
     updateMaterialCount();
+    
+    // Store сонголтыг шалгах
+    validateStoreSelection(storeSelect);
+  }
+  
+  // Store сонголтыг шалгах функц
+  function validateStoreSelection(storeSelect) {
+    if (!storeSelect.value) {
+      storeSelect.classList.add('error');
+      return false;
+    } else {
+      storeSelect.classList.remove('error');
+      return true;
+    }
   }
   
   // Материалын мөр устгах
@@ -1421,7 +1445,7 @@ document.addEventListener('DOMContentLoaded', function() {
     nextMaterialIndex = rows.length + 1;
   }
   
-  // Мөр шинэчлэх функцийг шинэчлэх
+  // Нэг мөрийн бүх элементийг шинэчлэх
   function updateRowElements(row, oldIndex, newIndex) {
     // № дугаар шинэчлэх
     const counterCell = row.querySelector('.index');
@@ -1503,19 +1527,6 @@ document.addEventListener('DOMContentLoaded', function() {
       emptyState.style.display = 'none';
     }
   }
-
-  // Store сонголтыг шалгах функц
-  function validateStoreSelection(storeSelect) {
-    if (!storeSelect.value) {
-      storeSelect.style.borderColor = '#dc3545';
-      storeSelect.style.backgroundColor = '#fff8f8';
-      return false;
-    } else {
-      storeSelect.style.borderColor = '#ddd';
-      storeSelect.style.backgroundColor = 'white';
-      return true;
-    }
-  }
   
   // Ганц мөрийн нийт дүнг тооцоолох
   function calculateTotal(index) {
@@ -1547,7 +1558,7 @@ document.addEventListener('DOMContentLoaded', function() {
     updateBudgetComparison();
   }
   
-  // Цэвэрлэх товчны функцийг шинэчлэх
+  // Цэвэрлэх товч
   resetBtn.addEventListener('click', function() {
     if (confirm('Бүх материалын мэдээллийг цэвэрлэх үү?')) {
       materialRowsContainer.innerHTML = '';
@@ -1663,15 +1674,15 @@ function validateForm() {
     const storeSelect = document.querySelector(`select[name="store${index}"]`);
     
     if (!select.value) {
-      errors.push('Бүх материалыг сонгоно уу!');
+      errors.push('Бүх материалыг сонгож, тоо хэмжээгээ оруулна уу!');
       row.style.backgroundColor = '#ffe6e6';
       isValid = false;
     }
     
     if (!storeSelect.value) {
       errors.push('Бүх материалын байгууллагыг сонгоно уу!');
-      storeSelect.style.borderColor = '#dc3545';
-      storeSelect.style.backgroundColor = '#fff8f8';
+      storeSelect.classList.add('error');
+      row.style.backgroundColor = '#fff3cd';
       isValid = false;
     }
     
@@ -1696,32 +1707,24 @@ function validateForm() {
   
   // Төсвийн үлдэгдэл шалгах
   const budgetSelect = document.getElementById('budget');
-    if (budgetSelect.value) {
-      const selectedOption = budgetSelect.options[budgetSelect.selectedIndex];
-      const budgetBalance = parseFloat(selectedOption.dataset.balance) || 0;
-      const materialsTotal = parseFloat(document.getElementById('totalAmount').value) || 0;
+  if (budgetSelect.value) {
+    const selectedOption = budgetSelect.options[budgetSelect.selectedIndex];
+    const budgetBalance = parseFloat(selectedOption.dataset.balance) || 0;
+    const materialsTotal = parseFloat(document.getElementById('totalAmount').value) || 0;
+    
+    if (budgetBalance < materialsTotal) {
+      const deficit = materialsTotal - budgetBalance;
       
-      if (budgetBalance < materialsTotal) {
-        const deficit = materialsTotal - budgetBalance;
-        
-        if (!confirm(
-          `Төсвийн үлдэгдэл хангалтгүй!\n\n` +
-          `Үлдэгдэл: ${formatCurrency(budgetBalance)}\n` +
-          `Нийт дүн: ${formatCurrency(materialsTotal)}\n` +
-          `Дутуу: ${formatCurrency(deficit)}\n\n` +
-          `Үргэлжлүүлэх үү?`
-        )) {
-          isValid = false;
-        }
+      if (!confirm(
+        `Төсвийн үлдэгдэл хангалтгүй!\n\n` +
+        `Үлдэгдэл: ${formatCurrency(budgetBalance)}\n` +
+        `Нийт дүн: ${formatCurrency(materialsTotal)}\n` +
+        `Дутуу: ${formatCurrency(deficit)}\n\n` +
+        `Үргэлжлүүлэх үү?`
+      )) {
+        isValid = false;
       }
     }
-    
-    // Алдаануудыг харуулах
-    if (errors.length > 0) {
-      showFormErrors(errors);
-    }
-    
-    return isValid;
   }
   
   // Алдаануудыг харуулах
