@@ -200,7 +200,7 @@
     </div>
     <!-- Store сонголт -->
     <div class="cell select store-cell">
-      <select name="store{index}" class="store-select" data-index="{index}" required>
+      <select name="store{index}" class="store-select" data-index="{index}">
         <option value="">Байгууллага сонгох</option>
         {% for store in all_stores %}
           <option value="{{store.id}}">{{store.name}} /{{store.register}}/ НӨАТ: {{store.noat_payer}}</option>
