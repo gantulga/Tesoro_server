@@ -544,7 +544,7 @@ export default class Calculations extends Component {
     });
     this.getProductsData()
   }
-
+ 
   async getProductsData() {
     var url;
     if (this.state.sel_parent_cat == null && this.state.sel_cat == null) {
