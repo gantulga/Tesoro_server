@@ -130,6 +130,7 @@
           <div class="header-cell input">Тоо/ширхэг</div>
           <div class="header-cell input">Нэгж үнэ</div>
           <div class="header-cell input">Нийт үнэ</div>
+          <div class="header-cell store">Байгууллага</div>
           <div class="header-cell action">Үйлдэл</div>
         </div>
         
@@ -196,6 +197,15 @@
     <div class="cell input">
       <input type="text" name="total{index}" value="0" 
              class="total-input" data-index="{index}" readonly />
+    </div>
+    <!-- Store сонголт -->
+    <div class="cell select store-cell">
+      <select name="store{index}" class="store-select" data-index="{index}" required>
+        <option value="">Байгууллага сонгох</option>
+        {% for store in all_stores %}
+          <option value="{{store.id}}">{{store.name}}</option>
+        {% endfor %}
+      </select>
     </div>
     <div class="cell action">
       <button type="button" class="btn-remove" data-index="{index}">
@@ -562,7 +572,7 @@
   }
 }
 
-/* Хүснэгтийн загвар - Mobile responsive */
+/* Хүснэгтийн загвар - Store баганатай */
 .product-list-container {
   border: 1px solid #ecf0f1;
   border-radius: 6px;
@@ -572,12 +582,12 @@
 
 .table-header {
   display: grid;
-  grid-template-columns: 50px minmax(150px, 2fr) 80px 100px 100px 60px;
+  grid-template-columns: 50px minmax(150px, 2fr) 80px 100px 100px minmax(120px, 1fr) 60px;
   background: #f8f9fa;
   font-weight: 600;
   color: #2c3e50;
   border-bottom: 2px solid #dee2e6;
-  min-width: 600px;
+  min-width: 700px;
 }
 
 .header-cell {
@@ -591,13 +601,17 @@
   text-align: left;
 }
 
+.header-cell.store {
+  text-align: center;
+}
+
 .product-row {
   display: grid;
-  grid-template-columns: 50px minmax(150px, 2fr) 80px 100px 100px 60px;
+  grid-template-columns: 50px minmax(150px, 2fr) 80px 100px 100px minmax(120px, 1fr) 60px;
   align-items: center;
   border-bottom: 1px solid #ecf0f1;
   transition: background 0.3s;
-  min-width: 600px;
+  min-width: 700px;
 }
 
 .product-row:hover {
@@ -657,6 +671,29 @@
   color: #2c3e50;
 }
 
+/* Store select styling */
+.store-select {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  background-color: white;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.store-select:focus {
+  border-color: #3498db;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+}
+
+.store-select.error {
+  border-color: #dc3545;
+  background-color: #fff8f8;
+}
+
 .btn-remove {
   background: #e74c3c;
   color: white;
@@ -681,7 +718,7 @@
   text-align: center;
   padding: 30px 15px;
   color: #95a5a6;
-  min-width: 600px;
+  min-width: 700px;
 }
 
 .empty-state i {
@@ -809,6 +846,12 @@
   background: #2980b9;
 }
 
+.btn-submit:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  background: #95a5a6;
+}
+
 .btn-reset {
   background: #95a5a6;
   color: white;
@@ -883,12 +926,12 @@
   }
   
   .table-header {
+    grid-template-columns: 40px minmax(120px, 1fr) 70px 90px 90px minmax(100px, 0.8fr) 50px;
     font-size: 11px;
-    grid-template-columns: 40px minmax(120px, 1fr) 70px 90px 90px 50px;
   }
   
   .product-row {
-    grid-template-columns: 40px minmax(120px, 1fr) 70px 90px 90px 50px;
+    grid-template-columns: 40px minmax(120px, 1fr) 70px 90px 90px minmax(100px, 0.8fr) 50px;
   }
   
   .header-cell, .cell {
@@ -896,7 +939,7 @@
     font-size: 11px;
   }
   
-  .product-select, .quantity-input, .price-input, .total-input {
+  .product-select, .quantity-input, .price-input, .total-input, .store-select {
     padding: 6px;
     font-size: 12px;
   }
@@ -925,11 +968,11 @@
 
 @media (max-width: 480px) {
   .table-header {
-    grid-template-columns: 35px minmax(100px, 1fr) 60px 80px 80px 45px;
+    grid-template-columns: 35px minmax(100px, 1fr) 60px 80px 80px minmax(90px, 0.7fr) 45px;
   }
   
   .product-row {
-    grid-template-columns: 35px minmax(100px, 1fr) 60px 80px 80px 45px;
+    grid-template-columns: 35px minmax(100px, 1fr) 60px 80px 80px minmax(90px, 0.7fr) 45px;
   }
   
   .header-cell, .cell {
@@ -937,7 +980,7 @@
     font-size: 10px;
   }
   
-  .product-select, .quantity-input, .price-input, .total-input {
+  .product-select, .quantity-input, .price-input, .total-input, .store-select {
     padding: 4px;
     font-size: 11px;
   }
@@ -961,7 +1004,7 @@
     min-height: 44px;
   }
   
-  .product-select, .quantity-input, .price-input {
+  .product-select, .quantity-input, .price-input, .store-select {
     min-height: 36px;
   }
   
@@ -986,13 +1029,47 @@
 
 /* iOS specific fixes */
 @supports (-webkit-touch-callout: none) {
-  .form-select, .search-input {
+  .form-select, .search-input, .store-select {
     -webkit-appearance: none;
   }
   
   .product-list-container {
     -webkit-overflow-scrolling: touch;
   }
+}
+
+/* Алдааны мессеж */
+.form-error-alert {
+  animation: slideDown 0.3s ease;
+  margin-bottom: 20px;
+  border-left: 4px solid #dc3545;
+}
+
+.form-error-alert ul {
+  margin-bottom: 0;
+  padding-left: 20px;
+}
+
+.form-error-alert li {
+  margin-bottom: 5px;
+}
+
+.form-error-alert li:last-child {
+  margin-bottom: 0;
+}
+
+/* Spinner animation */
+.fa-spinner {
+  margin-right: 8px;
+}
+
+.fa-spin {
+  animation: fa-spin 1s infinite linear;
+}
+
+@keyframes fa-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 </style>
 
@@ -1237,6 +1314,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const select = newRow.querySelector(`select[name="product${newIndex}"]`);
     const quantityInput = newRow.querySelector(`input[name="quantity${newIndex}"]`);
     const priceInput = newRow.querySelector(`input[name="price${newIndex}"]`);
+    const storeSelect = newRow.querySelector(`select[name="store${newIndex}"]`);
     const removeBtn = newRow.querySelector(`.btn-remove[data-index="${newIndex}"]`);
     
     select.addEventListener('change', function() {
@@ -1260,6 +1338,11 @@ document.addEventListener('DOMContentLoaded', function() {
       calculateTotal(this.dataset.index);
     });
     
+    storeSelect.addEventListener('change', function() {
+      // Store сонголтыг validate хийх
+      validateStoreSelection(this);
+    });
+    
     removeBtn.addEventListener('click', function() {
       removeProductRow(this.dataset.index);
     });
@@ -1267,6 +1350,20 @@ document.addEventListener('DOMContentLoaded', function() {
     // Хоосон төлөв нуух
     emptyState.style.display = 'none';
     updateProductCount();
+    
+    // Store сонголтыг шалгах
+    validateStoreSelection(storeSelect);
+  }
+  
+  // Store сонголтыг шалгах функц
+  function validateStoreSelection(storeSelect) {
+    if (!storeSelect.value) {
+      storeSelect.classList.add('error');
+      return false;
+    } else {
+      storeSelect.classList.remove('error');
+      return true;
+    }
   }
   
   // Барааны мөр устгах
@@ -1337,6 +1434,13 @@ document.addEventListener('DOMContentLoaded', function() {
     if (totalInput) {
       totalInput.name = `total${newIndex}`;
       totalInput.dataset.index = newIndex;
+    }
+    
+    // Store select шинэчлэх
+    const storeSelect = row.querySelector(`select[name="store${oldIndex}"]`);
+    if (storeSelect) {
+      storeSelect.name = `store${newIndex}`;
+      storeSelect.dataset.index = newIndex;
     }
     
     // Устгах товчны data-index шинэчлэх
@@ -1412,88 +1516,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
   
-  // Форм илгээхэд баталгаажуулалт
-  document.getElementById('addProductForm').addEventListener('submit', function(e) {
-    const productRows = productRowsContainer.querySelectorAll('.product-row');
-    
-    // Төсөв сонгоогүй эсэхийг шалгах
-    if (!budgetSelect.value) {
-      e.preventDefault();
-      alert('Төсөв сонгоно уу!');
-      budgetSelect.focus();
-      return;
-    }
-    
-    // Хаашаа сонгоогүй эсэхийг шалгах
-    if (!document.getElementById('client').value) {
-      e.preventDefault();
-      alert('Хаашаа гэдгээ сонгоно уу!');
-      document.getElementById('client').focus();
-      return;
-    }
-    
-    // Бараа байхгүй эсэхийг шалгах
-    if (productRows.length === 0) {
-      e.preventDefault();
-      alert('Дор хаяж нэг бараа нэмнэ үү!');
-      return;
-    }
-    
-    // Бараа бүрийг шалгах
-    let hasEmptyProduct = false;
-    let hasZeroQuantity = false;
-    
-    productRows.forEach(row => {
-      const index = row.getAttribute('data-index');
-      const select = document.querySelector(`select[name="product${index}"]`);
-      const quantity = parseFloat(document.querySelector(`input[name="quantity${index}"]`).value) || 0;
-      
-      if (!select.value) {
-        hasEmptyProduct = true;
-        row.style.backgroundColor = '#ffe6e6';
-      }
-      
-      if (quantity === 0) {
-        hasZeroQuantity = true;
-        row.style.backgroundColor = '#fff3cd';
-      }
-    });
-    
-    if (hasEmptyProduct) {
-      e.preventDefault();
-      alert('Бүх барааг сонгож, тоо хэмжээгээ оруулна уу!');
-      return;
-    }
-    
-    if (hasZeroQuantity) {
-      e.preventDefault();
-      alert('Бүх барааны тоо хэмжээ 0-ээс их байх ёстой!');
-      return;
-    }
-    
-    // Төсвийн үлдэгдэл шалгах
-    if (budgetSelect.value) {
-      const selectedOption = budgetSelect.options[budgetSelect.selectedIndex];
-      const budgetBalance = parseFloat(selectedOption.dataset.balance) || 0;
-      const productsTotal = parseFloat(totalAmount.value) || 0;
-      
-      if (budgetBalance < productsTotal) {
-        const deficit = productsTotal - budgetBalance;
-        
-        if (!confirm(
-          `Төсвийн үлдэгдэл хангалтгүй!\n\n` +
-          `Үлдэгдэл: ${formatCurrency(budgetBalance)}\n` +
-          `Нийт дүн: ${formatCurrency(productsTotal)}\n` +
-          `Дутуу: ${formatCurrency(deficit)}\n\n` +
-          `Үргэлжлүүлэх үү?`
-        )) {
-          e.preventDefault();
-          return;
-        }
-      }
-    }
-  });
-  
   // Эхлээд нэг хоосон мөр нэмэх
   addProductBtn.addEventListener('click', addProductRow);
   
@@ -1507,7 +1529,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
 });
-
 
 // Submit lock механизм
 let isSubmitting = false;
@@ -1582,10 +1603,18 @@ function validateForm() {
     const index = row.getAttribute('data-index');
     const select = document.querySelector(`select[name="product${index}"]`);
     const quantity = parseFloat(document.querySelector(`input[name="quantity${index}"]`).value) || 0;
+    const storeSelect = document.querySelector(`select[name="store${index}"]`);
     
     if (!select.value) {
-      errors.push('Бүх барааг сонгож, тоо хэмжээгээ оруулна уу!');
+      errors.push('Бүх барааг сонгоно уу!');
       row.style.backgroundColor = '#ffe6e6';
+      isValid = false;
+    }
+    
+    if (!storeSelect.value) {
+      errors.push('Бүх барааны байгууллагыг сонгоно уу!');
+      storeSelect.classList.add('error');
+      row.style.backgroundColor = '#fff3cd';
       isValid = false;
     }
     

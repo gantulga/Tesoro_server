@@ -136,7 +136,8 @@ def addProduct(request):
         all_wallets = Wallet.objects.filter(is_pos=False)
         all_divisions = Division.objects.all()
         all_clients = Client.objects.all()
-        return render(request, 'addProduct.html', {'all_products':all_products, 'range': range(30), 'all_budgets':all_budgets, 'all_wallets':all_wallets, 'all_divisions':all_divisions, 'all_clients':all_clients})
+        all_stores = Store.objects.all()
+        return render(request, 'addProduct.html', {'all_products':all_products, 'range': range(30), 'all_budgets':all_budgets, 'all_wallets':all_wallets, 'all_divisions':all_divisions, 'all_clients':all_clients, 'all_stores': all_stores})
 
 
 @group_required('Удирдлага')
@@ -282,7 +283,8 @@ def addCommodity(request):
         all_wallets = Wallet.objects.filter(is_pos=False)
         all_divisions = Division.objects.all()
         all_clients = Client.objects.all()
-        return render(request, 'addCommodity.html', {'all_commodities':all_commodities, 'range': range(30), 'all_budgets':all_budgets, 'all_wallets':all_wallets, 'all_divisions':all_divisions, 'all_clients':all_clients, 'all_stores':Store.objects.all(),})
+        all_stores = Store.objects.all()
+        return render(request, 'addCommodity.html', {'all_commodities':all_commodities, 'range': range(30), 'all_budgets':all_budgets, 'all_wallets':all_wallets, 'all_divisions':all_divisions, 'all_clients':all_clients, 'all_stores':all_stores})
 
 
 @never_cache
