@@ -113,7 +113,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'tesoro',
         'USER': 'root',
-        'PASSWORD': '',
+        'PASSWORD': 'Fa90101830#',
         'HOST': 'localhost',
         'PORT': '3306',
     }
