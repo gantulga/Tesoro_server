@@ -172,8 +172,8 @@ class Item_transfer_type(Createdinfo):
 class Store(Createdinfo):
     name = models.CharField(null=False, max_length=40)
     store_info = models.TextField(null=True, max_length=255)
-    register = models.CharField(null=True, blank=True)
-    ttd = models.CharField(null=True, blank=True)
+    register = models.CharField(null=True, blank=True, max_length=40)
+    ttd = models.CharField(null=True, blank=True, max_length=40)
     noat_payer = models.BooleanField(default=False)
 
 # Түүхий эд нэмэгдэх, бүтээгдэхүүнд ороод хасагдах, ажилчидад олгох, шилжүүлэх бүх гүйлгээний мэдээлэл
