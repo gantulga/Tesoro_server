@@ -107,7 +107,13 @@ def addProduct(request):
             if 'product'+str(index) in request.POST and request.POST['product'+str(index)]:
                 total_amount = int(request.POST['quantity'+str(index)]) * int(request.POST['price'+str(index)])
                 product = Product.objects.get(pk=request.POST['product'+str(index)])
-                item_transfer = Item_transfer.objects.create(item_transfer_type=item_transfer_type, product=product, to_division=to_division, to_client=to_client, is_confirmed=True, confirmed_by=request.user, created_by=request.user, quantity=int(request.POST['quantity'+str(index)]), unit_price=float(request.POST['price'+str(index)]), total_amount=total_amount)
+                
+                if request.POST['store'+str(index)]:
+                    store = Store.objects.get(request.POST['store'+str(index)])
+                else:
+                    store = None
+
+                item_transfer = Item_transfer.objects.create(item_transfer_type=item_transfer_type, product=product, to_division=to_division, to_client=to_client, is_confirmed=True, confirmed_by=request.user, created_by=request.user, quantity=int(request.POST['quantity'+str(index)]), unit_price=float(request.POST['price'+str(index)]), total_amount=total_amount, store=store)
 
                 if item_transfer:
                     itemBalance = Item_balance.objects.filter(product=product, client=item_transfer.to_client.id)
@@ -241,13 +247,18 @@ def addCommodity(request):
         while True:
             if 'material'+str(index) in request.POST and request.POST['material'+str(index)]:
                 commodity = Commodity.objects.get(pk=request.POST['material'+str(index)])
-                print(request.POST)
+                
+                if request.POST['store'+str(index)]:
+                    store = Store.objects.get(request.POST['store'+str(index)])
+                else:
+                    store = None
+
                 if request.POST['size_type'+str(index)] == "ш":
-                    item_transfer = Item_transfer.objects.create(item_transfer_type=item_transfer_type, commodity=commodity, to_division=to_division, to_client=to_client, is_confirmed=True, confirmed_by=request.user, created_by=request.user, quantity=int(request.POST['quantity'+str(index)]), unit_price=float(request.POST['price'+str(index)]), total_amount=float(request.POST['total'+str(index)]))
+                    item_transfer = Item_transfer.objects.create(item_transfer_type=item_transfer_type, commodity=commodity, to_division=to_division, to_client=to_client, is_confirmed=True, confirmed_by=request.user, created_by=request.user, quantity=int(request.POST['quantity'+str(index)]), unit_price=float(request.POST['price'+str(index)]), total_amount=float(request.POST['total'+str(index)]), store=store)
 
                     total_amount = float(request.POST['total'+str(index)])
                 else:
-                    item_transfer = Item_transfer.objects.create(item_transfer_type=item_transfer_type, commodity=commodity, to_division=to_division, to_client=to_client, is_confirmed=True, confirmed_by=request.user, created_by=request.user, size=int(request.POST['quantity'+str(index)]), unit_price=float(request.POST['price'+str(index)]), total_amount=float(request.POST['total'+str(index)]))
+                    item_transfer = Item_transfer.objects.create(item_transfer_type=item_transfer_type, commodity=commodity, to_division=to_division, to_client=to_client, is_confirmed=True, confirmed_by=request.user, created_by=request.user, size=int(request.POST['quantity'+str(index)]), unit_price=float(request.POST['price'+str(index)]), total_amount=float(request.POST['total'+str(index)]), store=store)
 
                     total_amount = float(request.POST['total'+str(index)])
 
