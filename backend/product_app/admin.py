@@ -43,7 +43,7 @@ class ProductAdmin(admin.ModelAdmin):
     get_categories.admin_order_field = 'categories'
 
 class CommodityAdmin(admin.ModelAdmin):
-    list_display = ('name', 'size_type', 'unit_size', 'get_categories')
+    list_display = ('name', 'description', 'size_type', 'unit_size', 'get_categories', 'image')
 
     list_per_page = 500
     exclude = ['created_by']
