@@ -29,19 +29,6 @@ class ProductAdmin(admin.ModelAdmin):
     list_per_page = 500
     exclude = ['created_by']
     ordering = ('is_ingrediented', 'is_gramm', 'name')
-
-    def get_enabled(self, obj):
-        return "True" if obj.enabled else "False"
-    get_enabled.short_description = 'Enabled'
-
-    def get_is_ingrediented(self, obj):
-        return "True" if obj.is_ingrediented else "False"
-    get_is_ingrediented.short_description = 'Is Ingrediented'
-
-    def get_is_gramm(self, obj):
-        return "True" if obj.is_gramm else "False"
-    get_is_gramm.short_description = 'Is Gramm'
-
     def get_ingredients(self, obj):
         ingredients = []
         for ingredient in obj.ingredients.all():
