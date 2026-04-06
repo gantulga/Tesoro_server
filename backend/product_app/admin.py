@@ -71,7 +71,11 @@ admin.site.register(Size_type)
 admin.site.register(Ingredient)
 admin.site.register(Ingredient_product)
 admin.site.register(Item_transfer_type)
-admin.site.register(Store)
+
+class StoreAdmin(admin.ModelAdmin):
+    list_display = ('name', 'store_info', 'register', 'ttd', 'noat_payer')
+
+admin.site.register(Store, StoreAdmin)
 admin.site.register(Item_transfer)
 admin.site.register(Item_balance, Item_balanceAdmin)
 admin.site.register(Item_balance_log, Item_balanceAdmin)
